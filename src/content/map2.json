@@ -1,0 +1,551 @@
+{
+  "id": "map2",
+  "name": "City Mall Car Park",
+  "theme": "city",
+  "bounds": {
+    "minX": -7.6,
+    "maxX": 9.4,
+    "minZ": -12,
+    "maxZ": 16
+  },
+  "day": {
+    "lengthSeconds": 360,
+    "sunrise": 0.2,
+    "sunset": 0.85,
+    "dawnLength": 0.06,
+    "startTime": 0.245
+  },
+  "energy": {
+    "kwhPerKwSecond": 0.1
+  },
+  "player": {
+    "start": {
+      "x": 0,
+      "z": 1
+    },
+    "speed": 5,
+    "plugSeconds": 0.5,
+    "plugRadius": 1.9,
+    "pickupRadius": 1.3,
+    "padRadius": 1.0,
+    "cleanRadius": 1.6,
+    "cleanPerSecond": 0.5,
+    "buildSeconds": 1.2,
+    "minDrainPerSecond": 150
+  },
+  "road": {
+    "laneX": -8.9,
+    "spawnZ": -22,
+    "despawnZ": 32,
+    "entranceZ": -13,
+    "exitZ": 19,
+    "carSpeed": 7
+  },
+  "lane": {
+    "x": -6.6,
+    "entryZ": -12,
+    "exitZ": 16.5
+  },
+  "queueSlots": [
+    {
+      "x": -6.6,
+      "z": -2.5
+    },
+    {
+      "x": -6.6,
+      "z": -5.5
+    },
+    {
+      "x": -6.6,
+      "z": -8.5
+    },
+    {
+      "x": -6.6,
+      "z": -11.5
+    }
+  ],
+  "bays": [
+    {
+      "id": "bay1",
+      "car": {
+        "x": -3.6,
+        "z": -0.5
+      },
+      "post": {
+        "x": -1.5,
+        "z": -0.5
+      }
+    },
+    {
+      "id": "bay2",
+      "car": {
+        "x": -3.6,
+        "z": 2.5
+      },
+      "post": {
+        "x": -1.5,
+        "z": 2.5
+      }
+    },
+    {
+      "id": "bay3",
+      "car": {
+        "x": -3.6,
+        "z": 5.5
+      },
+      "post": {
+        "x": -1.5,
+        "z": 5.5
+      }
+    },
+    {
+      "id": "bay4",
+      "car": {
+        "x": -3.6,
+        "z": 8.5
+      },
+      "post": {
+        "x": -1.5,
+        "z": 8.5
+      }
+    },
+    {
+      "id": "bay5",
+      "car": {
+        "x": -3.6,
+        "z": 11.5
+      },
+      "post": {
+        "x": -1.5,
+        "z": 11.5
+      }
+    },
+    {
+      "id": "bay6",
+      "car": {
+        "x": -3.6,
+        "z": 14.5
+      },
+      "post": {
+        "x": -1.5,
+        "z": 14.5
+      }
+    }
+  ],
+  "arrivals": {
+    "baseCarsPerMinute": 3.0,
+    "perChargerCarsPerMinute": 1.1,
+    "nightMultiplier": 0.6,
+    "rushTime": 0.8,
+    "rushWidth": 0.06,
+    "rushMultiplier": 2.4,
+    "firstCarDelaySeconds": 1
+  },
+  "dust": {
+    "perSecond": 0.0008,
+    "maxOutputLoss": 0.4
+  },
+  "spending": {
+    "minDwellSeconds": 20,
+    "cafePerMinute": 30,
+    "carWashPerMinute": 50,
+    "maxDwellBonusSeconds": 60
+  },
+  "carTypes": {
+    "sedan": {
+      "weight": 0.45
+    },
+    "taxi": {
+      "weight": 0.4
+    },
+    "hatchback": {
+      "weight": 0.15
+    }
+  },
+  "vip": {
+    "everySeconds": [150, 300],
+    "offerSeconds": 30,
+    "payMultiplier": 5,
+    "type": "sedan"
+  },
+  "contracts": {
+    "everySeconds": [150, 300],
+    "taxis": [4, 8],
+    "durationSeconds": 200,
+    "bonusPerTaxi": 120
+  },
+  "panelRow": {
+    "halfLength": 4
+  },
+  "cashStackOffset": 1.8,
+  "pads": [
+    {
+      "id": "charger1",
+      "kind": "charger",
+      "label": "Fast charger",
+      "price": 0,
+      "pos": {
+        "x": -1.5,
+        "z": -0.5
+      },
+      "bay": "bay1"
+    },
+    {
+      "id": "charger2",
+      "kind": "charger",
+      "label": "Fast charger",
+      "price": 0,
+      "pos": {
+        "x": -1.5,
+        "z": 2.5
+      },
+      "bay": "bay2"
+    },
+    {
+      "id": "carport1",
+      "kind": "panelRow",
+      "label": "Solar carport",
+      "price": 0,
+      "pos": {
+        "x": 1.6,
+        "z": -0.5
+      },
+      "buildPos": {
+        "x": -3.2,
+        "z": -0.5
+      },
+      "buildY": 3.0
+    },
+    {
+      "id": "carport2",
+      "kind": "panelRow",
+      "label": "Solar carport",
+      "price": 900,
+      "pos": {
+        "x": 1.6,
+        "z": 2.5
+      },
+      "unlockAfter": ["charger2"],
+      "buildPos": {
+        "x": -3.2,
+        "z": 2.5
+      },
+      "buildY": 3.0
+    },
+    {
+      "id": "battery1",
+      "kind": "battery",
+      "label": "Battery",
+      "price": 1500,
+      "pos": {
+        "x": 5.2,
+        "z": 10
+      },
+      "unlockAfter": ["carport2"]
+    },
+    {
+      "id": "technician1",
+      "kind": "technician",
+      "label": "Hire technician",
+      "price": 2500,
+      "pos": {
+        "x": 4.0,
+        "z": -3.5
+      },
+      "unlockAfter": ["battery1"]
+    },
+    {
+      "id": "charger3",
+      "kind": "charger",
+      "label": "Fast charger",
+      "price": 4000,
+      "pos": {
+        "x": -1.5,
+        "z": 5.5
+      },
+      "unlockAfter": ["technician1"],
+      "bay": "bay3"
+    },
+    {
+      "id": "carport3",
+      "kind": "panelRow",
+      "label": "Solar carport",
+      "price": 5000,
+      "pos": {
+        "x": 1.6,
+        "z": 5.5
+      },
+      "unlockAfter": ["charger3"],
+      "buildPos": {
+        "x": -3.2,
+        "z": 5.5
+      },
+      "buildY": 3.0
+    },
+    {
+      "id": "cafe",
+      "kind": "cafe",
+      "label": "Coffee kiosk",
+      "price": 7000,
+      "pos": {
+        "x": 7.6,
+        "z": 4.5
+      },
+      "unlockAfter": ["carport3"]
+    },
+    {
+      "id": "roof1",
+      "kind": "panelRow",
+      "label": "Roof deck row",
+      "price": 9000,
+      "pos": {
+        "x": 7.0,
+        "z": -9.0
+      },
+      "unlockAfter": ["cafe"],
+      "buildY": 2.2
+    },
+    {
+      "id": "cashier1",
+      "kind": "cashier",
+      "label": "Hire cashier",
+      "price": 10000,
+      "pos": {
+        "x": 4.0,
+        "z": -6.5
+      },
+      "unlockAfter": ["roof1"]
+    },
+    {
+      "id": "upper1",
+      "kind": "panelRow",
+      "label": "Upper carport",
+      "price": 14000,
+      "pos": {
+        "x": 4.0,
+        "z": -0.5
+      },
+      "unlockAfter": ["carport3"],
+      "buildPos": {
+        "x": -3.2,
+        "z": 1.0
+      },
+      "buildY": 5.0
+    },
+    {
+      "id": "charger4",
+      "kind": "charger",
+      "label": "Fast charger",
+      "price": 18000,
+      "pos": {
+        "x": -1.5,
+        "z": 8.5
+      },
+      "unlockAfter": ["upper1"],
+      "bay": "bay4"
+    },
+    {
+      "id": "carport4",
+      "kind": "panelRow",
+      "label": "Solar carport",
+      "price": 22000,
+      "pos": {
+        "x": 1.6,
+        "z": 8.5
+      },
+      "unlockAfter": ["charger4"],
+      "buildPos": {
+        "x": -3.2,
+        "z": 8.5
+      },
+      "buildY": 3.0
+    },
+    {
+      "id": "battery2",
+      "kind": "battery",
+      "label": "Battery",
+      "price": 28000,
+      "pos": {
+        "x": 5.2,
+        "z": 13.5
+      },
+      "unlockAfter": ["carport4"]
+    },
+    {
+      "id": "robot1",
+      "kind": "robot",
+      "label": "Cleaning robot",
+      "price": 30000,
+      "pos": {
+        "x": 4.0,
+        "z": -9.5
+      },
+      "unlockAfter": ["roof1"]
+    },
+    {
+      "id": "upper2",
+      "kind": "panelRow",
+      "label": "Upper carport",
+      "price": 36000,
+      "pos": {
+        "x": 4.0,
+        "z": 2.5
+      },
+      "unlockAfter": ["upper1", "carport4"],
+      "buildPos": {
+        "x": -3.2,
+        "z": 4.0
+      },
+      "buildY": 5.0
+    },
+    {
+      "id": "roof2",
+      "kind": "panelRow",
+      "label": "Roof deck row",
+      "price": 42000,
+      "pos": {
+        "x": 7.0,
+        "z": -6.8
+      },
+      "unlockAfter": ["roof1", "battery2"],
+      "buildY": 2.2
+    },
+    {
+      "id": "carWash",
+      "kind": "carWash",
+      "label": "Car wash",
+      "price": 50000,
+      "pos": {
+        "x": 7.6,
+        "z": 11.5
+      },
+      "unlockAfter": ["battery2"]
+    },
+    {
+      "id": "technician2",
+      "kind": "technician",
+      "label": "Hire technician",
+      "price": 55000,
+      "pos": {
+        "x": 4.0,
+        "z": 5.5
+      },
+      "unlockAfter": ["charger4"]
+    },
+    {
+      "id": "charger5",
+      "kind": "charger",
+      "label": "Fast charger",
+      "price": 70000,
+      "pos": {
+        "x": -1.5,
+        "z": 11.5
+      },
+      "unlockAfter": ["carWash"],
+      "bay": "bay5"
+    },
+    {
+      "id": "carport5",
+      "kind": "panelRow",
+      "label": "Solar carport",
+      "price": 85000,
+      "pos": {
+        "x": 1.6,
+        "z": 11.5
+      },
+      "unlockAfter": ["charger5"],
+      "buildPos": {
+        "x": -3.2,
+        "z": 11.5
+      },
+      "buildY": 3.0
+    },
+    {
+      "id": "upper3",
+      "kind": "panelRow",
+      "label": "Upper carport",
+      "price": 100000,
+      "pos": {
+        "x": 4.0,
+        "z": 8.5
+      },
+      "unlockAfter": ["upper2", "carport5"],
+      "buildPos": {
+        "x": -3.2,
+        "z": 7.0
+      },
+      "buildY": 5.0
+    },
+    {
+      "id": "battery3",
+      "kind": "battery",
+      "label": "Battery",
+      "price": 120000,
+      "pos": {
+        "x": 5.2,
+        "z": 7.0
+      },
+      "unlockAfter": ["upper3"]
+    },
+    {
+      "id": "charger6",
+      "kind": "charger",
+      "label": "Fast charger",
+      "price": 150000,
+      "pos": {
+        "x": -1.5,
+        "z": 14.5
+      },
+      "unlockAfter": ["battery3"],
+      "bay": "bay6"
+    },
+    {
+      "id": "carport6",
+      "kind": "panelRow",
+      "label": "Solar carport",
+      "price": 170000,
+      "pos": {
+        "x": 1.6,
+        "z": 14.5
+      },
+      "unlockAfter": ["charger6"],
+      "buildPos": {
+        "x": -3.2,
+        "z": 14.5
+      },
+      "buildY": 3.0
+    },
+    {
+      "id": "roof3",
+      "kind": "panelRow",
+      "label": "Roof deck row",
+      "price": 190000,
+      "pos": {
+        "x": 7.0,
+        "z": -4.6
+      },
+      "unlockAfter": ["roof2", "charger6"],
+      "buildY": 2.2
+    },
+    {
+      "id": "upper4",
+      "kind": "panelRow",
+      "label": "Upper carport",
+      "price": 220000,
+      "pos": {
+        "x": 4.0,
+        "z": 11.5
+      },
+      "unlockAfter": ["upper3", "carport6"],
+      "buildPos": {
+        "x": -3.2,
+        "z": 10.0
+      },
+      "buildY": 5.0
+    }
+  ],
+  "initial": {
+    "cash": 500,
+    "chargerTier": 2
+  }
+}

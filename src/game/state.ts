@@ -51,6 +51,7 @@ export function createInitialState(mapId = 'map1', options: NewGameOptions = {})
     eventSchedule: {
       sandstorm: content.events.firstDay + Math.round(rng.range(0, 1)),
       heatwave: content.events.firstDay + 1 + Math.round(rng.range(0, 1)),
+      nightRush: content.events.firstDay,
     },
     vipOfferUntil: 0,
     contract: null,
@@ -89,7 +90,11 @@ export function buildPadItem(state: GameState, pad: PadDef, content: Content): v
       const bayId = pad.bay ?? content.map.bays[state.chargers.length]?.id
       if (!bayId) throw new Error(`Charger pad "${pad.id}" has no bay`)
       bayDef(content.map, bayId)
-      state.chargers.push({ id: pad.id, bayId, tier: 0, carId: null, upgradingUntil: 0 })
+      const tier = Math.min(
+        content.map.initial.chargerTier ?? 0,
+        content.equipment.charger.tiers.length - 1,
+      )
+      state.chargers.push({ id: pad.id, bayId, tier, carId: null, upgradingUntil: 0 })
       break
     }
     case 'panelRow':

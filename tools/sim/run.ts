@@ -66,6 +66,10 @@ export function runBot(
     activeShare: Math.min(1, activeMinutes / (24 * 60)),
   })
   let state = createInitialState(mapId, { seed: 1234 })
+  // Later maps are reached through the prestige reset, so bots start with its income levels.
+  const startLevel =
+    (pacing.maps as Record<string, { startIncomeLevel?: number }>)[mapId]?.startIncomeLevel ?? 0
+  state = { ...state, prestige: { ...state.prestige, incomeLevel: startLevel } }
   const rows: MinuteRow[] = []
   const purchases: RunResult['purchases'] = []
   const milestones: Milestones = {

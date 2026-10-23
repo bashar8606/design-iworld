@@ -147,6 +147,10 @@ function Toasts() {
         push('You made it through the night', 'good')
       } else if (e.type === 'mapComplete') {
         push('Map complete!', 'good')
+      } else if (e.type === 'contractDone') {
+        push(`Fleet contract done: +$${Math.round(e.bonus).toLocaleString('en-US')}`, 'good')
+      } else if (e.type === 'contractFailed') {
+        push('The fleet contract ran out of time', 'bad')
       }
     })
   }, [])

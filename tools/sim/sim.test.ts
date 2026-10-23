@@ -12,7 +12,7 @@ describe('balancing sim', () => {
     expect(result.milestones.firstCashSeconds!).toBeLessThan(15)
     expect(result.purchases.length).toBeGreaterThan(3)
     expect(result.rows.length).toBeGreaterThan(10)
-    const checks = checkMilestones(result)
+    const checks = checkMilestones(result, 'map1')
     expect(checks.find((c) => c.milestone === 'First new charger')?.ok).toBe(true)
   })
 })

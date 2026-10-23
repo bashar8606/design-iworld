@@ -13,7 +13,15 @@ import { startTracking } from './store/tracking.ts'
 import { startTutorial, useTutorial } from './store/tutorial.ts'
 import { useUi } from './store/uiStore.ts'
 import { AdOffer, SolarBoostButton } from './ui/AdButtons.tsx'
-import { EventBanner, MapComplete, OfflineCard, StormOverlay, TutorialHint } from './ui/Cards.tsx'
+import {
+  ContractBanner,
+  EventBanner,
+  MapComplete,
+  OfflineCard,
+  StormOverlay,
+  TutorialHint,
+} from './ui/Cards.tsx'
+import { GreenCreditsSheet } from './ui/GreenCreditsSheet.tsx'
 import { Joystick } from './ui/Controls.tsx'
 import { DebugMenu } from './ui/DebugMenu.tsx'
 import { ErrorBoundary } from './ui/ErrorBoundary.tsx'
@@ -45,6 +53,8 @@ function Sheets() {
       return <FeedbackSheet />
     case 'shop':
       return <ShopSheet />
+    case 'greenCredits':
+      return <GreenCreditsSheet />
     default:
       return null
   }
@@ -73,6 +83,13 @@ export default function App() {
   const welcomeBackReady = useAds((s) => s.ready === 'welcome_back')
   useKeyboardControls()
   const open = useUi((s) => s.open)
+  const hasCredits = useGame(
+    (s) => s.state.prestige.greenCredits > 0 || s.state.prestige.incomeLevel > 0,
+  )
+  const sell = () => {
+    useGame.getState().dispatch({ type: 'sellToUtility' })
+    open('greenCredits')
+  }
   return (
     <div className="app">
       <World />
@@ -80,12 +97,23 @@ export default function App() {
       <ErrorBoundary name="hud">
         <Hud allowDebug={!store}>
           <EventBanner />
+          <ContractBanner />
           {!store && <TutorialHint />}
           <div className="hud-bottom">
             {!store && <AdOffer />}
             {!store && <NearbyUpgrade />}
             <div className="hud-bottom-buttons">
               {!store && <SolarBoostButton />}
+              {hasCredits && (
+                <button
+                  className="hud-fab"
+                  data-hud-control
+                  onClick={() => open('greenCredits')}
+                  aria-label="Green Credits"
+                >
+                  🌿
+                </button>
+              )}
               <button
                 className="hud-fab"
                 data-hud-control
@@ -118,7 +146,7 @@ export default function App() {
             }
           />
           <StarterPackCard />
-          <MapComplete />
+          <MapComplete onSell={sell} />
           <PerfOverlay initiallyVisible={quality.stress} />
         </>
       )}

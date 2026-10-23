@@ -19,16 +19,21 @@ Run `npm run lint`, `npx tsc -b` and `npm test` before every commit.
 
 - `src/game/` — pure TypeScript simulation: state, tick, economy, save, offline
 - `src/scene/` — React Three Fiber: world, chargers, panels, cars, player, sky
-- `src/ui/` — HUD, upgrade sheets, ad buttons, shop
 - `src/platform/` — ads, purchases, storage, haptics, analytics (+ web stubs)
 - `src/store/` — zustand store, the fixed-step game loop and the game-event bus
 - `src/gallery/` — the /gallery asset viewer
-- `src/content/` — JSON config: map, upgrades, cars, events, economy
+- `src/content/` — JSON config: map1/map2, cars, equipment, events, economy, pacing, ads, shop
+- `src/audio/` — howler.js sound and haptic feedback
+- `src/ui/` — HUD, sheets (upgrades, shop, settings, debug), cards, banners
 - `assets-src/` — .blend files, Blender scripts, raw exports, Poly Haven originals
 - `public/models/` — compressed .glb files; `public/textures/` — 512 px WebP textures and the HDRI
 - `tools/sim/` — balancing bots (greedy, smart, idle), CSV + HTML report, `--tune`
+- `tools/store/` — App Store saves, capture (simulator or Chromium), composite, preview video
 - `tools/assets/` — Blender rebuild, glTF optimize + gltfjsx, budget check, Poly Haven download
 - `ios/` — Capacitor iOS project (Swift Package Manager)
+
+Docs for setup that needs accounts or a Mac live in `docs/` (device test, ads and purchases,
+measurement and TestFlight, store listing, live ops).
 
 ## Rules
 
@@ -40,5 +45,8 @@ Run `npm run lint`, `npx tsc -b` and `npm test` before every commit.
 - Performance budget on an iPhone 3-4 years old: 60 fps, under 100 draw calls, under 150k
   triangles, textures at most 1024 px. Repeated objects use instancing.
 - Save after every purchase and when the app goes to the background.
-- After changing any price or rate, run `npm run sim -- --tune` and keep the smart and idle bots
-  within 25% of `src/content/pacing.json`.
+- After changing any price or rate, run `npm run sim -- --tune` (and `--map map2`) and keep the
+  smart and idle bots within 25% of `src/content/pacing.json`.
+- zustand selectors must return primitives or stable references; wrap selectors that build
+  objects or arrays in `useShallow`, or they re-render forever.
+- Platform SDKs (AdMob, RevenueCat, PostHog, Sentry) are only touched in `src/platform`.

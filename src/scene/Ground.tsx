@@ -4,6 +4,7 @@ import * as THREE from 'three'
 import textures from '../content/textures.json'
 import { getContent } from '../game/content.ts'
 import { useGame } from '../store/gameStore.ts'
+import { CityScenery } from './City.tsx'
 import { propMaterial } from './materials.ts'
 import { PALETTE, duneGeometry, skylineGeometry } from './props/geometry.ts'
 
@@ -85,9 +86,23 @@ function PolyHavenMaterial({
 export function Ground() {
   const mapId = useGame((s) => s.state.mapId)
   const map = getContent(mapId).map
-  const sand = useMemo(() => noiseTexture('#E9D8B4', '#CDB688', 1400, 18), [])
+  const city = map.theme === 'city'
+  const skyline = useMemo(() => skylineGeometry(), [])
+  const sand = useMemo(
+    () =>
+      city
+        ? noiseTexture('#666B74', '#585C64', 900, 18)
+        : noiseTexture('#E9D8B4', '#CDB688', 1400, 18),
+    [city],
+  )
   const asphalt = useMemo(() => noiseTexture('#50545D', '#3E4149', 900, 10), [])
-  const concrete = useMemo(() => noiseTexture('#D9D5C8', '#BDB8A9', 500, 6), [])
+  const concrete = useMemo(
+    () =>
+      city
+        ? noiseTexture('#AEB3BA', '#9DA2A9', 500, 6)
+        : noiseTexture('#D9D5C8', '#BDB8A9', 500, 6),
+    [city],
+  )
   const b = map.bounds
   const roadX = map.road.laneX - 1.25
   const roadLength = map.road.despawnZ - map.road.spawnZ + 30
@@ -102,7 +117,11 @@ export function Ground() {
     <group>
       <mesh rotation-x={-Math.PI / 2} position={[0, -0.01, 0]} receiveShadow>
         <planeGeometry args={[160, 160]} />
-        <SurfaceMaterial slot="sand" color="#FFFFFF" fallback={sand} />
+        {city ? (
+          <meshStandardMaterial color="#FFFFFF" map={sand} roughness={0.95} />
+        ) : (
+          <SurfaceMaterial slot="sand" color="#FFFFFF" fallback={sand} />
+        )}
       </mesh>
       {/* Two-lane highway along the west edge. */}
       <mesh
@@ -146,13 +165,15 @@ export function Ground() {
         </mesh>
       ))}
       <BayLines />
-      <Dunes />
-      <mesh
-        geometry={useMemo(() => skylineGeometry(), [])}
-        material={propMaterial}
-        position={[-62, 0, -70]}
-        rotation-y={Math.PI / 4}
-      />
+      {city ? <CityScenery map={map} /> : <Dunes />}
+      {!city && (
+        <mesh
+          geometry={skyline}
+          material={propMaterial}
+          position={[-62, 0, -70]}
+          rotation-y={Math.PI / 4}
+        />
+      )}
     </group>
   )
 }

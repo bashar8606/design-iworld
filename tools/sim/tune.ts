@@ -5,6 +5,9 @@ import pacing from '../../src/content/pacing.json'
 import type { MilestoneCheck } from './report.ts'
 
 export function suggestTuning(checks: MilestoneCheck[], content: Content): string[] {
+  const targets =
+    (pacing.maps as Record<string, { targets: { mapCompleteDays?: number[] } }>)[content.map.id]
+      ?.targets ?? {}
   const out: string[] = []
   const pads = content.map.pads
   const byMilestone = (name: string) =>
@@ -28,18 +31,18 @@ export function suggestTuning(checks: MilestoneCheck[], content: Content): strin
       `${c.bot}: first cash late → raise map.initial / shorten the first car (arrivals.firstCarDelaySeconds ${content.map.arrivals.firstCarDelaySeconds} → 0) or speed up the scooter`,
     )
   }
-  for (const c of byMilestone('Map 1 complete')) {
+  for (const c of byMilestone('Map complete')) {
     if (c.offBy === null) continue
     const factor = scale(c.offBy)
     const late = pads.filter((p) => p.price >= 1000)
     out.push(
-      `${c.bot}: map complete ${c.offBy > 0 ? 'too slow' : 'too fast'} (${c.value?.toFixed(2)} days vs ${(pacing.targets.mapCompleteDays as number[]).join('–')}) → scale prices of ${late.length} late pads (≥ $1,000) by ×${factor.toFixed(2)}, e.g. ${late
+      `${c.bot}: map complete ${c.offBy > 0 ? 'too slow' : 'too fast'} (${c.value?.toFixed(2)} days vs ${(targets.mapCompleteDays ?? []).join('–')}) → scale prices of ${late.length} late pads (≥ $1,000) by ×${factor.toFixed(2)}, e.g. ${late
         .slice(0, 3)
         .map((p) => `${p.id} ${p.price} → ${Math.round(p.price * factor)}`)
         .join(', ')}`,
     )
   }
-  const notCompleted = checks.filter((c) => c.milestone === 'Map 1 complete' && c.value === null)
+  const notCompleted = checks.filter((c) => c.milestone === 'Map complete' && c.value === null)
   for (const c of notCompleted)
     out.push(
       `${c.bot}: never completed map 1 in the run → lower late pad prices, or raise economy.offline.efficiency (${content.economy.offline.efficiency})`,

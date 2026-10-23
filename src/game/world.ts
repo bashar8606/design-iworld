@@ -18,6 +18,11 @@ export function padDef(content: Content, padId: string): PadDef {
   return pad
 }
 
+/** Where a pad's item stands (carports build over the bays, away from their pad). */
+export function itemPos(pad: PadDef): Vec2 {
+  return pad.buildPos ?? pad.pos
+}
+
 export function isPadUnlocked(state: GameState, pad: PadDef): boolean {
   return (pad.unlockAfter ?? []).every((id) => state.pads[id]?.built)
 }
@@ -107,7 +112,9 @@ export function arrivalRate(state: GameState, content: Content): number {
   const night = isNight(t, content.map) ? arrivals.nightMultiplier : 1
   let rate = base * (night + rush)
   const event = activeEvent(state)
-  if (event?.kind === 'heatwave') rate *= content.events.heatwave.arrivalMultiplier ?? 1
+  if (event?.kind === 'heatwave' || event?.kind === 'nightRush') {
+    rate *= content.events[event.kind].arrivalMultiplier ?? 1
+  }
   return rate
 }
 

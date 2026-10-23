@@ -4,7 +4,7 @@ import * as THREE from 'three'
 import { useShallow } from 'zustand/react/shallow'
 import { getContent } from '../game/content.ts'
 import type { Charger } from '../game/types.ts'
-import { bayDef } from '../game/world.ts'
+import { bayDef, itemPos } from '../game/world.ts'
 import { useGame } from '../store/gameStore.ts'
 import { cableMaterial, glowLime, glowTeal, propMaterial } from './materials.ts'
 import { popScale } from './buildPop.ts'
@@ -46,6 +46,11 @@ export function SolarPanels() {
   const key = useGame(useShallow((s) => s.state.panels.map((p) => `${p.id}:${p.tier}`)))
   const modules = useRef<THREE.InstancedMesh>(null)
   const frames = useRef<THREE.InstancedMesh>(null)
+  const posts = useRef<THREE.InstancedMesh>(null)
+  const postGeometry = useMemo(
+    () => new THREE.CylinderGeometry(0.09, 0.11, 1, 8).translate(0, 0.5, 0),
+    [],
+  )
   const moduleGeometry = useMemo(() => panelModuleGeometry(), [])
   const frameGeometry = useMemo(() => panelFrameGeometry(), [])
   const material = useMemo(
@@ -58,7 +63,8 @@ export function SolarPanels() {
       key.map((k) => {
         const [id, tier] = k.split(':')
         const pad = padPos(map, id!)
-        return { id: id!, tier: Number(tier), x: pad.pos.x, z: pad.pos.z, y: pad.y ?? 0 }
+        const at = itemPos(pad)
+        return { id: id!, tier: Number(tier), x: at.x, z: at.z, y: pad.buildY ?? 0 }
       }),
     [key, map],
   )
@@ -70,6 +76,24 @@ export function SolarPanels() {
       for (const m of panelRowMatrices(row.x, row.z, row.y)) modules.current!.setMatrixAt(i++, m)
       for (const m of panelFrameMatrices(row.x, row.z, row.y)) frames.current!.setMatrixAt(f++, m)
     }
+    // Raised rows (carports, roof decks) stand on posts down to the ground.
+    let p = 0
+    const m = new THREE.Matrix4()
+    for (const row of rows) {
+      if (row.y <= 0) continue
+      for (const [dx, dz] of [
+        [-3.7, -0.6],
+        [3.7, -0.6],
+        [-3.7, 0.6],
+        [3.7, 0.6],
+      ] as const) {
+        m.makeScale(1, row.y + 0.75, 1).setPosition(row.x + dx, 0, row.z + dz)
+        posts.current!.setMatrixAt(p++, m)
+      }
+    }
+    posts.current!.count = p
+    posts.current!.instanceMatrix.needsUpdate = true
+    posts.current!.computeBoundingSphere()
     modules.current!.count = i
     frames.current!.count = f
     modules.current!.instanceMatrix.needsUpdate = true
@@ -119,6 +143,14 @@ export function SolarPanels() {
         castShadow
         frustumCulled={false}
       />
+      <instancedMesh
+        ref={posts}
+        args={[postGeometry, undefined, 160]}
+        castShadow
+        frustumCulled={false}
+      >
+        <meshStandardMaterial color="#9AA3AB" />
+      </instancedMesh>
     </>
   )
 }

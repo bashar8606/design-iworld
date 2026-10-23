@@ -1,6 +1,7 @@
 // Headless balancing: runs bots that play the real src/game code for simulated days.
 //   npm run sim                 7 days, all bots, CSV + HTML report in tools/sim/out
 //   npm run sim -- --days 3 --bots smart,idle --tune
+//   npm run sim -- --map map2       map 2 (10 days, starting with map 1's prestige income levels)
 import { join, resolve } from 'node:path'
 import { getContent } from '../../src/game/content.ts'
 import { checkMilestones, writeCsv, writeReport } from './report.ts'
@@ -12,10 +13,10 @@ const arg = (name: string) => {
   const i = args.indexOf(`--${name}`)
   return i >= 0 ? args[i + 1] : undefined
 }
-const days = Number(arg('days') ?? 7)
+const days = Number(arg('days') ?? (arg('map') === 'map2' ? 10 : 7))
 const mapId = arg('map') ?? 'map1'
 const wanted = (arg('bots') ?? 'greedy,smart,idle').split(',')
-const outDir = resolve(arg('out') ?? join(import.meta.dirname, 'out'))
+const outDir = resolve(arg('out') ?? join(import.meta.dirname, 'out', arg('map') ?? 'map1'))
 const content = getContent(mapId)
 
 const configs: BotConfig[] = []
@@ -38,7 +39,7 @@ const results = configs.map((config) => {
   return result
 })
 
-const checks = results.filter((r) => !r.config.ads).flatMap(checkMilestones)
+const checks = results.filter((r) => !r.config.ads).flatMap((r) => checkMilestones(r, mapId))
 const night = nightTest(mapId, content)
 const adSpeedups = results
   .filter((r) => !r.config.ads)
@@ -58,7 +59,7 @@ writeReport(outDir, results, checks, { night, adSpeedups })
 console.log('\nMilestones (smart and idle must be within tolerance):')
 for (const c of checks) {
   console.log(
-    `  ${c.ok ? 'ok ' : 'OFF'} ${c.bot.padEnd(7)} ${c.milestone.padEnd(18)} ${c.value === null ? 'never' : c.value.toFixed(c.milestone === 'Map 1 complete' ? 2 : 0)}  (${c.target})`,
+    `  ${c.ok ? 'ok ' : 'OFF'} ${c.bot.padEnd(7)} ${c.milestone.padEnd(18)} ${c.value === null ? 'never' : c.value.toFixed(c.milestone === 'Map complete' ? 2 : 0)}  (${c.target})`,
   )
 }
 console.log(

@@ -16,64 +16,74 @@ export interface MilestoneCheck {
 const fmt = (n: number | null, unit: 's' | 'd') =>
   n === null ? 'never' : unit === 's' ? `${Math.round(n)} s` : `${n.toFixed(2)} days`
 
-export function checkMilestones(result: RunResult): MilestoneCheck[] {
-  const t = pacing.targets
-  const tol = pacing.tolerance
+type Targets = {
+  firstCashSeconds?: number
+  firstChargerSeconds?: number
+  firstBatterySeconds?: number
+  firstTechnicianSeconds?: number
+  mapCompleteDays?: number[]
+}
+
+export function checkMilestones(result: RunResult, mapId = 'map1'): MilestoneCheck[] {
+  const t = (pacing.maps as Record<string, { targets: Targets }>)[mapId]?.targets ?? {}
   const m: Milestones = result.milestones
+  const bot = result.config.name
   const rel = (v: number | null, target: number) => (v === null ? null : (v - target) / target)
-  const checks: MilestoneCheck[] = [
-    {
-      bot: result.config.name,
-      milestone: 'First cash',
-      value: m.firstCashSeconds,
-      target: `under ${t.firstCashSeconds} s`,
-      offBy:
-        m.firstCashSeconds === null
-          ? null
-          : Math.max(0, rel(m.firstCashSeconds, t.firstCashSeconds)!),
-      ok: false,
-    },
-    {
-      bot: result.config.name,
-      milestone: 'First new charger',
-      value: m.firstChargerSeconds,
-      target: `about ${t.firstChargerSeconds} s`,
-      offBy: rel(m.firstChargerSeconds, t.firstChargerSeconds),
-      ok: false,
-    },
-    {
-      bot: result.config.name,
-      milestone: 'First battery',
-      value: m.firstBatterySeconds,
-      target: `before the first night (~${t.firstBatterySeconds} s)`,
-      offBy: m.firstBatteryBeforeNight
-        ? Math.min(0, rel(m.firstBatterySeconds, t.firstBatterySeconds) ?? 0)
-        : rel(m.firstBatterySeconds, t.firstBatterySeconds),
-      ok: false,
-    },
-    {
-      bot: result.config.name,
-      milestone: 'First technician',
-      value: m.firstTechnicianSeconds,
-      target: `about ${t.firstTechnicianSeconds} s`,
-      offBy: rel(m.firstTechnicianSeconds, t.firstTechnicianSeconds),
-      ok: false,
-    },
-  ]
-  if (result.config.schedule === 'idle') {
+  const checks: MilestoneCheck[] = []
+  const add = (milestone: string, value: number | null, target: string, offBy: number | null) =>
+    checks.push({
+      bot,
+      milestone,
+      value,
+      target,
+      offBy,
+      ok: offBy !== null && Math.abs(offBy) <= pacing.tolerance,
+    })
+
+  if (t.firstCashSeconds !== undefined) {
+    const v = m.firstCashSeconds
+    add(
+      'First cash',
+      v,
+      `under ${t.firstCashSeconds} s`,
+      v === null ? null : Math.max(0, rel(v, t.firstCashSeconds)!),
+    )
+  }
+  if (t.firstChargerSeconds !== undefined) {
+    add(
+      'First new charger',
+      m.firstChargerSeconds,
+      `about ${t.firstChargerSeconds} s`,
+      rel(m.firstChargerSeconds, t.firstChargerSeconds),
+    )
+  }
+  if (t.firstBatterySeconds !== undefined) {
+    const off = rel(m.firstBatterySeconds, t.firstBatterySeconds)
+    add(
+      'First battery',
+      m.firstBatterySeconds,
+      `before the first night (~${t.firstBatterySeconds} s)`,
+      m.firstBatteryBeforeNight ? Math.min(0, off ?? 0) : off,
+    )
+  }
+  if (t.firstTechnicianSeconds !== undefined) {
+    add(
+      'First technician',
+      m.firstTechnicianSeconds,
+      `about ${t.firstTechnicianSeconds} s`,
+      rel(m.firstTechnicianSeconds, t.firstTechnicianSeconds),
+    )
+  }
+  if (t.mapCompleteDays && result.config.schedule === 'idle') {
     const [lo, hi] = t.mapCompleteDays as [number, number]
     const d = m.mapCompleteDays
-    const offBy = d === null ? null : d < lo ? (d - lo) / lo : d > hi ? (d - hi) / hi : 0
-    checks.push({
-      bot: result.config.name,
-      milestone: 'Map 1 complete',
-      value: d,
-      target: `${lo}–${hi} days`,
-      offBy,
-      ok: false,
-    })
+    add(
+      'Map complete',
+      d,
+      `${lo}–${hi} days`,
+      d === null ? null : d < lo ? (d - lo) / lo : d > hi ? (d - hi) / hi : 0,
+    )
   }
-  for (const c of checks) c.ok = c.offBy !== null && Math.abs(c.offBy) <= tol
   return checks
 }
 
@@ -117,7 +127,7 @@ export function writeReport(
   }))
   const table = checks
     .map((c) => {
-      const unit = c.milestone === 'Map 1 complete' ? 'd' : 's'
+      const unit = c.milestone === 'Map complete' ? 'd' : 's'
       const off = c.offBy === null ? '—' : `${c.offBy > 0 ? '+' : ''}${Math.round(c.offBy * 100)}%`
       return `<tr class="${c.ok ? 'ok' : 'off'}"><td>${c.bot}</td><td>${c.milestone}</td><td>${fmt(c.value, unit)}</td><td>${c.target}</td><td>${off}</td><td>${c.ok ? 'on target' : 'OFF'}</td></tr>`
     })

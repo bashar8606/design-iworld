@@ -733,3 +733,8 @@ body {
 .storm-on {
   opacity: 1;
 }
+
+.contract-banner {
+  background: #fff4c2;
+  color: #1e3557;
+}

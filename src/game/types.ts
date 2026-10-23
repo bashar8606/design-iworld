@@ -21,8 +21,12 @@ export interface PadDef {
   unlockAfter?: string[]
   /** Charger pads: the parking bay the charger serves. */
   bay?: string
-  /** Height of the pad above the ground (map 2 roof decks). */
+  /** Height of the pad above the ground. */
   y?: number
+  /** Where the built item stands, when not on the pad itself (carports over the bays). */
+  buildPos?: Vec2
+  /** Height the item is built at (carports and roof decks build upward). */
+  buildY?: number
 }
 
 export interface BayDef {
@@ -39,6 +43,8 @@ export interface CarTypeWeight {
 export interface MapContent {
   id: string
   name: string
+  /** Visual setting for the scene. */
+  theme: 'desert' | 'city'
   bounds: { minX: number; maxX: number; minZ: number; maxZ: number }
   day: {
     lengthSeconds: number
@@ -102,7 +108,7 @@ export interface MapContent {
     bonusPerTaxi: number
   }
   pads: PadDef[]
-  initial: { cash: number; firstCarType?: string }
+  initial: { cash: number; firstCarType?: string; chargerTier?: number }
 }
 
 export interface CarTypeDef {
@@ -148,12 +154,15 @@ export interface EventDef {
   panelOutputMultiplier?: number
   dustMultiplier?: number
   arrivalMultiplier?: number
+  enabled?: boolean
 }
 
 export interface EventsContent {
   firstDay: number
   sandstorm: EventDef
   heatwave: EventDef
+  /** Busier late evenings (a Ramadan live event); off unless remote config enables it. */
+  nightRush: EventDef
 }
 
 export interface EconomyContent {
@@ -259,8 +268,10 @@ export interface Pickup {
   bayId: string | null
 }
 
+export type WorldEventKind = 'sandstorm' | 'heatwave' | 'nightRush'
+
 export interface ActiveEvent {
-  kind: 'sandstorm' | 'heatwave'
+  kind: WorldEventKind
   announceAt: number
   startsAt: number
   endsAt: number

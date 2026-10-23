@@ -1,6 +1,7 @@
 {
   "id": "map1",
   "name": "Desert Highway Stop",
+  "theme": "desert",
   "bounds": {
     "minX": -7.6,
     "maxX": 11.6,

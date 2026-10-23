@@ -14,5 +14,13 @@
     "durationSeconds": 80,
     "arrivalMultiplier": 2,
     "announceSeconds": 30
+  },
+  "nightRush": {
+    "enabled": false,
+    "everyDays": [1, 1],
+    "dayTime": 0.9,
+    "durationSeconds": 90,
+    "arrivalMultiplier": 1.8,
+    "announceSeconds": 30
   }
 }

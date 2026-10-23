@@ -1,6 +1,6 @@
 // Player actions outside movement: upgrades, rewards, purchases and the prestige reset.
 // Each returns a new state (or the same one when the action is not allowed).
-import { getContent } from './content.ts'
+import { getContent, nextMapId } from './content.ts'
 import { Rng } from './rng.ts'
 import { createInitialState } from './state.ts'
 import { cloneState, spawnCar } from './tick.ts'
@@ -17,6 +17,9 @@ export type GameAction =
   | { type: 'grant'; cash?: number; gems?: number; permanentX2?: boolean }
   | { type: 'skipUpgradeWithGems'; id: string }
   | { type: 'debugAddCash'; amount: number }
+  /** Prestige: sell the completed map for Green Credits and move to the next map. */
+  | { type: 'sellToUtility' }
+  | { type: 'buyIncomeLevel' }
   /** Purchase grants and the updated ledger, applied together. */
   | {
       type: 'applyPurchases'
@@ -55,6 +58,10 @@ export function applyAction(
       s.ledger = action.ledger
       return s
     }
+    case 'sellToUtility':
+      return sellToUtility(state, nextMapId(state.mapId), content)
+    case 'buyIncomeLevel':
+      return buyIncomeLevel(state, content)
     case 'debugAddCash': {
       const s = cloneState(state)
       s.cash += action.amount

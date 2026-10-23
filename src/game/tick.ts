@@ -25,6 +25,7 @@ import {
   incomeMultiplier,
   isNight,
   isPadUnlocked,
+  itemPos,
   panelRatingKw,
   staffSpeedMultiplier,
   sunIntensity,
@@ -140,9 +141,10 @@ function updateWorldEvents(
     }
     return
   }
-  for (const kind of ['sandstorm', 'heatwave'] as const) {
-    if (s.day < s.eventSchedule[kind]) continue
+  for (const kind of ['sandstorm', 'heatwave', 'nightRush'] as const) {
     const def = defs[kind]
+    if (!def || def.enabled === false) continue
+    if (s.day < (s.eventSchedule[kind] ?? 0)) continue
     const dayStart = (s.day - map.day.startTime) * map.day.lengthSeconds
     const startsAt = dayStart + def.dayTime * map.day.lengthSeconds
     if (startsAt - def.announceSeconds > s.time) continue
@@ -245,7 +247,7 @@ function updatePlayer(
   for (const panel of s.panels) {
     const pad = map.pads.find((x) => x.id === panel.id)
     if (!pad) continue
-    if (distToPanelRow(p.pos, pad.pos, map.panelRow.halfLength) <= map.player.cleanRadius) {
+    if (distToPanelRow(p.pos, itemPos(pad), map.panelRow.halfLength) <= map.player.cleanRadius) {
       panel.dust = Math.max(0, panel.dust - map.player.cleanPerSecond * dt)
     }
   }
@@ -296,7 +298,7 @@ function updateStaff(s: GameState, dt: number, content: Content, events: GameEve
       const panel = s.panels.find((p) => p.id === id)
       const pad = map.pads.find((p) => p.id === id)
       if (!panel || !pad || panel.dust <= 0) m.target = null
-      else goal = { x: pad.pos.x, z: pad.pos.z + 1.1 }
+      else goal = { x: itemPos(pad).x, z: itemPos(pad).z + 1.1 }
     }
 
     const [pos] = moveToward(m.pos, goal, step)

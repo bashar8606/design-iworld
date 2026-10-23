@@ -68,14 +68,21 @@ export function EventBanner() {
     }),
   )
   if (!info.kind) return null
-  const text =
-    info.kind === 'sandstorm'
-      ? info.phase === 'soon'
-        ? `🌪️ Sandstorm in ${info.seconds} s: panels will drop to half power`
-        : `🌪️ Sandstorm! Panels at half power · ${info.seconds} s`
-      : info.phase === 'soon'
-        ? `🔥 Heatwave in ${info.seconds} s: double the cars tonight`
-        : `🔥 Heatwave! Double the cars · ${info.seconds} s`
+  const texts = {
+    sandstorm: [
+      `🌪️ Sandstorm in ${info.seconds} s: panels will drop to half power`,
+      `🌪️ Sandstorm! Panels at half power · ${info.seconds} s`,
+    ],
+    heatwave: [
+      `🔥 Heatwave in ${info.seconds} s: double the cars tonight`,
+      `🔥 Heatwave! Double the cars · ${info.seconds} s`,
+    ],
+    nightRush: [
+      `🌙 Night rush in ${info.seconds} s: busy late evening ahead`,
+      `🌙 Night rush! Extra cars · ${info.seconds} s`,
+    ],
+  } as const
+  const text = texts[info.kind][info.phase === 'soon' ? 0 : 1]
   return <div className={`event-banner event-${info.kind}`}>{text}</div>
 }
 
@@ -154,4 +161,28 @@ export function StormOverlay() {
     return !!e && e.kind === 'sandstorm' && s.state.time >= e.startsAt && s.state.time < e.endsAt
   })
   return <div className={`storm-overlay${storm ? ' storm-on' : ''}`} aria-hidden />
+}
+
+/** Taxi fleet contracts (map 2): serve N taxis before the deadline for a bonus. */
+export function ContractBanner() {
+  const contract = useGame(
+    useShallow((s) => {
+      const c = s.state.contract
+      return c
+        ? {
+            served: c.taxisServed,
+            required: c.taxisRequired,
+            left: Math.max(0, Math.ceil(c.endsAt - s.state.time)),
+            bonus: c.bonus,
+          }
+        : { served: 0, required: 0, left: 0, bonus: 0 }
+    }),
+  )
+  if (contract.required === 0) return null
+  return (
+    <div className="event-banner contract-banner">
+      🚕 Fleet contract: {Math.min(contract.served, contract.required)}/{contract.required} taxis ·{' '}
+      {formatDuration(contract.left)} · +{formatCash(contract.bonus)}
+    </div>
+  )
 }

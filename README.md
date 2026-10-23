@@ -19,7 +19,7 @@ the first cable run).
    `ios/App/App.xcodeproj` in Xcode. Xcode resolves the Swift packages on first open.
 2. In Xcode, select the **App** target → **Signing & Capabilities**. Tick **Automatically manage
    signing** and pick your team (add your Apple ID under Xcode → Settings → Accounts if none shows).
-   If Xcode says the bundle id is taken, change `com.yourname.solaroasis` to something unique in
+   The bundle id is `com.bashar.solaroasis`. If Xcode says it is taken, change it to something unique in
    both Xcode and `capacitor.config.ts`.
 3. On the iPhone, turn on **Settings → Privacy & Security → Developer Mode** and restart when
    asked. (It appears after the phone has been connected to Xcode once.)

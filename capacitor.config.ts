@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from '@capacitor/cli'
 
 const config: CapacitorConfig = {
-  appId: 'com.yourname.solaroasis',
+  appId: 'com.bashar.solaroasis',
   appName: 'Solar Oasis',
   webDir: 'dist',
   ios: {

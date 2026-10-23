@@ -7,7 +7,7 @@ set -euo pipefail
 cd "$(dirname "$0")/../.."
 
 DEVICE="${STORE_DEVICE:-iPhone 16 Pro Max}"
-BUNDLE_ID="com.yourname.solaroasis"
+BUNDLE_ID="com.bashar.solaroasis"
 RAW="store/raw"
 mkdir -p "$RAW"
 

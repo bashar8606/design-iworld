@@ -6,7 +6,7 @@ import { createInitialState } from '../state.ts'
 import { tick } from '../tick.ts'
 
 /** Maps still on the old layout; they move to the standard layout after map 1 is approved. */
-const PENDING = new Set(['map2', 'map3'])
+const PENDING = new Set<string>()
 
 describe('map layouts', () => {
   for (const id of MAP_ORDER) {

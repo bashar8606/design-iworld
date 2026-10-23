@@ -2,11 +2,12 @@
   "id": "map3",
   "name": "Alpine Ski Lodge",
   "theme": "snow",
+  "layoutVersion": 2,
   "bounds": {
-    "minX": -8.0,
-    "maxX": 14,
-    "minZ": -14,
-    "maxZ": 19
+    "minX": -11.2,
+    "maxX": 16.0,
+    "minZ": -24.0,
+    "maxZ": 27.8
   },
   "day": {
     "lengthSeconds": 360,
@@ -20,8 +21,8 @@
   },
   "player": {
     "start": {
-      "x": 0,
-      "z": 1
+      "x": 1.2,
+      "z": 2.0
     },
     "speed": 5,
     "plugSeconds": 0.5,
@@ -34,101 +35,101 @@
     "minDrainPerSecond": 400
   },
   "road": {
-    "laneX": -9.4,
-    "spawnZ": -24,
-    "despawnZ": 34,
-    "entranceZ": -15,
-    "exitZ": 21.5,
+    "laneX": -12.4,
+    "spawnZ": -32,
+    "despawnZ": 40,
+    "entranceZ": -24.5,
+    "exitZ": 21,
     "carSpeed": 7
   },
   "lane": {
-    "x": -7.0,
-    "entryZ": -14,
+    "x": -9.8,
+    "entryZ": -23.5,
     "exitZ": 19
   },
   "queueSlots": [
     {
-      "x": -7.0,
-      "z": -2.5
+      "x": -9.8,
+      "z": -3.5
     },
     {
-      "x": -7.0,
-      "z": -6.1
-    },
-    {
-      "x": -7.0,
+      "x": -9.8,
       "z": -9.7
     },
     {
-      "x": -7.0,
-      "z": -13.3
+      "x": -9.8,
+      "z": -15.9
+    },
+    {
+      "x": -9.8,
+      "z": -22.1
     }
   ],
   "bays": [
     {
       "id": "bay1",
       "car": {
-        "x": -3.6,
-        "z": -0.5
+        "x": -4.6,
+        "z": 0
       },
       "post": {
         "x": -1.5,
-        "z": -0.5
+        "z": 0
       }
     },
     {
       "id": "bay2",
       "car": {
-        "x": -3.6,
-        "z": 2.5
+        "x": -4.6,
+        "z": 3.2
       },
       "post": {
         "x": -1.5,
-        "z": 2.5
+        "z": 3.2
       }
     },
     {
       "id": "bay3",
       "car": {
-        "x": -3.6,
-        "z": 5.5
+        "x": -4.6,
+        "z": 6.4
       },
       "post": {
         "x": -1.5,
-        "z": 5.5
+        "z": 6.4
       }
     },
     {
       "id": "bay4",
       "car": {
-        "x": -3.6,
-        "z": 8.5
+        "x": -4.6,
+        "z": 9.6
       },
       "post": {
         "x": -1.5,
-        "z": 8.5
+        "z": 9.6
       }
     },
     {
       "id": "bay5",
       "car": {
-        "x": -3.6,
-        "z": 11.5
+        "x": -4.6,
+        "z": 12.8
       },
       "post": {
         "x": -1.5,
-        "z": 11.5
+        "z": 12.8
       }
     },
     {
       "id": "bay6",
       "car": {
-        "x": -3.6,
-        "z": 14.5
+        "x": -4.6,
+        "z": 16.0
       },
       "post": {
         "x": -1.5,
-        "z": 14.5
+        "z": 16.0
       }
     }
   ],
@@ -194,40 +195,50 @@
       "id": "lodge",
       "name": "Lodge lot",
       "bounds": {
-        "minX": -5.2,
-        "maxX": 14.0,
-        "minZ": -4,
-        "maxZ": 7
-      }
-    },
-    {
-      "id": "slope",
-      "name": "Sunny slope",
-      "bounds": {
-        "minX": -5.2,
-        "maxX": 14.0,
-        "minZ": -14,
-        "maxZ": -4
-      }
-    },
-    {
-      "id": "ridge",
-      "name": "Wind ridge",
-      "bounds": {
-        "minX": -5.2,
-        "maxX": 14.0,
-        "minZ": 7,
-        "maxZ": 13
+        "minX": -8.4,
+        "maxX": 16.0,
+        "minZ": -1.8,
+        "maxZ": 7.8
       }
     },
     {
       "id": "apres",
       "name": "Après-ski",
       "bounds": {
-        "minX": -5.2,
-        "maxX": 14.0,
-        "minZ": 13,
-        "maxZ": 19
+        "minX": -8.4,
+        "maxX": 16.0,
+        "minZ": -12.0,
+        "maxZ": -1.8
+      }
+    },
+    {
+      "id": "slope",
+      "name": "Sunny slope",
+      "bounds": {
+        "minX": -8.4,
+        "maxX": 16.0,
+        "minZ": 7.8,
+        "maxZ": 19.0
+      }
+    },
+    {
+      "id": "wash",
+      "name": "Salt wash",
+      "bounds": {
+        "minX": -8.4,
+        "maxX": 16.0,
+        "minZ": 19.0,
+        "maxZ": 27.8
+      }
+    },
+    {
+      "id": "ridge",
+      "name": "Wind ridge",
+      "bounds": {
+        "minX": -8.4,
+        "maxX": 16.0,
+        "minZ": -21.0,
+        "maxZ": -12.0
       }
     }
   ],
@@ -238,8 +249,8 @@
       "label": "Fast charger",
       "price": 0,
       "pos": {
-        "x": -1.5,
-        "z": -0.5
+        "x": -0.9,
+        "z": 0
       },
       "bay": "bay1"
     },
@@ -249,8 +260,12 @@
       "label": "Solar row",
       "price": 0,
       "pos": {
-        "x": 6.5,
-        "z": -2.4
+        "x": 3.4,
+        "z": 5.3
+      },
+      "buildPos": {
+        "x": 9.25,
+        "z": 5.3
       }
     },
     {
@@ -259,8 +274,8 @@
       "label": "Fast charger",
       "price": 2500,
       "pos": {
-        "x": -1.5,
-        "z": 2.5
+        "x": -0.9,
+        "z": 3.2
       },
       "bay": "bay2"
     },
@@ -270,8 +285,8 @@
       "label": "Wind turbine",
       "price": 0,
       "pos": {
-        "x": 11.5,
-        "z": 1.5
+        "x": 15.0,
+        "z": -0.8
       }
     },
     {
@@ -280,10 +295,22 @@
       "label": "Battery",
       "price": 2000,
       "pos": {
-        "x": 1.8,
-        "z": 3.6
+        "x": 7.8,
+        "z": 0.0
       },
       "unlockAfter": ["charger2"]
+    },
+    {
+      "id": "landApres",
+      "kind": "land",
+      "label": "Buy land: Après-ski",
+      "price": 2500,
+      "pos": {
+        "x": 3.6,
+        "z": -0.6
+      },
+      "unlockAfter": ["battery1"],
+      "opensZone": "apres"
     },
     {
       "id": "technician1",
@@ -291,10 +318,11 @@
       "label": "Hire technician",
       "price": 3000,
       "pos": {
-        "x": 4.4,
-        "z": 0.9
+        "x": 6.0,
+        "z": -4.4
       },
-      "unlockAfter": ["battery1"]
+      "unlockAfter": ["battery1"],
+      "zone": "apres"
     },
     {
       "id": "charger3",
@@ -302,8 +330,8 @@
       "label": "Fast charger",
       "price": 5000,
       "pos": {
-        "x": -1.5,
-        "z": 5.5
+        "x": -0.9,
+        "z": 6.4
       },
       "unlockAfter": ["technician1"],
       "bay": "bay3"
@@ -314,8 +342,8 @@
       "label": "Buy land: Sunny slope",
       "price": 6000,
       "pos": {
-        "x": 0.5,
-        "z": -2.6
+        "x": 2.4,
+        "z": 6.4
       },
       "unlockAfter": ["charger3"],
       "opensZone": "slope"
@@ -326,11 +354,14 @@
       "label": "Solar row",
       "price": 7000,
       "pos": {
-        "x": 6.5,
-        "z": -5.4
+        "x": 14.9,
+        "z": 6.6
       },
       "unlockAfter": ["charger3"],
-      "zone": "slope"
+      "buildPos": {
+        "x": 9.25,
+        "z": 7.1
+      }
     },
     {
       "id": "cashier1",
@@ -338,22 +369,11 @@
       "label": "Hire cashier",
       "price": 10000,
       "pos": {
-        "x": 6.8,
-        "z": 0.9
+        "x": 8.4,
+        "z": -4.4
       },
-      "unlockAfter": ["panel2"]
-    },
-    {
-      "id": "landRidge",
-      "kind": "land",
-      "label": "Buy land: Wind ridge",
-      "price": 14000,
-      "pos": {
-        "x": 5.2,
-        "z": 5.6
-      },
-      "unlockAfter": ["cashier1"],
-      "opensZone": "ridge"
+      "unlockAfter": ["panel2"],
+      "zone": "apres"
     },
     {
       "id": "charger4",
@@ -361,12 +381,12 @@
       "label": "Fast charger",
       "price": 20000,
       "pos": {
-        "x": -1.5,
-        "z": 8.5
+        "x": -0.9,
+        "z": 9.6
       },
       "unlockAfter": ["cashier1"],
-      "bay": "bay4",
-      "zone": "ridge"
+      "zone": "slope",
+      "bay": "bay4"
     },
     {
       "id": "battery2",
@@ -374,11 +394,10 @@
       "label": "Battery",
       "price": 26000,
       "pos": {
-        "x": 1.8,
-        "z": 9.0
+        "x": 11.8,
+        "z": 0.0
       },
-      "unlockAfter": ["charger4"],
-      "zone": "ridge"
+      "unlockAfter": ["charger4"]
     },
     {
       "id": "panel3",
@@ -386,11 +405,28 @@
       "label": "Solar row",
       "price": 40000,
       "pos": {
-        "x": 6.5,
-        "z": -7.6
+        "x": 3.4,
+        "z": 9.2
       },
       "unlockAfter": ["battery2"],
-      "zone": "slope"
+      "zone": "slope",
+      "buildPos": {
+        "x": 9.25,
+        "z": 9.2
+      }
+    },
+    {
+      "id": "landRidge",
+      "kind": "land",
+      "label": "Buy land: Wind ridge",
+      "price": 30000,
+      "pos": {
+        "x": 13.6,
+        "z": -10.6
+      },
+      "unlockAfter": ["panel3"],
+      "zone": "apres",
+      "opensZone": "ridge"
     },
     {
       "id": "turbine2",
@@ -398,8 +434,8 @@
       "label": "Wind turbine",
       "price": 42000,
       "pos": {
-        "x": 11.5,
-        "z": 9.5
+        "x": -4.0,
+        "z": -16.5
       },
       "unlockAfter": ["panel3"],
       "zone": "ridge"
@@ -410,11 +446,11 @@
       "label": "Snow-clearing robot",
       "price": 48000,
       "pos": {
-        "x": 1.8,
-        "z": -6.5
+        "x": 10.8,
+        "z": -4.4
       },
       "unlockAfter": ["panel3"],
-      "zone": "slope"
+      "zone": "apres"
     },
     {
       "id": "technician2",
@@ -422,24 +458,11 @@
       "label": "Hire technician",
       "price": 64000,
       "pos": {
-        "x": 4.0,
-        "z": 11.8
+        "x": 13.2,
+        "z": -4.4
       },
       "unlockAfter": ["charger4"],
-      "zone": "ridge"
-    },
-    {
-      "id": "landApres",
-      "kind": "land",
-      "label": "Buy land: Après-ski",
-      "price": 75000,
-      "pos": {
-        "x": 7.6,
-        "z": 11.6
-      },
-      "unlockAfter": ["turbine2"],
-      "zone": "ridge",
-      "opensZone": "apres"
+      "zone": "apres"
     },
     {
       "id": "cafe",
@@ -447,10 +470,10 @@
       "label": "Hot chocolate hut",
       "price": 85000,
       "pos": {
-        "x": 3.0,
-        "z": 16.4
+        "x": 1.8,
+        "z": -7.6
       },
-      "unlockAfter": ["landApres"],
+      "unlockAfter": ["technician1"],
       "zone": "apres"
     },
     {
@@ -459,12 +482,25 @@
       "label": "Fast charger",
       "price": 101000,
       "pos": {
-        "x": -1.5,
-        "z": 11.5
+        "x": -0.9,
+        "z": 12.8
       },
       "unlockAfter": ["turbine2"],
-      "bay": "bay5",
-      "zone": "ridge"
+      "zone": "slope",
+      "bay": "bay5"
+    },
+    {
+      "id": "landWash",
+      "kind": "land",
+      "label": "Buy land: Salt wash",
+      "price": 60000,
+      "pos": {
+        "x": 13.0,
+        "z": 17.4
+      },
+      "unlockAfter": ["cafe"],
+      "zone": "slope",
+      "opensZone": "wash"
     },
     {
       "id": "carWash",
@@ -472,11 +508,11 @@
       "label": "Salt wash",
       "price": 128000,
       "pos": {
-        "x": 7.6,
-        "z": 16.0
+        "x": -5.0,
+        "z": 22.6
       },
       "unlockAfter": ["cafe"],
-      "zone": "apres"
+      "zone": "wash"
     },
     {
       "id": "panel4",
@@ -484,11 +520,15 @@
       "label": "Solar row",
       "price": 149000,
       "pos": {
-        "x": 6.5,
-        "z": -9.8
+        "x": 14.9,
+        "z": 11.4
       },
       "unlockAfter": ["charger5"],
-      "zone": "slope"
+      "zone": "slope",
+      "buildPos": {
+        "x": 9.25,
+        "z": 11.4
+      }
     },
     {
       "id": "battery3",
@@ -496,11 +536,10 @@
       "label": "Battery",
       "price": 180000,
       "pos": {
-        "x": 4.8,
-        "z": 9.0
+        "x": 7.8,
+        "z": 3.2
       },
-      "unlockAfter": ["charger5"],
-      "zone": "ridge"
+      "unlockAfter": ["charger5"]
     },
     {
       "id": "charger6",
@@ -508,12 +547,12 @@
       "label": "Fast charger",
       "price": 222000,
       "pos": {
-        "x": -1.5,
-        "z": 14.5
+        "x": -0.9,
+        "z": 16.0
       },
-      "unlockAfter": ["battery3", "landApres"],
-      "bay": "bay6",
-      "zone": "apres"
+      "unlockAfter": ["battery3"],
+      "zone": "slope",
+      "bay": "bay6"
     },
     {
       "id": "turbine3",
@@ -521,11 +560,11 @@
       "label": "Wind turbine",
       "price": 265000,
       "pos": {
-        "x": 12.0,
-        "z": 16.0
+        "x": 4.5,
+        "z": -16.5
       },
       "unlockAfter": ["charger6"],
-      "zone": "apres"
+      "zone": "ridge"
     },
     {
       "id": "panel5",
@@ -533,11 +572,15 @@
       "label": "Solar row",
       "price": 308000,
       "pos": {
-        "x": 6.5,
-        "z": -12.0
+        "x": 3.4,
+        "z": 13.6
       },
       "unlockAfter": ["charger6"],
-      "zone": "slope"
+      "zone": "slope",
+      "buildPos": {
+        "x": 9.25,
+        "z": 13.6
+      }
     },
     {
       "id": "turbine4",
@@ -545,13 +588,220 @@
       "label": "Wind turbine",
       "price": 350000,
       "pos": {
-        "x": 11.5,
-        "z": -8.7
+        "x": 13.0,
+        "z": -16.5
       },
       "unlockAfter": ["turbine3"],
-      "zone": "slope"
+      "zone": "ridge"
     }
   ],
+  "washRoute": [
+    {
+      "x": -9.8,
+      "z": 18.4
+    },
+    {
+      "x": -5.0,
+      "z": 18.4
+    },
+    {
+      "x": -5.0,
+      "z": 26.8
+    },
+    {
+      "x": -12.4,
+      "z": 26.8
+    }
+  ],
+  "site": {
+    "plaza": {
+      "minX": -0.6,
+      "maxX": 4.6,
+      "minZ": -10.0,
+      "maxZ": 17.8
+    },
+    "yard": {
+      "minX": 5.5,
+      "maxX": 13.9,
+      "minZ": -1.5,
+      "maxZ": 4.6,
+      "gateMinZ": 0.9,
+      "gateMaxZ": 2.3
+    },
+    "buildings": [
+      {
+        "kind": "staffHut",
+        "pos": {
+          "x": 8.6,
+          "z": -8.4
+        },
+        "zone": "apres"
+      }
+    ],
+    "decor": [
+      {
+        "kind": "lamp",
+        "pos": {
+          "x": -8.1,
+          "z": -20
+        }
+      },
+      {
+        "kind": "lamp",
+        "pos": {
+          "x": -8.1,
+          "z": -13.0
+        }
+      },
+      {
+        "kind": "lamp",
+        "pos": {
+          "x": -8.1,
+          "z": -4
+        }
+      },
+      {
+        "kind": "lamp",
+        "pos": {
+          "x": -8.1,
+          "z": 4.8
+        }
+      },
+      {
+        "kind": "lamp",
+        "pos": {
+          "x": -8.1,
+          "z": 11.2
+        }
+      },
+      {
+        "kind": "lamp",
+        "pos": {
+          "x": -8.1,
+          "z": 20.6
+        }
+      },
+      {
+        "kind": "pine",
+        "pos": {
+          "x": -17.2,
+          "z": -26
+        }
+      },
+      {
+        "kind": "pine",
+        "pos": {
+          "x": -17.2,
+          "z": -18
+        }
+      },
+      {
+        "kind": "pine",
+        "pos": {
+          "x": -17.2,
+          "z": -10
+        }
+      },
+      {
+        "kind": "pine",
+        "pos": {
+          "x": -17.2,
+          "z": -2
+        }
+      },
+      {
+        "kind": "pine",
+        "pos": {
+          "x": -17.2,
+          "z": 6
+        }
+      },
+      {
+        "kind": "pine",
+        "pos": {
+          "x": -17.2,
+          "z": 14
+        }
+      },
+      {
+        "kind": "pine",
+        "pos": {
+          "x": 17.2,
+          "z": -9
+        }
+      },
+      {
+        "kind": "pine",
+        "pos": {
+          "x": -3.2,
+          "z": -11.0
+        }
+      },
+      {
+        "kind": "planter",
+        "pos": {
+          "x": -0.4,
+          "z": -10.6
+        }
+      },
+      {
+        "kind": "planter",
+        "pos": {
+          "x": 4.0,
+          "z": -10.6
+        }
+      },
+      {
+        "kind": "pine",
+        "pos": {
+          "x": -3.0,
+          "z": -13.4
+        }
+      },
+      {
+        "kind": "pine",
+        "pos": {
+          "x": 3.0,
+          "z": -13.4
+        }
+      },
+      {
+        "kind": "pine",
+        "pos": {
+          "x": 9.0,
+          "z": -13.4
+        }
+      },
+      {
+        "kind": "pine",
+        "pos": {
+          "x": 15.0,
+          "z": -13.4
+        }
+      },
+      {
+        "kind": "planter",
+        "pos": {
+          "x": 0.6,
+          "z": 24.4
+        }
+      },
+      {
+        "kind": "planter",
+        "pos": {
+          "x": 3.6,
+          "z": 25.4
+        }
+      },
+      {
+        "kind": "lodge",
+        "pos": {
+          "x": -2.0,
+          "z": -29.0
+        }
+      }
+    ]
+  },
   "initial": {
     "cash": 3000,
     "chargerTier": 2

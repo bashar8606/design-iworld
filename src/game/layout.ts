@@ -25,6 +25,8 @@ const F = footprintsJson as {
   palm: Half
   lamp: Half
   planter: Half
+  pine: Half
+  lodge: Half
   fence: number
   queueGap: number
   cafeQueue: Box

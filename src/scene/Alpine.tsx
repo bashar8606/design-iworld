@@ -2,7 +2,7 @@ import { useLayoutEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import type { MapContent } from '../game/types.ts'
 import { propMaterial } from './materials.ts'
-import { chaletGeometry, mountainGeometry, pineGeometry } from './props/geometry.ts'
+import { mountainGeometry, pineGeometry } from './props/geometry.ts'
 
 function seeded(seed: number) {
   let s = seed
@@ -54,7 +54,10 @@ export function AlpineScenery({ map }: { map: MapContent }) {
   const b = map.bounds
   const pine = useMemo(() => pineGeometry(), [])
   const mountain = useMemo(() => mountainGeometry(), [])
-  const chalet = useMemo(() => chaletGeometry(), [])
+  const lodges = useMemo(
+    () => (map.site?.decor ?? []).filter((d) => d.kind === 'lodge').map((d) => d.pos),
+    [map],
+  )
   const pines = useMemo(() => {
     const rand = seeded(9)
     const out: Placement[] = []
@@ -63,12 +66,12 @@ export function AlpineScenery({ map }: { map: MapContent }) {
       const z = b.minZ - 30 + rand() * (b.maxZ - b.minZ + 60)
       const inLot = x > b.minX - 1.5 && x < b.maxX + 1.5 && z > b.minZ - 1.5 && z < b.maxZ + 1.5
       const onRoad = x > map.road.laneX - 4.5 && x < b.minX + 1
-      const byLodge = Math.abs(x - (b.maxX + 9)) < 7 && Math.abs(z - 3) < 6
+      const byLodge = lodges.some((l) => Math.abs(x - l.x) < 7 && Math.abs(z - l.z) < 6)
       if (inLot || onRoad || byLodge) continue
       out.push({ x, z, s: 0.8 + rand() * 0.9, r: rand() * Math.PI * 2 })
     }
     return out
-  }, [b, map.road.laneX])
+  }, [b, map.road.laneX, lodges])
   const peaks = useMemo(() => {
     const rand = seeded(21)
     const out: Placement[] = []
@@ -91,14 +94,6 @@ export function AlpineScenery({ map }: { map: MapContent }) {
     <group>
       <Instances geometry={pine} items={pines} shadows />
       <Instances geometry={mountain} items={peaks} />
-      <mesh
-        geometry={chalet}
-        material={propMaterial}
-        position={[b.maxX + 9, 0, 3]}
-        rotation-y={-Math.PI / 2}
-        castShadow
-        receiveShadow
-      />
     </group>
   )
 }

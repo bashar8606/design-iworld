@@ -56,7 +56,8 @@ export interface SitePlan {
   }
   /** Buildings that come with a zone (shown once it is bought). */
   buildings?: { kind: 'staffHut'; pos: Vec2; zone?: string }[]
-  decor?: { kind: 'palm' | 'lamp' | 'planter'; pos: Vec2 }[]
+  /** Scenery; the lodge is map 3's ski lodge, standing beyond the lot. */
+  decor?: { kind: 'palm' | 'pine' | 'lamp' | 'planter' | 'lodge'; pos: Vec2 }[]
 }
 
 /** A piece of the lot the player buys with a land pad (the first zone is owned from the start). */

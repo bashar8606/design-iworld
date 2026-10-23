@@ -19,6 +19,8 @@
   "palm": { "hx": 0.5, "hz": 0.5 },
   "lamp": { "hx": 0.2, "hz": 0.2 },
   "planter": { "hx": 0.5, "hz": 0.5 },
+  "pine": { "hx": 1.0, "hz": 1.0 },
+  "lodge": { "hx": 4.5, "hz": 4.0 },
   "fence": 0.06,
   "queueGap": 0.6,
   "cafeQueue": { "minX": -1.9, "maxX": 1.9, "minZ": 2.6, "maxZ": 3.6 }

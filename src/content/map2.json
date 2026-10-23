@@ -2,11 +2,12 @@
   "id": "map2",
   "name": "City Mall Car Park",
   "theme": "city",
+  "layoutVersion": 2,
   "bounds": {
-    "minX": -7.6,
-    "maxX": 9.4,
-    "minZ": -12,
-    "maxZ": 16
+    "minX": -11.2,
+    "maxX": 16.0,
+    "minZ": -24.0,
+    "maxZ": 27.8
   },
   "day": {
     "lengthSeconds": 360,
@@ -20,8 +21,8 @@
   },
   "player": {
     "start": {
-      "x": 0,
-      "z": 1
+      "x": 1.2,
+      "z": 2.0
     },
     "speed": 5,
     "plugSeconds": 0.5,
@@ -34,101 +35,101 @@
     "minDrainPerSecond": 150
   },
   "road": {
-    "laneX": -8.9,
-    "spawnZ": -22,
-    "despawnZ": 32,
-    "entranceZ": -13,
-    "exitZ": 19,
+    "laneX": -12.4,
+    "spawnZ": -32,
+    "despawnZ": 40,
+    "entranceZ": -24.5,
+    "exitZ": 21,
     "carSpeed": 7
   },
   "lane": {
-    "x": -6.6,
-    "entryZ": -12,
-    "exitZ": 16.5
+    "x": -9.8,
+    "entryZ": -23.5,
+    "exitZ": 19
   },
   "queueSlots": [
     {
-      "x": -6.6,
-      "z": -2.5
+      "x": -9.8,
+      "z": -3.5
     },
     {
-      "x": -6.6,
-      "z": -5.5
+      "x": -9.8,
+      "z": -8.7
     },
     {
-      "x": -6.6,
-      "z": -8.5
+      "x": -9.8,
+      "z": -13.9
     },
     {
-      "x": -6.6,
-      "z": -11.5
+      "x": -9.8,
+      "z": -19.1
     }
   ],
   "bays": [
     {
       "id": "bay1",
       "car": {
-        "x": -3.6,
-        "z": -0.5
+        "x": -4.6,
+        "z": 0
       },
       "post": {
         "x": -1.5,
-        "z": -0.5
+        "z": 0
       }
     },
     {
       "id": "bay2",
       "car": {
-        "x": -3.6,
-        "z": 2.5
+        "x": -4.6,
+        "z": 3.2
       },
       "post": {
         "x": -1.5,
-        "z": 2.5
+        "z": 3.2
       }
     },
     {
       "id": "bay3",
       "car": {
-        "x": -3.6,
-        "z": 5.5
+        "x": -4.6,
+        "z": 6.4
       },
       "post": {
         "x": -1.5,
-        "z": 5.5
+        "z": 6.4
       }
     },
     {
       "id": "bay4",
       "car": {
-        "x": -3.6,
-        "z": 8.5
+        "x": -4.6,
+        "z": 9.6
       },
       "post": {
         "x": -1.5,
-        "z": 8.5
+        "z": 9.6
       }
     },
     {
       "id": "bay5",
       "car": {
-        "x": -3.6,
-        "z": 11.5
+        "x": -4.6,
+        "z": 12.8
       },
       "post": {
         "x": -1.5,
-        "z": 11.5
+        "z": 12.8
       }
     },
     {
       "id": "bay6",
       "car": {
-        "x": -3.6,
-        "z": 14.5
+        "x": -4.6,
+        "z": 16.0
       },
       "post": {
         "x": -1.5,
-        "z": 14.5
+        "z": 16.0
       }
     }
   ],
@@ -178,6 +179,48 @@
     "halfLength": 4
   },
   "cashStackOffset": 1.8,
+  "zones": [
+    {
+      "id": "deck",
+      "name": "Car park deck",
+      "bounds": {
+        "minX": -8.4,
+        "maxX": 16.0,
+        "minZ": -1.8,
+        "maxZ": 7.8
+      }
+    },
+    {
+      "id": "north",
+      "name": "Coffee & staff",
+      "bounds": {
+        "minX": -8.4,
+        "maxX": 16.0,
+        "minZ": -12.0,
+        "maxZ": -1.8
+      }
+    },
+    {
+      "id": "south",
+      "name": "South deck",
+      "bounds": {
+        "minX": -8.4,
+        "maxX": 16.0,
+        "minZ": 7.8,
+        "maxZ": 19.0
+      }
+    },
+    {
+      "id": "exit",
+      "name": "Car wash",
+      "bounds": {
+        "minX": -8.4,
+        "maxX": 16.0,
+        "minZ": 19.0,
+        "maxZ": 27.8
+      }
+    }
+  ],
   "pads": [
     {
       "id": "charger1",
@@ -185,8 +228,8 @@
       "label": "Fast charger",
       "price": 0,
       "pos": {
-        "x": -1.5,
-        "z": -0.5
+        "x": -0.9,
+        "z": 0
       },
       "bay": "bay1"
     },
@@ -196,8 +239,8 @@
       "label": "Fast charger",
       "price": 0,
       "pos": {
-        "x": -1.5,
-        "z": 2.5
+        "x": -0.9,
+        "z": 3.2
       },
       "bay": "bay2"
     },
@@ -207,12 +250,12 @@
       "label": "Solar carport",
       "price": 0,
       "pos": {
-        "x": 1.6,
-        "z": -0.5
+        "x": 3.4,
+        "z": 0
       },
       "buildPos": {
-        "x": -3.2,
-        "z": -0.5
+        "x": -4.6,
+        "z": 0
       },
       "buildY": 3.0
     },
@@ -222,13 +265,13 @@
       "label": "Solar carport",
       "price": 900,
       "pos": {
-        "x": 1.6,
-        "z": 2.5
+        "x": 3.4,
+        "z": 3.2
       },
       "unlockAfter": ["charger2"],
       "buildPos": {
-        "x": -3.2,
-        "z": 2.5
+        "x": -4.6,
+        "z": 3.2
       },
       "buildY": 3.0
     },
@@ -238,10 +281,22 @@
       "label": "Battery",
       "price": 1500,
       "pos": {
-        "x": 5.2,
-        "z": 10
+        "x": 7.8,
+        "z": 0.0
       },
       "unlockAfter": ["carport2"]
+    },
+    {
+      "id": "landNorth",
+      "kind": "land",
+      "label": "Buy land: Coffee & staff",
+      "price": 1200,
+      "pos": {
+        "x": 3.6,
+        "z": -0.6
+      },
+      "unlockAfter": ["battery1"],
+      "opensZone": "north"
     },
     {
       "id": "technician1",
@@ -249,10 +304,11 @@
       "label": "Hire technician",
       "price": 2500,
       "pos": {
-        "x": 4.0,
-        "z": -3.5
+        "x": 6.0,
+        "z": -4.4
       },
-      "unlockAfter": ["battery1"]
+      "unlockAfter": ["battery1"],
+      "zone": "north"
     },
     {
       "id": "charger3",
@@ -260,8 +316,8 @@
       "label": "Fast charger",
       "price": 4000,
       "pos": {
-        "x": -1.5,
-        "z": 5.5
+        "x": -0.9,
+        "z": 6.4
       },
       "unlockAfter": ["technician1"],
       "bay": "bay3"
@@ -272,15 +328,27 @@
       "label": "Solar carport",
       "price": 5000,
       "pos": {
-        "x": 1.6,
-        "z": 5.5
+        "x": 3.4,
+        "z": 6.4
       },
       "unlockAfter": ["charger3"],
       "buildPos": {
-        "x": -3.2,
-        "z": 5.5
+        "x": -4.6,
+        "z": 6.4
       },
       "buildY": 3.0
+    },
+    {
+      "id": "landSouth",
+      "kind": "land",
+      "label": "Buy land: South deck",
+      "price": 6000,
+      "pos": {
+        "x": 13.0,
+        "z": 6.4
+      },
+      "unlockAfter": ["charger3"],
+      "opensZone": "south"
     },
     {
       "id": "cafe",
@@ -288,10 +356,11 @@
       "label": "Coffee kiosk",
       "price": 7000,
       "pos": {
-        "x": 7.6,
-        "z": 4.5
+        "x": 1.8,
+        "z": -7.6
       },
-      "unlockAfter": ["carport3"]
+      "unlockAfter": ["carport3"],
+      "zone": "north"
     },
     {
       "id": "roof1",
@@ -299,10 +368,15 @@
       "label": "Roof deck row",
       "price": 9000,
       "pos": {
-        "x": 7.0,
-        "z": -9.0
+        "x": 14.9,
+        "z": 9.2
       },
       "unlockAfter": ["cafe"],
+      "zone": "south",
+      "buildPos": {
+        "x": 9.25,
+        "z": 9.2
+      },
       "buildY": 2.2
     },
     {
@@ -311,10 +385,11 @@
       "label": "Hire cashier",
       "price": 10000,
       "pos": {
-        "x": 4.0,
-        "z": -6.5
+        "x": 8.4,
+        "z": -4.4
       },
-      "unlockAfter": ["roof1"]
+      "unlockAfter": ["roof1"],
+      "zone": "north"
     },
     {
       "id": "upper1",
@@ -322,13 +397,13 @@
       "label": "Upper carport",
       "price": 14000,
       "pos": {
-        "x": 4.0,
-        "z": -0.5
+        "x": 1.2,
+        "z": 1.6
       },
       "unlockAfter": ["carport3"],
       "buildPos": {
-        "x": -3.2,
-        "z": 1.0
+        "x": -4.6,
+        "z": 1.6
       },
       "buildY": 5.0
     },
@@ -338,10 +413,11 @@
       "label": "Fast charger",
       "price": 18000,
       "pos": {
-        "x": -1.5,
-        "z": 8.5
+        "x": -0.9,
+        "z": 9.6
       },
       "unlockAfter": ["upper1"],
+      "zone": "south",
       "bay": "bay4"
     },
     {
@@ -350,13 +426,14 @@
       "label": "Solar carport",
       "price": 22000,
       "pos": {
-        "x": 1.6,
-        "z": 8.5
+        "x": 3.4,
+        "z": 9.6
       },
       "unlockAfter": ["charger4"],
+      "zone": "south",
       "buildPos": {
-        "x": -3.2,
-        "z": 8.5
+        "x": -4.6,
+        "z": 9.6
       },
       "buildY": 3.0
     },
@@ -366,8 +443,8 @@
       "label": "Battery",
       "price": 28000,
       "pos": {
-        "x": 5.2,
-        "z": 13.5
+        "x": 12.2,
+        "z": 0.0
       },
       "unlockAfter": ["carport4"]
     },
@@ -377,10 +454,11 @@
       "label": "Cleaning robot",
       "price": 30000,
       "pos": {
-        "x": 4.0,
-        "z": -9.5
+        "x": 10.8,
+        "z": -4.4
       },
-      "unlockAfter": ["roof1"]
+      "unlockAfter": ["roof1"],
+      "zone": "north"
     },
     {
       "id": "upper2",
@@ -388,13 +466,13 @@
       "label": "Upper carport",
       "price": 36000,
       "pos": {
-        "x": 4.0,
-        "z": 2.5
+        "x": 1.2,
+        "z": 4.8
       },
       "unlockAfter": ["upper1", "carport4"],
       "buildPos": {
-        "x": -3.2,
-        "z": 4.0
+        "x": -4.6,
+        "z": 4.8
       },
       "buildY": 5.0
     },
@@ -404,11 +482,29 @@
       "label": "Roof deck row",
       "price": 42000,
       "pos": {
-        "x": 7.0,
-        "z": -6.8
+        "x": 14.9,
+        "z": 11.4
       },
       "unlockAfter": ["roof1", "battery2"],
+      "zone": "south",
+      "buildPos": {
+        "x": 9.25,
+        "z": 11.4
+      },
       "buildY": 2.2
+    },
+    {
+      "id": "landExit",
+      "kind": "land",
+      "label": "Buy land: Car wash",
+      "price": 25000,
+      "pos": {
+        "x": 13.0,
+        "z": 17.4
+      },
+      "unlockAfter": ["battery2"],
+      "zone": "south",
+      "opensZone": "exit"
     },
     {
       "id": "carWash",
@@ -416,10 +512,11 @@
       "label": "Car wash",
       "price": 50000,
       "pos": {
-        "x": 7.6,
-        "z": 11.5
+        "x": -5.0,
+        "z": 22.6
       },
-      "unlockAfter": ["battery2"]
+      "unlockAfter": ["battery2"],
+      "zone": "exit"
     },
     {
       "id": "technician2",
@@ -427,10 +524,11 @@
       "label": "Hire technician",
       "price": 55000,
       "pos": {
-        "x": 4.0,
-        "z": 5.5
+        "x": 13.2,
+        "z": -4.4
       },
-      "unlockAfter": ["charger4"]
+      "unlockAfter": ["charger4"],
+      "zone": "north"
     },
     {
       "id": "charger5",
@@ -438,10 +536,11 @@
       "label": "Fast charger",
       "price": 70000,
       "pos": {
-        "x": -1.5,
-        "z": 11.5
+        "x": -0.9,
+        "z": 12.8
       },
       "unlockAfter": ["carWash"],
+      "zone": "south",
       "bay": "bay5"
     },
     {
@@ -450,13 +549,14 @@
       "label": "Solar carport",
       "price": 85000,
       "pos": {
-        "x": 1.6,
-        "z": 11.5
+        "x": 3.4,
+        "z": 12.8
       },
       "unlockAfter": ["charger5"],
+      "zone": "south",
       "buildPos": {
-        "x": -3.2,
-        "z": 11.5
+        "x": -4.6,
+        "z": 12.8
       },
       "buildY": 3.0
     },
@@ -466,13 +566,14 @@
       "label": "Upper carport",
       "price": 100000,
       "pos": {
-        "x": 4.0,
-        "z": 8.5
+        "x": 1.2,
+        "z": 11.2
       },
       "unlockAfter": ["upper2", "carport5"],
+      "zone": "south",
       "buildPos": {
-        "x": -3.2,
-        "z": 7.0
+        "x": -4.6,
+        "z": 11.2
       },
       "buildY": 5.0
     },
@@ -482,8 +583,8 @@
       "label": "Battery",
       "price": 120000,
       "pos": {
-        "x": 5.2,
-        "z": 7.0
+        "x": 7.8,
+        "z": 3.2
       },
       "unlockAfter": ["upper3"]
     },
@@ -493,10 +594,11 @@
       "label": "Fast charger",
       "price": 150000,
       "pos": {
-        "x": -1.5,
-        "z": 14.5
+        "x": -0.9,
+        "z": 16.0
       },
       "unlockAfter": ["battery3"],
+      "zone": "south",
       "bay": "bay6"
     },
     {
@@ -505,13 +607,14 @@
       "label": "Solar carport",
       "price": 170000,
       "pos": {
-        "x": 1.6,
-        "z": 14.5
+        "x": 3.4,
+        "z": 16.0
       },
       "unlockAfter": ["charger6"],
+      "zone": "south",
       "buildPos": {
-        "x": -3.2,
-        "z": 14.5
+        "x": -4.6,
+        "z": 16.0
       },
       "buildY": 3.0
     },
@@ -521,10 +624,15 @@
       "label": "Roof deck row",
       "price": 190000,
       "pos": {
-        "x": 7.0,
-        "z": -4.6
+        "x": 14.9,
+        "z": 13.6
       },
       "unlockAfter": ["roof2", "charger6"],
+      "zone": "south",
+      "buildPos": {
+        "x": 9.25,
+        "z": 13.6
+      },
       "buildY": 2.2
     },
     {
@@ -533,17 +641,176 @@
       "label": "Upper carport",
       "price": 220000,
       "pos": {
-        "x": 4.0,
-        "z": 11.5
+        "x": 1.2,
+        "z": 14.4
       },
       "unlockAfter": ["upper3", "carport6"],
+      "zone": "south",
       "buildPos": {
-        "x": -3.2,
-        "z": 10.0
+        "x": -4.6,
+        "z": 14.4
       },
       "buildY": 5.0
     }
   ],
+  "washRoute": [
+    {
+      "x": -9.8,
+      "z": 18.4
+    },
+    {
+      "x": -5.0,
+      "z": 18.4
+    },
+    {
+      "x": -5.0,
+      "z": 26.8
+    },
+    {
+      "x": -12.4,
+      "z": 26.8
+    }
+  ],
+  "site": {
+    "plaza": {
+      "minX": -0.6,
+      "maxX": 4.6,
+      "minZ": -10.0,
+      "maxZ": 17.8
+    },
+    "yard": {
+      "minX": 5.5,
+      "maxX": 14.5,
+      "minZ": -1.5,
+      "maxZ": 4.6,
+      "gateMinZ": 0.9,
+      "gateMaxZ": 2.3
+    },
+    "buildings": [
+      {
+        "kind": "staffHut",
+        "pos": {
+          "x": 8.6,
+          "z": -8.4
+        },
+        "zone": "north"
+      }
+    ],
+    "decor": [
+      {
+        "kind": "lamp",
+        "pos": {
+          "x": -8.1,
+          "z": -20
+        }
+      },
+      {
+        "kind": "lamp",
+        "pos": {
+          "x": -8.1,
+          "z": -12
+        }
+      },
+      {
+        "kind": "lamp",
+        "pos": {
+          "x": -8.1,
+          "z": -4
+        }
+      },
+      {
+        "kind": "lamp",
+        "pos": {
+          "x": -8.1,
+          "z": 4.8
+        }
+      },
+      {
+        "kind": "lamp",
+        "pos": {
+          "x": -8.1,
+          "z": 11.2
+        }
+      },
+      {
+        "kind": "lamp",
+        "pos": {
+          "x": -8.1,
+          "z": 20.6
+        }
+      },
+      {
+        "kind": "palm",
+        "pos": {
+          "x": 17.2,
+          "z": -9
+        }
+      },
+      {
+        "kind": "palm",
+        "pos": {
+          "x": -3.2,
+          "z": -11.0
+        }
+      },
+      {
+        "kind": "planter",
+        "pos": {
+          "x": -0.4,
+          "z": -10.6
+        }
+      },
+      {
+        "kind": "planter",
+        "pos": {
+          "x": 4.0,
+          "z": -10.6
+        }
+      },
+      {
+        "kind": "palm",
+        "pos": {
+          "x": -3.0,
+          "z": -13.4
+        }
+      },
+      {
+        "kind": "palm",
+        "pos": {
+          "x": 3.0,
+          "z": -13.4
+        }
+      },
+      {
+        "kind": "palm",
+        "pos": {
+          "x": 9.0,
+          "z": -13.4
+        }
+      },
+      {
+        "kind": "palm",
+        "pos": {
+          "x": 15.0,
+          "z": -13.4
+        }
+      },
+      {
+        "kind": "planter",
+        "pos": {
+          "x": 0.6,
+          "z": 24.4
+        }
+      },
+      {
+        "kind": "planter",
+        "pos": {
+          "x": 3.6,
+          "z": 25.4
+        }
+      }
+    ]
+  },
   "initial": {
     "cash": 500,
     "chargerTier": 2

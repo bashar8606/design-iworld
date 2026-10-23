@@ -6,9 +6,11 @@ import { zoneOwned } from '../game/world.ts'
 import { useGame } from '../store/gameStore.ts'
 import { glowLamp, propMaterial } from './materials.ts'
 import {
+  chaletGeometry,
   lampHeadGeometry,
   lampPoleGeometry,
   palmGeometry,
+  pineGeometry,
   planterGeometry,
   staffHutGeometry,
   yardFenceGeometry,
@@ -22,7 +24,7 @@ export function SitePlan() {
   if (!site) return null
   return (
     <group>
-      {site.plaza && <Plaza box={site.plaza} />}
+      {site.plaza && <Plaza box={site.plaza} theme={map.theme} />}
       {site.yard && <Yard yard={site.yard} />}
       {(site.buildings ?? []).map((b, i) => (
         <Building key={i} map={map} building={b} />
@@ -37,19 +39,26 @@ function seeded(seed: number) {
   return () => (s = (s * 16807) % 2147483647) / 2147483647
 }
 
-/** Square sandstone pavers with thin joints, 1 m to a tile. */
-function paverTexture(): THREE.CanvasTexture {
+const PAVERS = {
+  desert: { hue: 36, sat: 38, light: 86, joint: 'rgba(150,120,80,0.45)' },
+  city: { hue: 215, sat: 8, light: 80, joint: 'rgba(80,90,100,0.45)' },
+  snow: { hue: 205, sat: 18, light: 88, joint: 'rgba(110,130,150,0.45)' },
+} as const
+
+/** Square pavers with thin joints, 1 m to a tile, tinted for the map. */
+function paverTexture(theme: MapContent['theme']): THREE.CanvasTexture {
+  const p = PAVERS[theme]
   const canvas = document.createElement('canvas')
   canvas.width = canvas.height = 128
   const ctx = canvas.getContext('2d')!
   const rand = seeded(3)
   for (let y = 0; y < 2; y++)
     for (let x = 0; x < 2; x++) {
-      const l = 86 + rand() * 6
-      ctx.fillStyle = `hsl(36, 38%, ${l}%)`
+      const l = p.light + rand() * 6
+      ctx.fillStyle = `hsl(${p.hue}, ${p.sat}%, ${l}%)`
       ctx.fillRect(x * 64, y * 64, 64, 64)
     }
-  ctx.strokeStyle = 'rgba(150,120,80,0.45)'
+  ctx.strokeStyle = p.joint
   ctx.lineWidth = 3
   for (const v of [0, 64, 128]) {
     ctx.beginPath()
@@ -82,15 +91,15 @@ function gravelTexture(): THREE.CanvasTexture {
   return t
 }
 
-function Plaza({ box }: { box: NonNullable<Plan['plaza']> }) {
+function Plaza({ box, theme }: { box: NonNullable<Plan['plaza']>; theme: MapContent['theme'] }) {
   const w = box.maxX - box.minX
   const d = box.maxZ - box.minZ
   const texture = useMemo(() => {
-    const t = paverTexture()
+    const t = paverTexture(theme)
     // Two tiles per texture repeat, one tile per metre.
     t.repeat.set(w / 2, d / 2)
     return t
-  }, [w, d])
+  }, [w, d, theme])
   return (
     <mesh
       rotation-x={-Math.PI / 2}
@@ -218,6 +227,8 @@ function Decor({ decor }: { decor: NonNullable<Plan['decor']> }) {
   const pole = useMemo(() => lampPoleGeometry(), [])
   const head = useMemo(() => lampHeadGeometry(), [])
   const planter = useMemo(() => planterGeometry(), [])
+  const pine = useMemo(() => pineGeometry(), [])
+  const lodge = useMemo(() => chaletGeometry(), [])
   const spots = useMemo(() => {
     const rand = seeded(17)
     const of = (kind: string) =>
@@ -226,10 +237,16 @@ function Decor({ decor }: { decor: NonNullable<Plan['decor']> }) {
         .map((d) => ({
           pos: d.pos,
           // Palms and planters vary a little; lamps all reach over the parking bays (+x).
-          rot: kind === 'lamp' ? 0 : rand() * Math.PI * 2,
-          scale: kind === 'palm' ? 0.85 + rand() * 0.35 : 1,
+          rot: kind === 'lamp' || kind === 'lodge' ? 0 : rand() * Math.PI * 2,
+          scale: kind === 'palm' || kind === 'pine' ? 0.85 + rand() * 0.35 : 1,
         }))
-    return { palm: of('palm'), lamp: of('lamp'), planter: of('planter') }
+    return {
+      palm: of('palm'),
+      pine: of('pine'),
+      lamp: of('lamp'),
+      planter: of('planter'),
+      lodge: of('lodge'),
+    }
   }, [decor])
   return (
     <group>
@@ -237,6 +254,8 @@ function Decor({ decor }: { decor: NonNullable<Plan['decor']> }) {
       <Instances geometry={pole} spots={spots.lamp} />
       <Instances geometry={head} material={glowLamp} spots={spots.lamp} shadows={false} />
       <Instances geometry={planter} spots={spots.planter} />
+      <Instances geometry={pine} spots={spots.pine} />
+      <Instances geometry={lodge} spots={spots.lodge} />
     </group>
   )
 }

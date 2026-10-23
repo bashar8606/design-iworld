@@ -1,0 +1,15 @@
+node_modules
+dist
+*.local
+*.tsbuildinfo
+.DS_Store
+coverage
+
+# Blender backups
+*.blend1
+*.blend2
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { getContent } from '../game/content.ts'
 import { useGame } from '../store/gameStore.ts'
 import { STEPS, useTutorial } from '../store/tutorial.ts'
+import { trackUi } from '../store/tracking.ts'
 import { useUi } from '../store/uiStore.ts'
 import { formatCash, formatDuration } from './format.ts'
 
@@ -21,6 +22,10 @@ export function OfflineCard({ onDouble }: { onDouble?: (earned: number) => void 
             <button
               className="btn btn-primary"
               onClick={() => {
+                trackUi('offline_card_claimed', {
+                  earned: Math.round(offline.earned),
+                  doubled: true,
+                })
                 onDouble(offline.earned)
                 dismiss()
               }}
@@ -28,7 +33,16 @@ export function OfflineCard({ onDouble }: { onDouble?: (earned: number) => void 
               ▶ Double it
             </button>
           )}
-          <button className="btn" onClick={dismiss}>
+          <button
+            className="btn"
+            onClick={() => {
+              trackUi('offline_card_claimed', {
+                earned: Math.round(offline.earned),
+                doubled: false,
+              })
+              dismiss()
+            }}
+          >
             Collect
           </button>
         </div>

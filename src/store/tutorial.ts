@@ -99,6 +99,7 @@ export function startTutorial(): () => void {
       if (next >= STEPS.length) trackUi('tutorial_complete')
     }
   }
+  if (useTutorial.getState().active && useTutorial.getState().step === 0) trackUi('tutorial_start')
   const off = onGameEvent(advance)
   const unsub = useGame.subscribe((s, prev) => {
     if (s.state.mapId !== prev.state.mapId || s.state.time < prev.state.time) advance()

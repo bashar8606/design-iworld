@@ -122,5 +122,6 @@ export function trackUi(
   event: string,
   props: Record<string, string | number | boolean | null> = {},
 ) {
-  platform.analytics.track(event, props)
+  const days = Math.floor((Date.now() - installedAt()) / 86_400_000)
+  platform.analytics.track(event, { ...props, days_since_install: days })
 }

@@ -7,6 +7,7 @@ import { World } from './scene/World.tsx'
 import { quality } from './scene/quality.ts'
 import { startGameLoop, useGame } from './store/gameStore.ts'
 import { startPersistence } from './store/persistence.ts'
+import { loadRemoteConfig } from './store/remoteConfig.ts'
 import { startTracking } from './store/tracking.ts'
 import { startTutorial } from './store/tutorial.ts'
 import { useUi } from './store/uiStore.ts'
@@ -47,7 +48,11 @@ function Sheets() {
 
 export default function App() {
   useEffect(() => startGameLoop(), [])
-  useEffect(() => startTracking(), [])
+  useEffect(() => {
+    const stop = startTracking()
+    void loadRemoteConfig()
+    return stop
+  }, [])
   useEffect(() => startPersistence({ skipLoad: quality.stress }), [])
   useEffect(() => startTutorial(), [])
   useEffect(() => startFeedback(), [])

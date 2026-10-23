@@ -96,13 +96,11 @@ export async function watchRewarded(placement: AdPlacement, amount = 0): Promise
   if (placement === 'daily_chest') {
     const { state } = useGame.getState()
     const perMinute = state.time > 60 ? (state.stats.totalEarned / state.time) * 60 : 20
-    useGame
-      .getState()
-      .dispatch({
-        type: 'reward',
-        placement,
-        amount: Math.round(perMinute * adsConfig.dailyChest.cashMinutes),
-      })
+    useGame.getState().dispatch({
+      type: 'reward',
+      placement,
+      amount: Math.round(perMinute * adsConfig.dailyChest.cashMinutes),
+    })
     try {
       localStorage.setItem(CHEST_KEY, today())
     } catch {

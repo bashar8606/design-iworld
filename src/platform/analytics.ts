@@ -9,6 +9,8 @@ export interface Analytics {
   track(event: string, props?: AnalyticsProps): void
   /** Sends queued events now (before the app is suspended). */
   flush(): void
+  /** JSON payload of a feature flag (remote config), or null when offline or not set. */
+  remoteConfig(flag: string, timeoutMs?: number): Promise<unknown>
 }
 
 export const webAnalytics: Analytics = {
@@ -25,6 +27,9 @@ export const webAnalytics: Analytics = {
     console.info(`[analytics] ${event}`, props ?? {})
   },
   flush() {},
+  async remoteConfig() {
+    return null
+  },
 }
 
 /**
@@ -59,6 +64,20 @@ export function createPostHogAnalytics(apiKey: string, host: string): Analytics 
     },
     flush() {
       // posthog-js sends with sendBeacon on page hide; nothing extra to do.
+    },
+    async remoteConfig(flag, timeoutMs = 3000) {
+      const posthog = await new Promise<typeof client>((resolve) => {
+        const check = () => (client ? resolve(client) : setTimeout(check, 50))
+        check()
+      })
+      if (!posthog) return null
+      return new Promise((resolve) => {
+        const timer = setTimeout(() => resolve(null), timeoutMs)
+        posthog.onFeatureFlags(() => {
+          clearTimeout(timer)
+          resolve(posthog.getFeatureFlagPayload(flag) ?? null)
+        })
+      })
     },
   }
 }

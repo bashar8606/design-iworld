@@ -2,6 +2,8 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { Suspense, lazy } from 'react'
 import App from './App.tsx'
+import { initCrashReporting } from './platform/crash.ts'
+import { APP_VERSION } from './store/tracking.ts'
 import './index.css'
 
 // iOS ignores user-scalable=no in some cases; block pinch and double-tap zoom directly.
@@ -16,6 +18,8 @@ if (import.meta.env.DEV) {
     ;(window as unknown as { __game: typeof useGame }).__game = useGame
   })
 }
+
+void initCrashReporting(APP_VERSION)
 
 const isGallery =
   window.location.pathname.replace(/\/$/, '').endsWith('/gallery') ||

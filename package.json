@@ -17,7 +17,8 @@
     "assets:blender": "python3 tools/assets/build_blender.py",
     "assets:polyhaven": "tsx tools/assets/polyhaven.ts",
     "audio:generate": "tsx tools/audio/generate.ts",
-    "ios:skadnetwork": "tsx tools/ios/skadnetwork.ts"
+    "ios:skadnetwork": "tsx tools/ios/skadnetwork.ts",
+    "posthog:insights": "tsx tools/posthog/insights.ts"
   },
   "dependencies": {
     "@capacitor-community/admob": "^8.2.1",
@@ -29,6 +30,8 @@
     "@react-three/drei": "^10.7.9",
     "@react-three/fiber": "^9.8.2",
     "@revenuecat/purchases-capacitor": "^13.7.6",
+    "@sentry/capacitor": "^4.4.0",
+    "@sentry/react": "^10.69.0",
     "howler": "^2.2.4",
     "posthog-js": "^1.438.19",
     "react": "^19.3.1",

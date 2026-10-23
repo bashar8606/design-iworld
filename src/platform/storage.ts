@@ -6,19 +6,29 @@ export interface Storage {
   remove(key: string): Promise<void>
 }
 
-/** Backed by localStorage so saves survive reloads in a desktop browser. */
+/** Backed by localStorage so saves survive reloads in a desktop browser. Private windows and
+ * sandboxed frames can block it; then the game runs without saving instead of failing. */
 export const webStorage: Storage = {
   async get(key) {
-    console.info(`[storage] get "${key}" (web)`)
-    return localStorage.getItem(key)
+    try {
+      return localStorage.getItem(key)
+    } catch {
+      return null
+    }
   },
   async set(key, value) {
-    console.info(`[storage] set "${key}" (${value.length} chars, web)`)
-    localStorage.setItem(key, value)
+    try {
+      localStorage.setItem(key, value)
+    } catch {
+      console.info(`[storage] could not save "${key}" (storage blocked)`)
+    }
   },
   async remove(key) {
-    console.info(`[storage] remove "${key}" (web)`)
-    localStorage.removeItem(key)
+    try {
+      localStorage.removeItem(key)
+    } catch {
+      // nothing saved, nothing to remove
+    }
   },
 }
 

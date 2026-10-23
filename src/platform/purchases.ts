@@ -56,7 +56,11 @@ export const webPurchases: Purchases = {
     if (productId === 'remove_ads' && !owned.entitlements.includes(shop.entitlements.noAds)) {
       owned.entitlements.push(shop.entitlements.noAds)
     }
-    localStorage.setItem(WEB_KEY, JSON.stringify(owned))
+    try {
+      localStorage.setItem(WEB_KEY, JSON.stringify(owned))
+    } catch {
+      // Storage blocked: the test purchase lasts for this session only.
+    }
     return 'purchased'
   },
   async restore() {

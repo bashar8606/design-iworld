@@ -4,7 +4,7 @@ import { SAVE_KEY } from '../game/save.ts'
 import { platform } from '../platform/index.ts'
 import { onGameEvent } from './events.ts'
 import { onAction, useGame } from './gameStore.ts'
-import { catchUp, resumeFromSave, saveJson } from './lifecycle.ts'
+import { catchUp, catchUpQuarry, resumeFromSave, saveJson } from './lifecycle.ts'
 import { trackUi } from './tracking.ts'
 import { useUi } from './uiStore.ts'
 
@@ -14,7 +14,12 @@ let saving = Promise.resolve()
 /** Saves now; saves are queued so two never interleave. */
 export function saveNow(): Promise<void> {
   saving = saving.then(async () => {
-    const { json, savedAt: at } = saveJson(useGame.getState().state, savedAt, Date.now())
+    const g = useGame.getState()
+    const { json, savedAt: at } = saveJson(g.state, savedAt, Date.now(), {
+      business: g.business,
+      quarry: g.quarry,
+      inactiveSince: g.inactiveSince,
+    })
     savedAt = at
     await platform.storage.set(SAVE_KEY, json)
   })
@@ -43,7 +48,8 @@ export function startPersistence(options: { skipLoad?: boolean } = {}): () => vo
       if (resumed) {
         savedAt = resumed.savedAt
         game.replace(resumed.state)
-        showAwayCard(resumed.earned, resumed.awaySeconds)
+        game.restore(resumed)
+        if (resumed.business === 'station') showAwayCard(resumed.earned, resumed.awaySeconds)
       }
     }
     useUi.getState().setLoaded()
@@ -76,7 +82,15 @@ export function startPersistence(options: { skipLoad?: boolean } = {}): () => vo
       void saveNow()
     } else if (active && backgrounded) {
       backgrounded = false
-      const { state } = useGame.getState()
+      const { state, business, quarry } = useGame.getState()
+      // Only the business on screen catches up; the other one waits for the player to switch.
+      if (business === 'quarry' && quarry) {
+        const back = catchUpQuarry(quarry, savedAt ?? Date.now(), Date.now())
+        savedAt = back.savedAt
+        if (back.awaySeconds > 0) useGame.getState().replaceQuarry(back.state)
+        useGame.getState().setPaused(false)
+        return
+      }
       const resumed = catchUp(state, savedAt ?? Date.now(), Date.now())
       savedAt = resumed.savedAt
       if (resumed.awaySeconds > 0) {

@@ -6,6 +6,7 @@ import { getContent } from '../game/content.ts'
 import type { StaffKind } from '../game/types.ts'
 import { bayDef } from '../game/world.ts'
 import { tickAlpha, useGame } from '../store/gameStore.ts'
+import { sceneView, selectQuarryOn } from '../store/view.ts'
 import { FACE_CAMERA } from './billboard.ts'
 import { damp, lerp, lerpAngle } from './interp.ts'
 import { glowTeal, propMaterial } from './materials.ts'
@@ -29,19 +30,22 @@ function useTint(ref: React.RefObject<THREE.Group | null>, tint: string | undefi
 
 export function Player() {
   const group = useRef<THREE.Group>(null)
-  const moving = useGame((s) => s.state.player.moving)
+  const moving = useGame((s) =>
+    s.business === 'quarry' && s.quarry ? s.quarry.player.moving : s.state.player.moving,
+  )
+  const station = useGame((s) => !selectQuarryOn(s))
   const heading = useRef(0)
   useFrame((_, dt) => {
-    const { state, prev } = useGame.getState()
+    const { player, prevPlayer } = sceneView()
     const t = tickAlpha()
     const g = group.current
     if (!g) return
     g.position.set(
-      lerp(prev.player.pos.x, state.player.pos.x, t),
+      lerp(prevPlayer.pos.x, player.pos.x, t),
       0,
-      lerp(prev.player.pos.z, state.player.pos.z, t),
+      lerp(prevPlayer.pos.z, player.pos.z, t),
     )
-    heading.current = lerpAngle(heading.current, state.player.heading, 1 - Math.exp(-14 * dt))
+    heading.current = lerpAngle(heading.current, player.heading, 1 - Math.exp(-14 * dt))
     g.rotation.y = heading.current + Math.PI
   })
   return (
@@ -52,7 +56,7 @@ export function Player() {
           <ringGeometry args={[0.45, 0.55, 24]} />
         </mesh>
       </group>
-      <PlugProgress />
+      {station && <PlugProgress />}
     </>
   )
 }

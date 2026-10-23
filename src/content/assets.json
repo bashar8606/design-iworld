@@ -155,6 +155,36 @@
       "route": "code",
       "source": "src/scene/props/geometry.ts",
       "triangleLimit": 120
+    },
+    "forestPine": {
+      "route": "code",
+      "source": "src/scene/props/geometry.ts",
+      "triangleLimit": 200
+    },
+    "hill": {
+      "route": "code",
+      "source": "src/scene/props/geometry.ts",
+      "triangleLimit": 100
+    },
+    "siteCabin": {
+      "route": "code",
+      "source": "src/scene/props/geometry.ts",
+      "triangleLimit": 200
+    },
+    "siteSign": {
+      "route": "code",
+      "source": "src/scene/props/geometry.ts",
+      "triangleLimit": 120
+    },
+    "surveyStake": {
+      "route": "code",
+      "source": "src/scene/props/geometry.ts",
+      "triangleLimit": 60
+    },
+    "boulder": {
+      "route": "code",
+      "source": "src/scene/props/geometry.ts",
+      "triangleLimit": 40
     }
   }
 }

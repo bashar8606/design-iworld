@@ -18,6 +18,8 @@ Run `npm run lint`, `npx tsc -b` and `npm test` before every commit.
 ## Layout
 
 - `src/game/` — pure TypeScript simulation: state, tick, economy, save, offline
+- `src/game/quarry/` + `src/scene/quarry/` — the second business, Pine Ridge Quarry; `src/game/business.ts`
+  switches between it and the station (only the business on screen ticks; the other catches up)
 - `src/scene/` — React Three Fiber: world, chargers, panels, cars, player, sky
 - `src/platform/` — ads, purchases, storage, haptics, analytics (+ web stubs)
 - `src/store/` — zustand store, the fixed-step game loop and the game-event bus

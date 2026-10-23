@@ -328,8 +328,8 @@ export function turbineRotorGeometry(): THREE.BufferGeometry {
   return merge(parts)
 }
 
-/** A snowy pine: trunk, three tiers of needles, each with a dusting of snow. */
-export function pineGeometry(): THREE.BufferGeometry {
+/** A pine: trunk and three tiers of needles, each with a dusting of snow unless `snow` is off. */
+export function pineGeometry(snow = true): THREE.BufferGeometry {
   const parts = [
     paint(new THREE.CylinderGeometry(0.12, 0.18, 0.9, 6).translate(0, 0.45, 0), '#6B4B33'),
   ]
@@ -340,9 +340,13 @@ export function pineGeometry(): THREE.BufferGeometry {
   ] as const
   for (const [r, h, y] of tiers) {
     parts.push(paint(new THREE.ConeGeometry(r, h, 7).translate(0, y, 0), '#2F6B4F'))
-    parts.push(
-      paint(new THREE.ConeGeometry(r * 0.55, h * 0.45, 7).translate(0, y + h * 0.3, 0), '#F4F8FB'),
-    )
+    if (snow)
+      parts.push(
+        paint(
+          new THREE.ConeGeometry(r * 0.55, h * 0.45, 7).translate(0, y + h * 0.3, 0),
+          '#F4F8FB',
+        ),
+      )
   }
   return merge(parts)
 }
@@ -447,4 +451,51 @@ export function yardFenceGeometry(): THREE.BufferGeometry {
     boxAt([1.0, 0.05, 0.04], [0, 0.6, 0], PALETTE.metal),
     boxAt([1.0, 0.04, 0.02], [0, 0.9, 0], PALETTE.yellow),
   ])
+}
+
+// ---------------------------------------------------------------------------
+// Quarry (Pine Ridge): the empty site before the pit is dug.
+
+/** A grassy hill on the horizon: a low dome, unit radius and height. */
+export function hillGeometry(): THREE.BufferGeometry {
+  const dome = new THREE.SphereGeometry(1, 9, 4, 0, Math.PI * 2, 0, Math.PI / 2)
+  return merge([paint(dome, '#7FA35A')])
+}
+
+/** The site office: a portacabin on blocks with a blue stripe, windows, a door and steps. */
+export function siteCabinGeometry(): THREE.BufferGeometry {
+  return merge([
+    boxAt([5.6, 0.3, 2.6], [0, 0.15, 0], '#8C8579'),
+    boxAt([5.4, 2.3, 2.4], [0, 1.45, 0], PALETTE.white),
+    boxAt([5.5, 0.25, 2.5], [0, 2.7, 0], '#C9CED3'),
+    boxAt([5.42, 0.25, 2.42], [0, 0.55, 0], '#2E6DB4'),
+    boxAt([0.9, 1.8, 0.06], [-1.6, 1.3, 1.22], PALETTE.navy),
+    boxAt([1.4, 0.8, 0.06], [0.3, 1.6, 1.22], '#9DD8F0'),
+    boxAt([1.4, 0.8, 0.06], [1.9, 1.6, 1.22], '#9DD8F0'),
+    boxAt([1.2, 0.3, 0.8], [-1.6, 0.15, 1.6], '#8C8579'),
+  ])
+}
+
+/** The site sign by the entrance: two posts and a board in quarry yellow. */
+export function siteSignGeometry(): THREE.BufferGeometry {
+  return merge([
+    cylAt(0.08, 2.4, [-1.1, 1.2, 0], '#6B4B33', 6),
+    cylAt(0.08, 2.4, [1.1, 1.2, 0], '#6B4B33', 6),
+    boxAt([2.9, 1.2, 0.1], [0, 1.9, 0], PALETTE.yellow),
+    boxAt([2.5, 0.22, 0.12], [0, 2.15, 0], PALETTE.navy),
+    boxAt([1.6, 0.16, 0.12], [0, 1.75, 0], PALETTE.navy),
+  ])
+}
+
+/** A surveyor's stake with an orange flag, marking where the pit will be dug. */
+export function surveyStakeGeometry(): THREE.BufferGeometry {
+  return merge([
+    cylAt(0.03, 1.2, [0, 0.6, 0], '#C8A26A', 5),
+    boxAt([0.42, 0.26, 0.02], [0.22, 1.0, 0], PALETTE.orange),
+  ])
+}
+
+/** A loose boulder: a squashed, faceted rock. */
+export function boulderGeometry(): THREE.BufferGeometry {
+  return merge([paint(new THREE.DodecahedronGeometry(0.6, 0).scale(1, 0.7, 0.85), '#9A948A')])
 }

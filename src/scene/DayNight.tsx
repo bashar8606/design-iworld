@@ -1,9 +1,7 @@
 import { useFrame, useThree } from '@react-three/fiber'
 import { useMemo, useRef } from 'react'
 import * as THREE from 'three'
-import { getContent } from '../game/content.ts'
-import { activeEvent } from '../game/world.ts'
-import { useGame } from '../store/gameStore.ts'
+import { sceneView } from '../store/view.ts'
 import { glowLamp, glowLime, glowTeal } from './materials.ts'
 
 // Colour keys across the day (dayTime 0..1). Night → dawn → day → dusk → night.
@@ -86,7 +84,12 @@ const tmpB = new THREE.Color()
 const SAND_HAZE = new THREE.Color('#D9B98A')
 /** A blizzard (the sandstorm event on the snowy map) whites everything out instead. */
 const SNOW_HAZE = new THREE.Color('#E6EEF5')
-const GROUND_BOUNCE = { desert: '#D9C08E', city: '#9DA2A9', snow: '#E4ECF3' } as const
+const GROUND_BOUNCE = {
+  desert: '#D9C08E',
+  city: '#9DA2A9',
+  snow: '#E4ECF3',
+  forest: '#9DB07A',
+} as const
 
 function sample(t: number, key: 'top' | 'horizon' | 'light' | 'ambient', out: THREE.Color) {
   const i = Math.max(0, KEYS.findIndex((k) => k.t > t) - 1)
@@ -131,7 +134,6 @@ export function DayNight({ shadows = true }: { shadows?: boolean }) {
   const sky = useRef<THREE.Mesh>(null)
   const haze = useRef(0)
   const scene = useThree((s) => s.scene)
-  const map = getContent(useGame.getState().state.mapId).map
   const uniforms = useMemo(
     () => ({
       top: { value: new THREE.Color() },
@@ -143,17 +145,17 @@ export function DayNight({ shadows = true }: { shadows?: boolean }) {
   const fogColor = useMemo(() => new THREE.Color(), [])
 
   useFrame(() => {
-    const { state } = useGame.getState()
-    const t = state.dayTime
+    const view = sceneView()
+    const t = view.dayTime
     sample(t, 'top', uniforms.top.value)
     sample(t, 'horizon', uniforms.horizon.value)
-    const target = state.player.pos
+    const target = view.player.pos
 
     if (sun.current) {
       // The sun sweeps from east (+x) to west (-x) across the day; the moon lights the night.
-      const { sunrise, sunset } = map.day
+      const { sunrise, sunset } = view.day
       const day = Math.min(1, Math.max(0, (t - sunrise) / (sunset - sunrise)))
-      const angle = state.sun > 0 ? Math.PI * day : Math.PI * 0.35
+      const angle = view.sun > 0 ? Math.PI * day : Math.PI * 0.35
       const dir = new THREE.Vector3(Math.cos(angle) * 14, 12 + Math.sin(angle) * 10, 10)
       sun.current.position.set(target.x + dir.x, dir.y, target.z + dir.z)
       sun.current.target.position.set(target.x, 0, target.z)
@@ -161,16 +163,16 @@ export function DayNight({ shadows = true }: { shadows?: boolean }) {
       sample(t, 'light', sun.current.color)
       sun.current.intensity = sampleIntensity(t)
     }
-    const theme = getContent(state.mapId).map.theme
+    const { theme } = view
     if (hemi.current) {
       hemi.current.groundColor.set(GROUND_BOUNCE[theme])
       sample(t, 'ambient', hemi.current.color)
-      hemi.current.intensity = 0.35 + 0.35 * Math.min(1, state.sun * 1.5)
+      hemi.current.intensity = 0.35 + 0.35 * Math.min(1, view.sun * 1.5)
     }
     if (sky.current) sky.current.position.set(target.x, 0, target.z)
     uniforms.center.value.set(target.x, 0, target.z)
     // Sandstorms bring a sandy haze and a dimmer sun.
-    const storm = activeEvent(state)?.kind === 'sandstorm' ? 1 : 0
+    const storm = view.storm ? 1 : 0
     haze.current += (storm - haze.current) * 0.02
     fogColor
       .copy(uniforms.horizon.value)
@@ -184,7 +186,7 @@ export function DayNight({ shadows = true }: { shadows?: boolean }) {
     if (scene.background instanceof THREE.Color) scene.background.copy(fogColor)
 
     // Chargers and battery strips glow brighter at night.
-    const night = 1 - Math.min(1, state.sun * 2)
+    const night = 1 - Math.min(1, view.sun * 2)
     glowTeal.emissiveIntensity = 0.35 + 1.6 * night
     glowLime.emissiveIntensity = 0.5 + 1.8 * night
     glowLamp.emissiveIntensity = 0.1 + 2.4 * night

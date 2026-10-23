@@ -8,7 +8,7 @@ import { formatDuration } from './format.ts'
 import { useClaimableMissions } from './missionText.ts'
 import { upgradeOptions } from './upgrades.ts'
 
-function NavButton({
+export function NavButton({
   tone,
   icon,
   label,

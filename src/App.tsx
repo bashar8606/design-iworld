@@ -28,6 +28,8 @@ import { DebugMenu } from './ui/DebugMenu.tsx'
 import { ErrorBoundary } from './ui/ErrorBoundary.tsx'
 import { FeedbackSheet } from './ui/FeedbackSheet.tsx'
 import { Hud } from './ui/Hud.tsx'
+import { QuarryHud } from './ui/QuarryHud.tsx'
+import { selectQuarryOn } from './store/view.ts'
 import { LayoutViewBar } from './ui/LayoutViewBar.tsx'
 import { MapSheet } from './ui/MapSheet.tsx'
 import { MissionCard, MissionsSheet } from './ui/Missions.tsx'
@@ -92,6 +94,7 @@ export default function App() {
   useKeyboardControls()
   const open = useUi((s) => s.open)
   const layoutView = useUi((s) => s.layoutView)
+  const quarry = useGame(selectQuarryOn)
   const sell = () => {
     useGame.getState().dispatch({ type: 'sellToUtility' })
     open('greenCredits')
@@ -99,8 +102,12 @@ export default function App() {
   return (
     <div className="app">
       <World />
-      <StormOverlay />
-      {layoutView ? (
+      {!quarry && <StormOverlay />}
+      {quarry ? (
+        <ErrorBoundary name="hud">
+          <QuarryHud allowDebug={!store} />
+        </ErrorBoundary>
+      ) : layoutView ? (
         <LayoutViewBar />
       ) : (
         <ErrorBoundary name="hud">
@@ -121,11 +128,11 @@ export default function App() {
           </Hud>
         </ErrorBoundary>
       )}
-      {!layoutView && <Joystick />}
+      {(quarry || !layoutView) && <Joystick />}
       <ErrorBoundary name="sheets">
         <Sheets />
       </ErrorBoundary>
-      {!store && !layoutView && (
+      {!store && !layoutView && !quarry && (
         <>
           <OfflineCard
             onDouble={

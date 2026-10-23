@@ -68,7 +68,7 @@ export function bayDef(map: MapContent, bayId: string) {
   return bay
 }
 
-export function sunIntensity(dayTime: number, map: MapContent): number {
+export function sunIntensity(dayTime: number, map: Pick<MapContent, 'day'>): number {
   const { sunrise, sunset, dawnLength } = map.day
   if (dayTime <= sunrise || dayTime >= sunset) return 0
   const rise = smoothstep((dayTime - sunrise) / dawnLength)
@@ -83,11 +83,14 @@ function smoothstep(x: number): number {
   return t * t * (3 - 2 * t)
 }
 
-export function isNight(dayTime: number, map: MapContent): boolean {
+export function isNight(dayTime: number, map: Pick<MapContent, 'day'>): boolean {
   return dayTime <= map.day.sunrise || dayTime >= map.day.sunset
 }
 
-export function dayClock(time: number, map: MapContent): { day: number; dayTime: number } {
+export function dayClock(
+  time: number,
+  map: Pick<MapContent, 'day'>,
+): { day: number; dayTime: number } {
   const total = map.day.startTime + time / map.day.lengthSeconds
   const day = Math.floor(total)
   return { day, dayTime: total - day }

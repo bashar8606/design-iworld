@@ -9,11 +9,13 @@ import { resetSave, saveNow } from '../store/persistence.ts'
 import { resetTutorial, useTutorial } from '../store/tutorial.ts'
 import { useUi } from '../store/uiStore.ts'
 import { Sheet } from './Sheet.tsx'
+import { goToBusiness } from '../store/businessSwitch.ts'
 
 /** Hidden debug menu (five taps on the clock): cash, time skips, save reset, stress test. */
 export function DebugMenu() {
   const open = useUi((s) => s.open)
   const game = useGame()
+  const { business } = game
   const skipPlay = (seconds: number) => {
     let s = useGame.getState().state
     for (let t = 0; t < seconds; t += 0.1) s = tick(s, 0.1, NO_INPUT)
@@ -104,6 +106,12 @@ export function DebugMenu() {
             Play {getContent(id).map.name}
           </button>
         ))}
+        <button
+          className="btn"
+          onClick={() => goToBusiness(business === 'quarry' ? 'station' : 'quarry')}
+        >
+          {business === 'quarry' ? 'Back to the station' : 'Open the quarry'}
+        </button>
         <button className="btn" onClick={() => useUi.getState().setLayoutView(true)}>
           Layout view
         </button>

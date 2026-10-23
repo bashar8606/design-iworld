@@ -1,0 +1,68 @@
+{
+  "id": "quarry1",
+  "name": "Pine Ridge Quarry",
+  "theme": "forest",
+  "unlock": {
+    "afterMap": "map1"
+  },
+  "bounds": {
+    "minX": -24,
+    "maxX": 26,
+    "minZ": -18,
+    "maxZ": 16
+  },
+  "day": {
+    "lengthSeconds": 360,
+    "sunrise": 0.2,
+    "sunset": 0.85,
+    "dawnLength": 0.06,
+    "startTime": 0.3
+  },
+  "player": {
+    "start": {
+      "x": 12,
+      "z": 8
+    },
+    "speed": 5
+  },
+  "site": {
+    "clearing": {
+      "minX": -23,
+      "maxX": 25,
+      "minZ": -17,
+      "maxZ": 15
+    },
+    "pit": {
+      "x": -9,
+      "z": -5,
+      "rx": 11,
+      "rz": 8.5
+    },
+    "cabin": {
+      "x": 14,
+      "z": 11,
+      "rotation": 0
+    },
+    "sign": {
+      "x": 21,
+      "z": 13.5
+    }
+  },
+  "forest": {
+    "count": 360,
+    "seed": 11,
+    "margin": 1.5,
+    "extent": 34
+  },
+  "hills": [
+    { "x": -48, "z": -44, "r": 26, "h": 11 },
+    { "x": -8, "z": -58, "r": 30, "h": 14 },
+    { "x": 36, "z": -50, "r": 24, "h": 10 },
+    { "x": -62, "z": -6, "r": 22, "h": 8 },
+    { "x": 62, "z": -14, "r": 22, "h": 9 }
+  ],
+  "next": [
+    { "id": "quarry2", "name": "Red Canyon Copper" },
+    { "id": "quarry3", "name": "Glacier Marble" }
+  ]
+}

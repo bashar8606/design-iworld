@@ -21,6 +21,8 @@ import { UpgradeArrows } from './UpgradeArrows.tsx'
 import { Zones } from './Zones.tsx'
 import { Weather } from './Weather.tsx'
 import { quality } from './quality.ts'
+import { QuarryWorld } from './quarry/QuarryWorld.tsx'
+import { selectQuarryOn } from '../store/view.ts'
 
 export interface WorldProps {
   /** Real-time shadows; the device build uses a baked contact shadow instead. */
@@ -39,6 +41,7 @@ export function World({
 }: WorldProps) {
   // Nothing renders while the app is in the background.
   const paused = useGame((s) => s.paused)
+  const quarry = useGame(selectQuarryOn)
   return (
     <Canvas
       frameloop={paused ? 'never' : 'always'}
@@ -51,29 +54,45 @@ export function World({
       <DayNight shadows={shadows} />
       <Suspense fallback={null}>
         <Lighting />
-        <Ground />
-        <SitePlan />
-        <SolarPanels />
-        <Batteries />
-        <WindTurbines />
-        <Chargers />
-        <Facilities />
-        <Zones />
-        <Pads />
-        <Pickups />
-        <Cars />
-        <Player />
-        <Staff />
-        <Drivers />
-        <Effects />
-        <TutorialArrow />
-        <UpgradeArrows />
-        <LayoutOverlay />
-        <Weather />
-        {!shadows && <BakedContactShadow />}
-        {!shadows && <BlobShadows />}
+        {quarry ? (
+          <>
+            <QuarryWorld shadows={shadows} />
+            <Player />
+          </>
+        ) : (
+          <StationWorld shadows={shadows} />
+        )}
         {children}
       </Suspense>
     </Canvas>
+  )
+}
+
+/** The charging station's scene. */
+function StationWorld({ shadows }: { shadows: boolean }) {
+  return (
+    <>
+      <Ground />
+      <SitePlan />
+      <SolarPanels />
+      <Batteries />
+      <WindTurbines />
+      <Chargers />
+      <Facilities />
+      <Zones />
+      <Pads />
+      <Pickups />
+      <Cars />
+      <Player />
+      <Staff />
+      <Drivers />
+      <Effects />
+      <TutorialArrow />
+      <UpgradeArrows />
+      <LayoutOverlay />
+      <Weather />
+      {!shadows && <BakedContactShadow />}
+      {!shadows && <BlobShadows />}
+    </>
   )
 }

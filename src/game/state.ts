@@ -7,7 +7,7 @@ import { batteryCapacity, bayDef, dayClock, sunIntensity } from './world.ts'
 
 export const TICKS_PER_SECOND = 10
 export const TICK_SECONDS = 1 / TICKS_PER_SECOND
-export const SAVE_VERSION = 1
+export const SAVE_VERSION = 2
 /** A time that never arrives (JSON cannot store Infinity). */
 export const NEVER = 1e12
 

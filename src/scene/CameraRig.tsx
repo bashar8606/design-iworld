@@ -7,6 +7,7 @@ import { ownedZones } from '../game/world.ts'
 import { onGameEvent } from '../store/events.ts'
 import { tickAlpha, useGame } from '../store/gameStore.ts'
 import { useUi } from '../store/uiStore.ts'
+import { sceneView } from '../store/view.ts'
 import {
   CAMERA_AZIMUTH_DEG,
   CAMERA_DISTANCE,
@@ -62,6 +63,8 @@ export function CameraRig({
   const size = useThree((s) => s.size)
   const target = useRef(new THREE.Vector3())
   const first = useRef(true)
+  // Switching business jumps straight to the player instead of gliding across the world.
+  const shown = useRef<string | null>(null)
   const zoom = Math.min(size.width, size.height) / viewSize
   // Buying land swings the camera over the new zone and pulls back to show it.
   const reveal = useRef<{ center: THREE.Vector3; start: number } | null>(null)
@@ -84,9 +87,15 @@ export function CameraRig({
   useFrame((_, dt) => {
     const cam = camera.current
     if (!cam) return
-    const { state, prev } = useGame.getState()
+    const { state } = useGame.getState()
+    const view = sceneView()
+    const station = view.business === 'station'
+    if (shown.current !== view.business) {
+      shown.current = view.business
+      first.current = true
+    }
     const map = getContent(state.mapId).map
-    if (useUi.getState().layoutView) {
+    if (station && useUi.getState().layoutView) {
       // Straight down over the whole map, north (−z) up.
       // The legend covers the bottom of the screen, so fit the map into the space above it.
       const b = map.bounds
@@ -102,7 +111,7 @@ export function CameraRig({
       first.current = true
       return
     }
-    const zones = map.zones ? ownedZones(state, map).length : 1
+    const zones = station && map.zones ? ownedZones(state, map).length : 1
     const r = reveal.current
     const rt = r ? (performance.now() - r.start) / 1000 : Infinity
     if (r && rt > REVEAL_SECONDS) reveal.current = null
@@ -113,21 +122,17 @@ export function CameraRig({
       cam.zoom = first.current ? goalZoom : damp(cam.zoom, goalZoom, 4, dt)
       cam.updateProjectionMatrix()
     }
-    const b = getContent(state.mapId).map.bounds
+    const b = view.bounds
     const t = tickAlpha()
-    const goal = follow
-      ? new THREE.Vector3(
-          Math.max(
-            b.minX + 2,
-            Math.min(b.maxX - 2, lerp(prev.player.pos.x, state.player.pos.x, t)),
-          ),
-          0,
-          Math.max(
-            b.minZ + 2,
-            Math.min(b.maxZ - 2, lerp(prev.player.pos.z, state.player.pos.z, t)),
-          ),
-        )
-      : overviewCenter(state)
+    const { player, prevPlayer } = view
+    const goal =
+      follow || !station
+        ? new THREE.Vector3(
+            Math.max(b.minX + 2, Math.min(b.maxX - 2, lerp(prevPlayer.pos.x, player.pos.x, t))),
+            0,
+            Math.max(b.minZ + 2, Math.min(b.maxZ - 2, lerp(prevPlayer.pos.z, player.pos.z, t))),
+          )
+        : overviewCenter(state)
     if (r) goal.lerp(r.center, k)
     if (first.current) {
       target.current.copy(goal)

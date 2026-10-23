@@ -1,15 +1,29 @@
+import type { BusinessId } from './business.ts'
 import { emptyCollection } from './collection.ts'
 import { getContent } from './content.ts'
 import { initialMissions } from './missions.ts'
+import { isQuarryState } from './quarry/state.ts'
+import type { QuarryState } from './quarry/types.ts'
 import { SAVE_VERSION } from './state.ts'
 import type { GameState } from './types.ts'
 
-export interface SaveFile {
+/** The quarry and which business is on screen (saves from version 2). */
+export interface SaveExtras {
+  business: BusinessId
+  quarry: QuarryState | null
+  /** Wall-clock ms when the business that is not on screen was left. */
+  inactiveSince: number | null
+}
+
+export interface SaveFile extends SaveExtras {
   version: number
   /** Wall-clock ms of the save, never moved backwards (see `nextSavedAt`). */
   savedAt: number
+  /** The charging station. */
   state: GameState
 }
+
+const NO_EXTRAS: SaveExtras = { business: 'station', quarry: null, inactiveSince: null }
 
 export const SAVE_KEY = 'solar-oasis.save'
 
@@ -18,15 +32,28 @@ export function nextSavedAt(previous: number | null, nowMs: number): number {
   return Math.max(previous ?? 0, nowMs)
 }
 
-export function serializeSave(state: GameState, savedAt: number): string {
-  const file: SaveFile = { version: SAVE_VERSION, savedAt, state: { ...state, events: [] } }
+export function serializeSave(
+  state: GameState,
+  savedAt: number,
+  extras: Partial<SaveExtras> = {},
+): string {
+  const file: SaveFile = {
+    version: SAVE_VERSION,
+    savedAt,
+    state: { ...state, events: [] },
+    ...NO_EXTRAS,
+    ...extras,
+  }
   return JSON.stringify(file)
 }
 
 type Migration = (state: Record<string, unknown>) => Record<string, unknown>
 
 /** migrations[n] upgrades a version-n save to version n + 1. */
-const migrations: Record<number, Migration> = {}
+const migrations: Record<number, Migration> = {
+  // Version 2 added the quarry beside the station; the station state itself is unchanged.
+  1: (state) => state,
+}
 
 export function migrate(raw: {
   version: number
@@ -46,7 +73,14 @@ export function migrate(raw: {
 export function deserializeSave(json: string | null): SaveFile | null {
   if (!json) return null
   try {
-    const raw = JSON.parse(json) as { version?: unknown; savedAt?: unknown; state?: unknown }
+    const raw = JSON.parse(json) as {
+      version?: unknown
+      savedAt?: unknown
+      state?: unknown
+      business?: unknown
+      quarry?: unknown
+      inactiveSince?: unknown
+    }
     if (typeof raw.version !== 'number' || typeof raw.savedAt !== 'number') return null
     if (typeof raw.state !== 'object' || raw.state === null) return null
     if (raw.version > SAVE_VERSION) return null
@@ -62,7 +96,15 @@ export function deserializeSave(json: string | null): SaveFile | null {
     for (const car of (state.cars as { golden?: boolean }[] | undefined) ?? []) car.golden ??= false
     grantBuiltZones(state as unknown as GameState)
     moveToLayout(state as unknown as GameState)
-    return { version: SAVE_VERSION, savedAt: raw.savedAt, state: state as unknown as GameState }
+    const quarry = isQuarryState(raw.quarry) ? raw.quarry : null
+    return {
+      version: SAVE_VERSION,
+      savedAt: raw.savedAt,
+      state: state as unknown as GameState,
+      quarry,
+      business: raw.business === 'quarry' && quarry ? 'quarry' : 'station',
+      inactiveSince: typeof raw.inactiveSince === 'number' ? raw.inactiveSince : null,
+    }
   } catch {
     return null
   }

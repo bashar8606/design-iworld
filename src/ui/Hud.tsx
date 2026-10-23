@@ -6,6 +6,7 @@ import { onGameEvent } from '../store/events.ts'
 import { useGame } from '../store/gameStore.ts'
 import { useUi } from '../store/uiStore.ts'
 import { clockTime, formatCash } from './format.ts'
+import { useFiveTaps } from './useFiveTaps.ts'
 
 const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
@@ -222,19 +223,6 @@ function Toasts() {
       ))}
     </div>
   )
-}
-
-/** Five quick taps on the clock open the hidden debug menu. */
-function useFiveTaps(onFive: () => void) {
-  const taps = useRef<number[]>([])
-  return () => {
-    const now = performance.now()
-    taps.current = [...taps.current.filter((t) => now - t < 1500), now]
-    if (taps.current.length >= 5) {
-      taps.current = []
-      onFive()
-    }
-  }
 }
 
 export function Hud({

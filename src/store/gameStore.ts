@@ -1,14 +1,34 @@
 import { create } from 'zustand'
 import { type GameAction, applyAction } from '../game/actions.ts'
+import { type BusinessId, type SwitchResult, switchBusiness } from '../game/business.ts'
+import { tickQuarry } from '../game/quarry/tick.ts'
+import type { QuarryState } from '../game/quarry/types.ts'
 import { TICK_SECONDS, createInitialState } from '../game/state.ts'
 import { tick } from '../game/tick.ts'
 import type { GameState, TickInput, Vec2 } from '../game/types.ts'
 import { emitGameEvents } from './events.ts'
 
 export interface GameStore {
+  /** The charging station. */
   state: GameState
   /** The state one tick earlier, for interpolating positions between ticks. */
   prev: GameState
+  /** Which business is on screen and ticking. */
+  business: BusinessId
+  /** The quarry, once opened; it only ticks while it is on screen. */
+  quarry: QuarryState | null
+  quarryPrev: QuarryState | null
+  /** Wall-clock ms when the business that is not on screen was left. */
+  inactiveSince: number | null
+  /** Shows the other business; it catches up for the time it was away. */
+  switchTo: (business: BusinessId, nowMs?: number) => SwitchResult
+  /** Restores both businesses from a save. */
+  restore: (b: {
+    business: BusinessId
+    quarry: QuarryState | null
+    inactiveSince: number | null
+  }) => void
+  replaceQuarry: (quarry: QuarryState) => void
   /** performance.now() of the latest tick. */
   tickedAt: number
   input: TickInput
@@ -50,6 +70,37 @@ export const useGame = create<GameStore>()((set, get) => ({
     for (const listener of actionListeners) listener(action)
   },
   replace: (state) => set({ state, prev: state, tickedAt: performance.now() }),
+  business: 'station',
+  quarry: null,
+  quarryPrev: null,
+  inactiveSince: null,
+  switchTo: (business, nowMs = Date.now()) => {
+    const s = get()
+    const result = switchBusiness(
+      { active: s.business, station: s.state, quarry: s.quarry, inactiveSince: s.inactiveSince },
+      business,
+      nowMs,
+    )
+    const b = result.businesses
+    set({
+      business: b.active,
+      state: b.station,
+      prev: b.station,
+      quarry: b.quarry,
+      quarryPrev: b.quarry,
+      inactiveSince: b.inactiveSince,
+      tickedAt: performance.now(),
+    })
+    return result
+  },
+  restore: ({ business, quarry, inactiveSince }) =>
+    set({
+      business: business === 'quarry' && quarry ? 'quarry' : 'station',
+      quarry,
+      quarryPrev: quarry,
+      inactiveSince,
+    }),
+  replaceQuarry: (quarry) => set({ quarry, quarryPrev: quarry, tickedAt: performance.now() }),
   setPaused: (paused) => set({ paused }),
   setSpeed: (speed) => set({ speed }),
   autopilot: null,
@@ -81,7 +132,22 @@ export function startGameLoop(): () => void {
     const store = useGame.getState()
     const elapsed = Math.min(1, (now - last) / 1000)
     last = now
-    if (!store.paused) {
+    if (!store.paused && store.business === 'quarry' && store.quarry) {
+      accumulator += elapsed * store.speed
+      let quarry = store.quarry
+      let prev = quarry
+      let steps = 0
+      while (accumulator >= TICK_SECONDS && steps < MAX_STEPS_PER_FRAME) {
+        prev = quarry
+        quarry = tickQuarry(quarry, TICK_SECONDS, useGame.getState().input)
+        accumulator -= TICK_SECONDS
+        steps++
+      }
+      if (steps > 0) {
+        if (accumulator > TICK_SECONDS) accumulator = 0
+        useGame.setState({ quarry, quarryPrev: prev, tickedAt: now })
+      }
+    } else if (!store.paused) {
       accumulator += elapsed * store.speed
       let steps = 0
       let { state, prev } = store

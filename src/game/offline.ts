@@ -6,7 +6,11 @@ import type { Content, GameState } from './types.ts'
  * Seconds that count as "away", given the save time and the current wall clock (both ms).
  * Moving the clock backwards gives nothing; jumps forward are capped.
  */
-export function awaySeconds(savedAtMs: number, nowMs: number, content: Content): number {
+export function awaySeconds(
+  savedAtMs: number,
+  nowMs: number,
+  content: Pick<Content, 'economy'>,
+): number {
   const seconds = (nowMs - savedAtMs) / 1000
   if (!Number.isFinite(seconds) || seconds <= 0) return 0
   return Math.min(seconds, content.economy.offline.capSeconds)

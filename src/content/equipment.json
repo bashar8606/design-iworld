@@ -1,0 +1,100 @@
+{
+  "charger": {
+    "tiers": [
+      {
+        "id": "ac7",
+        "label": "7 kW",
+        "powerKw": 7,
+        "upgradePrice": 0,
+        "buildSeconds": 0
+      },
+      {
+        "id": "ac22",
+        "label": "22 kW",
+        "powerKw": 22,
+        "upgradePrice": 250,
+        "buildSeconds": 0
+      },
+      {
+        "id": "dc50",
+        "label": "50 kW",
+        "powerKw": 50,
+        "upgradePrice": 6000,
+        "buildSeconds": 60
+      },
+      {
+        "id": "dc150",
+        "label": "150 kW",
+        "powerKw": 150,
+        "upgradePrice": 60000,
+        "buildSeconds": 180
+      }
+    ]
+  },
+  "panelRow": {
+    "tiers": [
+      {
+        "id": "basic",
+        "label": "Basic",
+        "ratingKw": 9,
+        "upgradePrice": 0,
+        "buildSeconds": 0
+      },
+      {
+        "id": "mono",
+        "label": "Mono",
+        "ratingKw": 15,
+        "upgradePrice": 600,
+        "buildSeconds": 0
+      },
+      {
+        "id": "tracking",
+        "label": "Sun-tracking",
+        "ratingKw": 24,
+        "upgradePrice": 15000,
+        "buildSeconds": 150
+      }
+    ]
+  },
+  "battery": {
+    "tiers": [
+      {
+        "id": "small",
+        "label": "Small",
+        "capacityKwh": 40,
+        "powerKw": 14,
+        "upgradePrice": 0,
+        "buildSeconds": 0
+      },
+      {
+        "id": "container",
+        "label": "Container",
+        "capacityKwh": 160,
+        "powerKw": 45,
+        "upgradePrice": 8000,
+        "buildSeconds": 150
+      }
+    ]
+  },
+  "staff": {
+    "technician": {
+      "speed": 3,
+      "taskSeconds": 1.4,
+      "levels": [0, 400, 2500, 12000],
+      "speedPerLevel": 0.3
+    },
+    "cashier": {
+      "speed": 3.2,
+      "taskSeconds": 0.4,
+      "levels": [0, 1200, 5000, 20000],
+      "speedPerLevel": 0.3
+    },
+    "robot": {
+      "speed": 2,
+      "taskSeconds": 0,
+      "cleanPerSecond": 0.25,
+      "levels": [0, 3000, 9000, 30000],
+      "speedPerLevel": 0.3
+    }
+  }
+}

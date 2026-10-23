@@ -1,3 +1,26 @@
 {
-  "startingMoney": 50
+  "offline": {
+    "capSeconds": 28800,
+    "efficiency": 0.5,
+    "stepSeconds": 1,
+    "minSecondsForCard": 60
+  },
+  "boosts": {
+    "adIncomeMultiplier": 2,
+    "adBoostSeconds": 600,
+    "adBoostCapSeconds": 14400,
+    "permanentIncomeMultiplier": 2
+  },
+  "prestige": {
+    "creditsPerSqrtEarned": 0.05,
+    "incomePerLevel": 0.25,
+    "levelPriceBase": 5,
+    "levelPriceGrowth": 1.6
+  },
+  "milestones": {
+    "nightSurvivedMaxLost": 2
+  },
+  "save": {
+    "autosaveSeconds": 15
+  }
 }

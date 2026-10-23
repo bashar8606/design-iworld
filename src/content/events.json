@@ -1,0 +1,18 @@
+{
+  "firstDay": 2,
+  "sandstorm": {
+    "everyDays": [2, 3],
+    "dayTime": 0.42,
+    "durationSeconds": 70,
+    "panelOutputMultiplier": 0.5,
+    "dustMultiplier": 5,
+    "announceSeconds": 30
+  },
+  "heatwave": {
+    "everyDays": [2, 3],
+    "dayTime": 0.68,
+    "durationSeconds": 80,
+    "arrivalMultiplier": 2,
+    "announceSeconds": 30
+  }
+}

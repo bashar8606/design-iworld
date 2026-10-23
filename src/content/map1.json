@@ -1,0 +1,419 @@
+{
+  "id": "map1",
+  "name": "Desert Highway Stop",
+  "bounds": {
+    "minX": -7.6,
+    "maxX": 11.6,
+    "minZ": -16.5,
+    "maxZ": 18
+  },
+  "day": {
+    "lengthSeconds": 360,
+    "sunrise": 0.2,
+    "sunset": 0.85,
+    "dawnLength": 0.06,
+    "startTime": 0.245
+  },
+  "energy": {
+    "kwhPerKwSecond": 0.1
+  },
+  "player": {
+    "start": {
+      "x": -0.5,
+      "z": -2.5
+    },
+    "speed": 5,
+    "plugSeconds": 0.5,
+    "plugRadius": 1.9,
+    "pickupRadius": 1.3,
+    "padRadius": 1.15,
+    "cleanRadius": 1.6,
+    "cleanPerSecond": 0.5,
+    "buildSeconds": 1.2,
+    "minDrainPerSecond": 15
+  },
+  "road": {
+    "laneX": -8.9,
+    "spawnZ": -23,
+    "despawnZ": 36,
+    "entranceZ": -17,
+    "exitZ": 21,
+    "carSpeed": 7
+  },
+  "lane": {
+    "x": -6.6,
+    "entryZ": -16,
+    "exitZ": 18.5
+  },
+  "queueSlots": [
+    {
+      "x": -6.6,
+      "z": -4
+    },
+    {
+      "x": -6.6,
+      "z": -7
+    },
+    {
+      "x": -6.6,
+      "z": -10
+    },
+    {
+      "x": -6.6,
+      "z": -13
+    }
+  ],
+  "bays": [
+    {
+      "id": "bay1",
+      "car": {
+        "x": -3.6,
+        "z": -1
+      },
+      "post": {
+        "x": -1.5,
+        "z": -1
+      }
+    },
+    {
+      "id": "bay2",
+      "car": {
+        "x": -3.6,
+        "z": 2.2
+      },
+      "post": {
+        "x": -1.5,
+        "z": 2.2
+      }
+    },
+    {
+      "id": "bay3",
+      "car": {
+        "x": -3.6,
+        "z": 5.4
+      },
+      "post": {
+        "x": -1.5,
+        "z": 5.4
+      }
+    },
+    {
+      "id": "bay4",
+      "car": {
+        "x": -3.6,
+        "z": 8.6
+      },
+      "post": {
+        "x": -1.5,
+        "z": 8.6
+      }
+    },
+    {
+      "id": "bay5",
+      "car": {
+        "x": -3.6,
+        "z": 11.8
+      },
+      "post": {
+        "x": -1.5,
+        "z": 11.8
+      }
+    },
+    {
+      "id": "bay6",
+      "car": {
+        "x": -3.6,
+        "z": 15
+      },
+      "post": {
+        "x": -1.5,
+        "z": 15
+      }
+    }
+  ],
+  "arrivals": {
+    "baseCarsPerMinute": 2.2,
+    "perChargerCarsPerMinute": 0.9,
+    "nightMultiplier": 0.5,
+    "rushTime": 0.87,
+    "rushWidth": 0.055,
+    "rushMultiplier": 2.6,
+    "firstCarDelaySeconds": 0.5
+  },
+  "dust": {
+    "perSecond": 0.0015,
+    "maxOutputLoss": 0.5
+  },
+  "spending": {
+    "minDwellSeconds": 20,
+    "cafePerMinute": 6,
+    "carWashPerMinute": 10,
+    "maxDwellBonusSeconds": 60
+  },
+  "carTypes": {
+    "scooter": {
+      "weight": 0.35
+    },
+    "hatchback": {
+      "weight": 0.65
+    },
+    "sedan": {
+      "weight": 0.25,
+      "unlockAfter": "charger3"
+    },
+    "taxi": {
+      "weight": 0.15,
+      "unlockAfter": "charger4"
+    }
+  },
+  "vip": {
+    "everySeconds": [150, 300],
+    "offerSeconds": 30,
+    "payMultiplier": 5,
+    "type": "sedan"
+  },
+  "pads": [
+    {
+      "id": "charger1",
+      "kind": "charger",
+      "label": "Charger",
+      "price": 0,
+      "pos": {
+        "x": -1.5,
+        "z": -1
+      },
+      "bay": "bay1"
+    },
+    {
+      "id": "panel1",
+      "kind": "panelRow",
+      "label": "Solar row",
+      "price": 0,
+      "pos": {
+        "x": 6.5,
+        "z": -3.5
+      }
+    },
+    {
+      "id": "charger2",
+      "kind": "charger",
+      "label": "Charger",
+      "price": 20,
+      "pos": {
+        "x": -1.5,
+        "z": 2.2
+      },
+      "bay": "bay2"
+    },
+    {
+      "id": "panel2",
+      "kind": "panelRow",
+      "label": "Solar row",
+      "price": 35,
+      "pos": {
+        "x": 6.5,
+        "z": -5.7
+      },
+      "unlockAfter": ["charger2"]
+    },
+    {
+      "id": "battery1",
+      "kind": "battery",
+      "label": "Battery",
+      "price": 80,
+      "pos": {
+        "x": 1.8,
+        "z": 3.5
+      },
+      "unlockAfter": ["panel2"]
+    },
+    {
+      "id": "technician1",
+      "kind": "technician",
+      "label": "Hire technician",
+      "price": 220,
+      "pos": {
+        "x": 4.4,
+        "z": 0.8
+      },
+      "unlockAfter": ["battery1"]
+    },
+    {
+      "id": "cafe",
+      "kind": "cafe",
+      "label": "Caf\u00e9",
+      "price": 400,
+      "pos": {
+        "x": 8.2,
+        "z": 6
+      },
+      "unlockAfter": ["technician1"]
+    },
+    {
+      "id": "charger3",
+      "kind": "charger",
+      "label": "Charger",
+      "price": 300,
+      "pos": {
+        "x": -1.5,
+        "z": 5.4
+      },
+      "unlockAfter": ["technician1"],
+      "bay": "bay3"
+    },
+    {
+      "id": "panel3",
+      "kind": "panelRow",
+      "label": "Solar row",
+      "price": 500,
+      "pos": {
+        "x": 6.5,
+        "z": -7.9
+      },
+      "unlockAfter": ["charger3"]
+    },
+    {
+      "id": "cashier1",
+      "kind": "cashier",
+      "label": "Hire cashier",
+      "price": 900,
+      "pos": {
+        "x": 6.8,
+        "z": 0.8
+      },
+      "unlockAfter": ["cafe"]
+    },
+    {
+      "id": "battery2",
+      "kind": "battery",
+      "label": "Battery",
+      "price": 1400,
+      "pos": {
+        "x": 1.8,
+        "z": 7.5
+      },
+      "unlockAfter": ["panel3"]
+    },
+    {
+      "id": "charger4",
+      "kind": "charger",
+      "label": "Charger",
+      "price": 2200,
+      "pos": {
+        "x": -1.5,
+        "z": 8.6
+      },
+      "unlockAfter": ["battery2"],
+      "bay": "bay4"
+    },
+    {
+      "id": "panel4",
+      "kind": "panelRow",
+      "label": "Solar row",
+      "price": 3200,
+      "pos": {
+        "x": 6.5,
+        "z": -10.1
+      },
+      "unlockAfter": ["charger4"]
+    },
+    {
+      "id": "robot1",
+      "kind": "robot",
+      "label": "Cleaning robot",
+      "price": 4500,
+      "pos": {
+        "x": 9.2,
+        "z": 0.8
+      },
+      "unlockAfter": ["panel4"]
+    },
+    {
+      "id": "carWash",
+      "kind": "carWash",
+      "label": "Car wash",
+      "price": 7000,
+      "pos": {
+        "x": 8.2,
+        "z": 12.5
+      },
+      "unlockAfter": ["robot1"]
+    },
+    {
+      "id": "technician2",
+      "kind": "technician",
+      "label": "Hire technician",
+      "price": 9000,
+      "pos": {
+        "x": 4.4,
+        "z": -1.4
+      },
+      "unlockAfter": ["charger4"]
+    },
+    {
+      "id": "charger5",
+      "kind": "charger",
+      "label": "Charger",
+      "price": 14000,
+      "pos": {
+        "x": -1.5,
+        "z": 11.8
+      },
+      "unlockAfter": ["carWash"],
+      "bay": "bay5"
+    },
+    {
+      "id": "panel5",
+      "kind": "panelRow",
+      "label": "Solar row",
+      "price": 20000,
+      "pos": {
+        "x": 6.5,
+        "z": -12.3
+      },
+      "unlockAfter": ["charger5"]
+    },
+    {
+      "id": "battery3",
+      "kind": "battery",
+      "label": "Battery",
+      "price": 28000,
+      "pos": {
+        "x": 1.8,
+        "z": 11.5
+      },
+      "unlockAfter": ["panel5"]
+    },
+    {
+      "id": "charger6",
+      "kind": "charger",
+      "label": "Charger",
+      "price": 40000,
+      "pos": {
+        "x": -1.5,
+        "z": 15
+      },
+      "unlockAfter": ["battery3"],
+      "bay": "bay6"
+    },
+    {
+      "id": "panel6",
+      "kind": "panelRow",
+      "label": "Solar row",
+      "price": 55000,
+      "pos": {
+        "x": 6.5,
+        "z": -14.5
+      },
+      "unlockAfter": ["charger6"]
+    }
+  ],
+  "initial": {
+    "cash": 0,
+    "firstCarType": "scooter"
+  },
+  "panelRow": {
+    "halfLength": 4
+  },
+  "cashStackOffset": 1.8
+}

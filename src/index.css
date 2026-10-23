@@ -263,3 +263,23 @@ body {
   background: #19b5a5;
   color: white;
 }
+
+.perf-overlay {
+  position: absolute;
+  left: max(8px, var(--safe-left));
+  bottom: max(8px, var(--safe-bottom));
+  background: rgb(15 23 42 / 0.75);
+  color: #a6e22e;
+  font:
+    600 12px/1.4 ui-monospace,
+    Menlo,
+    monospace;
+  padding: 6px 10px;
+  border-radius: 8px;
+  pointer-events: none;
+  z-index: 20;
+}
+
+.perf-bad {
+  color: #ff8a80;
+}

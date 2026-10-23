@@ -9,23 +9,34 @@ import { Ground } from './Ground.tsx'
 import { Lighting } from './Lighting.tsx'
 import { Pads } from './Pads.tsx'
 import { Pickups } from './Pickups.tsx'
+import { PerfProbe } from './PerfProbe.tsx'
 import { Player, Staff } from './People.tsx'
+import { BakedContactShadow, BlobShadows } from './Shadows.tsx'
+import { quality } from './quality.ts'
 
 export interface WorldProps {
   /** Real-time shadows; the device build uses a baked contact shadow instead. */
   shadows?: boolean
   maxDpr?: number
+  /** Frame the whole layout instead of following the player (stress test). */
+  overview?: boolean
   children?: React.ReactNode
 }
 
-export function World({ shadows = true, maxDpr = 2, children }: WorldProps) {
+export function World({
+  shadows = quality.shadows,
+  maxDpr = quality.maxDpr,
+  overview = false,
+  children,
+}: WorldProps) {
   return (
     <Canvas
       shadows={shadows ? 'percentage' : false}
       dpr={[1, maxDpr]}
       gl={{ antialias: true, powerPreference: 'high-performance' }}
     >
-      <CameraRig />
+      <CameraRig follow={!overview} viewSize={overview ? 95 : undefined} />
+      <PerfProbe />
       <DayNight shadows={shadows} />
       <Suspense fallback={null}>
         <Lighting />
@@ -40,6 +51,8 @@ export function World({ shadows = true, maxDpr = 2, children }: WorldProps) {
         <Player />
         <Staff />
         <Effects />
+        {!shadows && <BakedContactShadow />}
+        {!shadows && <BlobShadows />}
         {children}
       </Suspense>
     </Canvas>

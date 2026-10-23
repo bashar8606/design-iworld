@@ -20,6 +20,18 @@ const offset = new THREE.Vector3(
   CAMERA_DISTANCE * Math.cos(el) * Math.cos(az),
 )
 
+/** Centre of everything built, for the overview camera. */
+function overviewCenter(state: ReturnType<typeof useGame.getState>['state']) {
+  const pads = getContent(state.mapId).map.pads
+  const xs = pads.map((p) => p.pos.x)
+  const zs = pads.map((p) => p.pos.z)
+  return new THREE.Vector3(
+    (Math.min(...xs) + Math.max(...xs)) / 2,
+    0,
+    (Math.min(...zs) + Math.max(...zs)) / 2,
+  )
+}
+
 /** Orthographic camera that follows the player smoothly and stays over the map. */
 export function CameraRig({
   follow = true,
@@ -52,7 +64,7 @@ export function CameraRig({
             Math.min(b.maxZ - 2, lerp(prev.player.pos.z, state.player.pos.z, t)),
           ),
         )
-      : new THREE.Vector3((b.minX + b.maxX) / 2, 0, (b.minZ + b.maxZ) / 2)
+      : overviewCenter(state)
     if (first.current) {
       target.current.copy(goal)
       first.current = false

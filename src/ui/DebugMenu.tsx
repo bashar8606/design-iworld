@@ -104,6 +104,9 @@ export function DebugMenu() {
             Play {getContent(id).map.name}
           </button>
         ))}
+        <button className="btn" onClick={() => useUi.getState().setLayoutView(true)}>
+          Layout view
+        </button>
         <button className="btn" onClick={() => setStress(!quality.stress)}>
           {quality.stress ? 'Leave stress test' : 'Stress test'}
         </button>

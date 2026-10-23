@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest'
+import map1Json from '../content/map1.json'
 import { getContent, setContentOverrides } from '../game/content.ts'
 import { deserializeSave, serializeSave } from '../game/save.ts'
 import { createInitialState } from '../game/state.ts'
@@ -36,8 +37,11 @@ describe('remote config', () => {
     const content = getContent('map1')
     expect(content.economy.offline.capSeconds).toBe(28800)
     expect(content.economy.offline.efficiency).toBe(0.5)
-    expect(content.map.bounds.minX).toBe(-7.6)
-    expect(content.map.pads.find((p) => p.id === 'charger2')!.pos).toEqual({ x: -1.5, z: 2.2 })
+    // Shape-changing keys are dropped, so the bundled layout stays as it is.
+    expect(content.map.bounds.minX).toBe(map1Json.bounds.minX)
+    expect(content.map.pads.find((p) => p.id === 'charger2')!.pos).toEqual(
+      map1Json.pads.find((p) => p.id === 'charger2')!.pos,
+    )
     expect(content.map.pads.some((p) => p.id === 'ghost')).toBe(false)
   })
 

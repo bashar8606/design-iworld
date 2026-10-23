@@ -4,6 +4,7 @@ import * as THREE from 'three'
 import { useShallow } from 'zustand/react/shallow'
 import { getContent } from '../game/content.ts'
 import type { Charger } from '../game/types.ts'
+import { chargePort, raisedRowPosts } from '../game/layout.ts'
 import { bayDef, itemPos, windStrength } from '../game/world.ts'
 import { useGame } from '../store/gameStore.ts'
 import { cableMaterial, glowLime, glowTeal, propMaterial } from './materials.ts'
@@ -85,13 +86,8 @@ export function SolarPanels() {
     const m = new THREE.Matrix4()
     for (const row of rows) {
       if (row.y <= 0) continue
-      for (const [dx, dz] of [
-        [-3.7, -0.6],
-        [3.7, -0.6],
-        [-3.7, 0.6],
-        [3.7, 0.6],
-      ] as const) {
-        m.makeScale(1, row.y + 0.75, 1).setPosition(row.x + dx, 0, row.z + dz)
+      for (const post of raisedRowPosts(map, padPos(map, row.id))) {
+        m.makeScale(1, row.y + 0.75, 1).setPosition(post.x, 0, post.z)
         posts.current!.setMatrixAt(p++, m)
       }
     }
@@ -104,7 +100,7 @@ export function SolarPanels() {
     frames.current!.instanceMatrix.needsUpdate = true
     modules.current!.computeBoundingSphere()
     frames.current!.computeBoundingSphere()
-  }, [rows])
+  }, [rows, map])
 
   // Dust tint, tier tint and sun-tracking tilt.
   const color = useMemo(() => new THREE.Color(), [])
@@ -216,7 +212,7 @@ function BatteryUnit({
   })
   // Rotated so the long side faces the camera.
   return (
-    <group ref={group} position={[x, y, z]} rotation-y={tier === 0 ? 0 : Math.PI / 2}>
+    <group ref={group} position={[x, y, z]}>
       <mesh geometry={geometry} material={propMaterial} castShadow receiveShadow />
       <mesh
         ref={ref}
@@ -334,20 +330,24 @@ function UpgradeMarker() {
 
 function ChargingCable({ chargerId, bayId }: { chargerId: string; bayId: string }) {
   const map = useMap()
-  const charging = useGame((s) => {
+  // The type of the car charging here, or null: the cable runs to that car's charge port.
+  const type = useGame((s) => {
     const c = s.state.chargers.find((x: Charger) => x.id === chargerId)
     const car = s.state.cars.find((x) => x.id === c?.carId)
-    return car?.phase === 'charging'
+    return car?.phase === 'charging' ? car.type : null
   })
+  const mapId = useGame((s) => s.state.mapId)
   const geometry = useMemo(() => {
+    if (!type) return null
     const bay = bayDef(map, bayId)
     return cableGeometry(
       { x: bay.post.x - 0.25, y: 1.0, z: bay.post.z },
-      { x: bay.car.x + 1.1, y: 0.85, z: bay.car.z - 0.85 },
+      chargePort(bay, getContent(mapId), type),
       0.55,
     )
-  }, [map, bayId])
-  return charging ? <mesh geometry={geometry} material={cableMaterial} castShadow /> : null
+  }, [map, mapId, bayId, type])
+  const charging = geometry !== null
+  return charging ? <mesh geometry={geometry!} material={cableMaterial} castShadow /> : null
 }
 
 // ---------------------------------------------------------------------------

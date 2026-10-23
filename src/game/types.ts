@@ -65,6 +65,8 @@ export interface MapContent {
   name: string
   /** Visual setting for the scene. */
   theme: 'desert' | 'city' | 'snow'
+  /** Raised whenever things move on the map, so saves made before move with them. */
+  layoutVersion?: number
   bounds: { minX: number; maxX: number; minZ: number; maxZ: number }
   day: {
     lengthSeconds: number
@@ -144,6 +146,8 @@ export interface CarTypeDef {
   patienceSeconds: number
   speed: number
   length: number
+  /** Charge port: metres forward of the centre, metres to the left, height. */
+  port: [number, number, number]
 }
 
 export interface TierDef {
@@ -424,6 +428,8 @@ export interface GameState {
    */
   ledger: string[] | null
   missions: { seq: number; completed: number; active: Mission[] }
+  /** The map layout this state was laid out on (see MapContent.layoutVersion). */
+  layoutVersion: number
   /** Car album: cars served per card and stars claimed per card. Carried across maps. */
   collection: { served: Record<string, number>; claimed: Record<string, number> }
   /** Events produced by the last tick(s); the store drains them. */

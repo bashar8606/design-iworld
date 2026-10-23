@@ -83,8 +83,8 @@ def build_car(name, spec):
         )
         parts.append(c.box(f"tail{sx}", (0.3, 0.04, 0.1), (sx * W * 0.32, -L / 2 + 0.01, clearance + body_h * 0.7), "taillight"))
 
-    # Charging-port flap on the left side, open.
-    port_y = -L / 2 + 0.9
+    # Charging-port flap just behind the left front wheel, open, so it faces the charger when parked nose-in.
+    port_y = L / 2 - 1.25
     parts.append(c.box("port", (0.04, 0.22, 0.18), (-W / 2 - 0.01, port_y, clearance + body_h * 0.8), "teal"))
     parts.append(c.box("flap", (0.2, 0.02, 0.18), (-W / 2 - 0.12, port_y + 0.12, clearance + body_h * 0.8), spec["body"]))
 

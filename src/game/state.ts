@@ -74,6 +74,7 @@ export function createInitialState(mapId = 'map1', options: NewGameOptions = {})
     mapComplete: false,
     ledger: options.carry?.ledger ?? null,
     missions: { seq: 0, completed: 0, active: [] },
+    layoutVersion: map.layoutVersion ?? 1,
     collection: options.carry?.collection ?? emptyCollection(),
     events: [],
   }

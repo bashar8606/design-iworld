@@ -2,6 +2,7 @@ import { useFrame } from '@react-three/fiber'
 import { useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import { getContent } from '../game/content.ts'
+import { cafeSpots, chargePort } from '../game/layout.ts'
 import type { Vec2 } from '../game/types.ts'
 import { bayDef, chargerPowerKw } from '../game/world.ts'
 import { useGame } from '../store/gameStore.ts'
@@ -19,14 +20,6 @@ interface Driver {
   door: Vec2
   spot: Vec2
   heading: number
-}
-
-/** Spots in front of the kiosk's serving window (it faces +z in the scene). */
-function cafeSpots(cafe: Vec2): Vec2[] {
-  return [-1.7, -0.6, 0.5, 1.6].map((dx, i) => ({
-    x: cafe.x + dx,
-    z: cafe.z + 2.1 + (i % 2) * 0.5,
-  }))
 }
 
 function step(from: Vec2, to: Vec2, dist: number): { pos: Vec2; arrived: boolean } {
@@ -90,7 +83,9 @@ export function Drivers() {
         const used = new Set([...list.values()].map((d) => `${d.spot.x},${d.spot.z}`))
         const spot = spots.find((s) => !used.has(`${s.x},${s.z}`))
         const bay = bayDef(content.map, car.bayId)
-        const door = { x: bay.car.x + 0.4, z: bay.car.z - 1.25 }
+        // The driver's door: just behind the front wheel on the left, outside the car.
+        const port = chargePort(bay, content, car.type)
+        const door = { x: port.x - 0.6, z: port.z - 0.5 }
         const walk = Math.hypot(spot ? spot.x - door.x : 0, spot ? spot.z - door.z : 0) / WALK_SPEED
         if (!spot || list.size >= MAX || remaining < 2 * walk + MIN_STAY) continue
         driver = { phase: 'out', pos: { ...door }, door, spot, heading: 0 }

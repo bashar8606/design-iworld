@@ -6,6 +6,7 @@ import { getContent } from '../game/content.ts'
 import { ownedZones } from '../game/world.ts'
 import { onGameEvent } from '../store/events.ts'
 import { tickAlpha, useGame } from '../store/gameStore.ts'
+import { useUi } from '../store/uiStore.ts'
 import {
   CAMERA_AZIMUTH_DEG,
   CAMERA_DISTANCE,
@@ -85,6 +86,22 @@ export function CameraRig({
     if (!cam) return
     const { state, prev } = useGame.getState()
     const map = getContent(state.mapId).map
+    if (useUi.getState().layoutView) {
+      // Straight down over the whole map, north (−z) up.
+      // The legend covers the bottom of the screen, so fit the map into the space above it.
+      const b = map.bounds
+      const w = b.maxX - b.minX + 4
+      const d = b.maxZ - b.minZ + 4
+      const free = size.height * 0.72
+      cam.zoom = Math.min(size.width / w, free / d)
+      cam.updateProjectionMatrix()
+      const cx = (b.minX + b.maxX) / 2
+      const cz = (b.minZ + b.maxZ) / 2 + (size.height - free) / 2 / cam.zoom
+      cam.position.set(cx, 80, cz + 0.001)
+      cam.lookAt(cx, 0, cz)
+      first.current = true
+      return
+    }
     const zones = map.zones ? ownedZones(state, map).length : 1
     const r = reveal.current
     const rt = r ? (performance.now() - r.start) / 1000 : Infinity

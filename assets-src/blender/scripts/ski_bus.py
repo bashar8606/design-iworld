@@ -42,7 +42,7 @@ def build():
             parts.append(c.box(f"ski{i}{dx}", (0.08, 3.4, 0.04), (x + dx, 0, top + 0.07), col))
     parts += wheels(L, W, axles=(L / 2 - 1.0, -L / 2 + 1.05), radius=0.42)
     parts += lights(L, W, z_head=CLEAR + 0.6, z_tail=CLEAR + 0.75)
-    parts += charge_port(L, W, y=-L / 2 + 1.0, z=CLEAR + 0.95, body="sky")
+    parts += charge_port(L, W, y=L / 2 - 1.3, z=CLEAR + 0.95, body="sky")
     return finish("ski_bus", parts, 3000, L)
 
 

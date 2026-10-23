@@ -180,16 +180,16 @@ export function batteryGeometry(tier: number): THREE.BufferGeometry {
       cylAt(0.1, 0.05, [0.7, 0.9, 0.56], PALETTE.teal, 8, [Math.PI / 2, 0, 0]),
     ])
   }
-  // Shipping-container battery with ribs.
+  // Container battery with ribs; fits the 4.0 × 2.2 m footprint in footprints.json.
   const parts = [
-    boxAt([6.2, 0.14, 2.6], [0, 0.07, 0], PALETTE.concrete),
-    boxAt([6.0, 2.3, 2.4], [0, 1.29, 0], PALETTE.white),
-    boxAt([6.06, 0.12, 2.46], [0, 2.47, 0], PALETTE.navy),
+    boxAt([4.0, 0.14, 2.2], [0, 0.07, 0], PALETTE.concrete),
+    boxAt([3.8, 2.1, 2.0], [0, 1.19, 0], PALETTE.white),
+    boxAt([3.86, 0.12, 2.06], [0, 2.27, 0], PALETTE.navy),
   ]
-  for (let i = 0; i < 9; i++) {
-    parts.push(boxAt([0.08, 1.9, 2.46], [-2.6 + i * 0.65, 1.25, 0], '#E3E6E2'))
+  for (let i = 0; i < 6; i++) {
+    parts.push(boxAt([0.08, 1.7, 2.06], [-1.6 + i * 0.64, 1.15, 0], '#E3E6E2'))
   }
-  parts.push(boxAt([0.6, 0.5, 0.6], [2.2, 2.78, 0], PALETTE.metal))
+  parts.push(boxAt([0.5, 0.45, 0.5], [1.3, 2.55, 0], PALETTE.metal))
   return merge(parts)
 }
 
@@ -197,7 +197,7 @@ export function batteryGeometry(tier: number): THREE.BufferGeometry {
 export function batteryStrip(tier: number) {
   return tier === 0
     ? { length: 1.6, pos: [0, 1.2, 0.56] as const }
-    : { length: 5.2, pos: [0, 2.05, 1.24] as const }
+    : { length: 3.3, pos: [0, 1.85, 1.04] as const }
 }
 
 // ---------------------------------------------------------------------------

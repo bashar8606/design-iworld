@@ -3,6 +3,7 @@ import { useLayoutEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import textures from '../content/textures.json'
 import { getContent } from '../game/content.ts'
+import { BAY_DEPTH, stopLine } from '../game/layout.ts'
 import { useGame } from '../store/gameStore.ts'
 import { AlpineScenery } from './Alpine.tsx'
 import { CityScenery } from './City.tsx'
@@ -210,24 +211,34 @@ function BayLines() {
   const mapId = useGame((s) => s.state.mapId)
   const map = getContent(mapId).map
   const ref = useRef<THREE.InstancedMesh>(null)
+  // Two side lines per bay running back from the stop line, and a short bar on the stop line.
   const lines = useMemo(() => {
-    const out: { x: number; z: number }[] = []
+    const out: { x: number; z: number; stop?: boolean }[] = []
     for (const bay of map.bays) {
-      out.push({ x: bay.car.x, z: bay.car.z - 1.6 }, { x: bay.car.x, z: bay.car.z + 1.6 })
+      const stop = stopLine(bay)
+      const x = stop.x - BAY_DEPTH / 2
+      out.push(
+        { x, z: bay.car.z - 1.6 },
+        { x, z: bay.car.z + 1.6 },
+        { x: stop.x, z: stop.z, stop: true },
+      )
     }
     return out
   }, [map])
   useLayoutEffect(() => {
     const m = new THREE.Matrix4()
+    const r = new THREE.Matrix4()
     lines.forEach((p, i) => {
-      m.makeRotationX(-Math.PI / 2).setPosition(p.x, 0.014, p.z)
+      m.makeRotationX(-Math.PI / 2)
+      if (p.stop) m.premultiply(r.makeRotationY(Math.PI / 2)).scale(new THREE.Vector3(0.5, 1, 1))
+      m.setPosition(p.x, 0.014, p.z)
       ref.current!.setMatrixAt(i, m)
     })
     ref.current!.instanceMatrix.needsUpdate = true
   }, [lines])
   return (
     <instancedMesh ref={ref} args={[undefined, undefined, lines.length]}>
-      <planeGeometry args={[4.4, 0.1]} />
+      <planeGeometry args={[BAY_DEPTH, 0.1]} />
       <meshStandardMaterial color="#FFFFFF" />
     </instancedMesh>
   )

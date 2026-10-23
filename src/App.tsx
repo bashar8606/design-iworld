@@ -28,6 +28,7 @@ import { DebugMenu } from './ui/DebugMenu.tsx'
 import { ErrorBoundary } from './ui/ErrorBoundary.tsx'
 import { FeedbackSheet } from './ui/FeedbackSheet.tsx'
 import { Hud } from './ui/Hud.tsx'
+import { LayoutViewBar } from './ui/LayoutViewBar.tsx'
 import { MapSheet } from './ui/MapSheet.tsx'
 import { MissionCard, MissionsSheet } from './ui/Missions.tsx'
 import { PerfOverlay } from './ui/PerfOverlay.tsx'
@@ -90,6 +91,7 @@ export default function App() {
   const welcomeBackReady = useAds((s) => s.ready === 'welcome_back')
   useKeyboardControls()
   const open = useUi((s) => s.open)
+  const layoutView = useUi((s) => s.layoutView)
   const sell = () => {
     useGame.getState().dispatch({ type: 'sellToUtility' })
     open('greenCredits')
@@ -98,28 +100,32 @@ export default function App() {
     <div className="app">
       <World />
       <StormOverlay />
-      <ErrorBoundary name="hud">
-        <Hud allowDebug={!store}>
-          <div className="hud-under-bar">
-            <div className="hud-banners">
-              <EventBanner />
-              <ContractBanner />
-              {!store && <TutorialHint />}
+      {layoutView ? (
+        <LayoutViewBar />
+      ) : (
+        <ErrorBoundary name="hud">
+          <Hud allowDebug={!store}>
+            <div className="hud-under-bar">
+              <div className="hud-banners">
+                <EventBanner />
+                <ContractBanner />
+                {!store && <TutorialHint />}
+              </div>
+              {!store && <MissionCard />}
             </div>
-            {!store && <MissionCard />}
-          </div>
-          <div className="hud-bottom">
-            {!store && <AdOffer />}
-            {!store && <UpgradeCard />}
-            <BottomNav store={store} />
-          </div>
-        </Hud>
-      </ErrorBoundary>
-      <Joystick />
+            <div className="hud-bottom">
+              {!store && <AdOffer />}
+              {!store && <UpgradeCard />}
+              <BottomNav store={store} />
+            </div>
+          </Hud>
+        </ErrorBoundary>
+      )}
+      {!layoutView && <Joystick />}
       <ErrorBoundary name="sheets">
         <Sheets />
       </ErrorBoundary>
-      {!store && (
+      {!store && !layoutView && (
         <>
           <OfflineCard
             onDouble={

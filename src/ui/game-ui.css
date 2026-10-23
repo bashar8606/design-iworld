@@ -1012,3 +1012,53 @@
 .storm-overlay.storm-snow {
   background: radial-gradient(ellipse at 30% 40%, rgb(240 246 252 / 0.2), rgb(214 228 240 / 0.6));
 }
+
+/* ---------------------------------------------------------------- debug layout view */
+
+.layout-bar {
+  position: absolute;
+  max-height: 26%;
+  overflow-y: auto;
+  box-sizing: border-box;
+  left: max(12px, var(--safe-left));
+  right: max(12px, var(--safe-right));
+  bottom: max(12px, var(--safe-bottom));
+  z-index: 20;
+  padding: 10px 12px;
+  border-radius: 16px;
+  background: rgb(255 255 255 / 0.92);
+  color: var(--ui-ink);
+  font-size: 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.layout-bar .btn {
+  min-height: 36px;
+  padding: 6px 12px;
+}
+
+.layout-bar ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+}
+
+.layout-bar li span {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  margin-right: 4px;
+  vertical-align: -1px;
+}
+
+.layout-problems {
+  margin: 0;
+  padding-left: 18px;
+  color: #b42318;
+}

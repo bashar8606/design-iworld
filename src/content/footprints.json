@@ -1,0 +1,20 @@
+{
+  "_note": "Ground footprints in metres (half sizes) of everything placed on a map, at its largest upgraded size. src/game/layout.ts checks maps against them.",
+  "charger": { "hx": 0.45, "hz": 0.5 },
+  "cash": { "hx": 0.3, "hz": 0.2 },
+  "panelRow": { "hx": 3.85, "hz": 0.5 },
+  "battery": { "hx": 2.0, "hz": 1.1 },
+  "cafe": { "minX": -2.65, "maxX": 2.65, "minZ": -1.25, "maxZ": 2.37 },
+  "carWash": { "hx": 2.2, "hz": 3.1 },
+  "staff": { "hx": 0.5, "hz": 0.5 },
+  "windTurbine": { "hx": 0.6, "hz": 0.6 },
+  "pad": 1.05,
+  "landPad": 1.2,
+  "raisedPost": 0.11,
+  "raisedPostInset": 0.85,
+  "vehicleHalfWidth": 1.0,
+  "bayDepth": 6.2,
+  "laneHalfWidth": 1.2,
+  "queueGap": 0.6,
+  "cafeQueue": { "minX": -1.9, "maxX": 1.9, "minZ": 2.6, "maxZ": 3.6 }
+}

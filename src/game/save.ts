@@ -61,6 +61,7 @@ export function deserializeSave(json: string | null): SaveFile | null {
     if (!('turbines' in state)) state.turbines = []
     for (const car of (state.cars as { golden?: boolean }[] | undefined) ?? []) car.golden ??= false
     grantBuiltZones(state as unknown as GameState)
+    moveToLayout(state as unknown as GameState)
     return { version: SAVE_VERSION, savedAt: raw.savedAt, state: state as unknown as GameState }
   } catch {
     return null
@@ -78,4 +79,28 @@ function grantBuiltZones(state: GameState) {
     if (built) state.pads[land.id] = { paid: land.price, built: true, builtAt: 0 }
     else state.pads[land.id] ??= { paid: 0, built: false, builtAt: null }
   }
+}
+
+/**
+ * A save from before its map was re-laid out: send the cars away (new ones arrive within
+ * seconds), and move staff and cash stacks to where their pads and bays now are.
+ */
+function moveToLayout(state: GameState) {
+  const { map } = getContent(state.mapId)
+  const version = map.layoutVersion ?? 1
+  if ((state.layoutVersion ?? 1) === version) return
+  state.layoutVersion = version
+  state.cars = []
+  state.queue = []
+  state.chargers = state.chargers.map((c) => ({ ...c, carId: null }))
+  state.player = { ...state.player, plug: null }
+  state.nextArrivalAt = Math.min(state.nextArrivalAt, state.time + 2)
+  state.staff = state.staff.map((m) => {
+    const pad = map.pads.find((p) => p.id === m.id)
+    return pad ? { ...m, home: { ...pad.pos }, pos: { ...pad.pos }, target: null, timer: 0 } : m
+  })
+  state.pickups = state.pickups.map((p) => {
+    const bay = map.bays.find((b) => b.id === p.bayId)
+    return bay ? { ...p, pos: { x: bay.post.x + map.cashStackOffset, z: bay.post.z } } : p
+  })
 }

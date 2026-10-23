@@ -9,6 +9,10 @@ const LEGEND = [
   ['#8A5CF6', 'Parked vehicle (longest)'],
   ['#F29E4C', 'Cash stack / café queue'],
   ['#7A7F87', 'Entry lane'],
+  ['#B08D57', 'Plaza'],
+  ['#0E7F74', 'Energy-yard fence'],
+  ['#3E9B5F', 'Palms, lamps, planters'],
+  ['#C2410C', 'Way out through the car wash'],
   ['#F7C948', 'Zone border'],
   ['#E5484D', 'Problem'],
 ] as const

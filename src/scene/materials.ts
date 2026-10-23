@@ -23,3 +23,11 @@ export const glowLime = new THREE.MeshStandardMaterial({
 })
 
 export const cableMaterial = new THREE.MeshStandardMaterial({ color: '#2B2B2E', roughness: 0.6 })
+
+/** Street-lamp heads: dim by day, warm and bright after dark (DayNight sets the intensity). */
+export const glowLamp = new THREE.MeshStandardMaterial({
+  color: '#FFF1C9',
+  emissive: '#FFD27A',
+  emissiveIntensity: 0.1,
+  toneMapped: false,
+})

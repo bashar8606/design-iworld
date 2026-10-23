@@ -12,6 +12,10 @@ const COLORS: Record<FootprintKind, string> = {
   post: '#1E3557',
   walk: '#F29E4C',
   lane: '#7A7F87',
+  decor: '#3E9B5F',
+  fence: '#0E7F74',
+  route: '#C2410C',
+  plaza: '#B08D57',
 }
 const PROBLEM = '#E5484D'
 

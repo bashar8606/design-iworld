@@ -15,6 +15,11 @@
   "vehicleHalfWidth": 1.0,
   "bayDepth": 6.2,
   "laneHalfWidth": 1.2,
+  "staffHut": { "hx": 2.5, "hz": 1.6 },
+  "palm": { "hx": 0.5, "hz": 0.5 },
+  "lamp": { "hx": 0.2, "hz": 0.2 },
+  "planter": { "hx": 0.5, "hz": 0.5 },
+  "fence": 0.06,
   "queueGap": 0.6,
   "cafeQueue": { "minX": -1.9, "maxX": 1.9, "minZ": 2.6, "maxZ": 3.6 }
 }

@@ -373,3 +373,78 @@ export function chaletGeometry(): THREE.BufferGeometry {
     boxAt([1.3, 2.2, 0.1], [0, 1.1, 3.22], '#5E3E2A'),
   ])
 }
+
+// ---------------------------------------------------------------------------
+// Site plan pieces (map 1): staff hut, palms, street lamps, planters, yard fence posts.
+
+/** Staff hut: a small block with a flat overhanging roof, a door facing +z and a sign. */
+export function staffHutGeometry(): THREE.BufferGeometry {
+  return merge([
+    boxAt([5.0, 0.15, 3.2], [0, 0.07, 0], PALETTE.concrete),
+    boxAt([4.6, 2.5, 2.8], [0, 1.4, 0], PALETTE.cream),
+    boxAt([5.2, 0.22, 3.5], [0, 2.75, 0.1], PALETTE.teal),
+    boxAt([1.0, 1.9, 0.08], [-1.2, 1.1, 1.42], PALETTE.navy),
+    boxAt([1.4, 0.8, 0.08], [0.8, 1.6, 1.42], '#9DD8F0'),
+    boxAt([1.8, 0.45, 0.1], [0.8, 2.35, 1.48], PALETTE.yellow),
+    boxAt([0.5, 0.5, 0.5], [1.6, 3.1, -0.6], PALETTE.metal),
+  ])
+}
+
+/** A desert palm: a slightly bent ringed trunk and a crown of drooping fronds. */
+export function palmGeometry(): THREE.BufferGeometry {
+  const parts: THREE.BufferGeometry[] = []
+  for (let i = 0; i < 6; i++) {
+    const r = 0.2 - i * 0.015
+    const seg = new THREE.CylinderGeometry(r * 0.9, r, 0.62, 7).translate(
+      0.04 * i * i * 0.1,
+      0.31 + i * 0.6,
+      0,
+    )
+    parts.push(paint(seg, i % 2 ? '#9C7A55' : '#8A6A4A'))
+  }
+  const top = 3.6
+  for (let i = 0; i < 7; i++) {
+    const frond = new THREE.BoxGeometry(0.42, 0.06, 1.9).translate(0, 0, 0.95)
+    frond.rotateX(0.45)
+    frond.rotateY((i / 7) * Math.PI * 2)
+    frond.translate(0.18, top, 0)
+    parts.push(paint(frond, i % 2 ? '#3E9B5F' : '#4FB06D'))
+  }
+  parts.push(paint(new THREE.SphereGeometry(0.28, 7, 5).translate(0.18, top, 0), '#6B5236'))
+  return merge(parts)
+}
+
+/** Street lamp: a slim pole with an arm and a lamp head (the head glows at night). */
+export function lampPoleGeometry(): THREE.BufferGeometry {
+  return merge([
+    cylAt(0.18, 0.2, [0, 0.1, 0], PALETTE.concrete, 8),
+    cylAt(0.06, 4.2, [0, 2.2, 0], PALETTE.dark, 8),
+    boxAt([0.9, 0.08, 0.08], [0.42, 4.25, 0], PALETTE.dark),
+  ])
+}
+
+/** The lamp head alone, placed at the end of the arm, for the night-glow material. */
+export function lampHeadGeometry(): THREE.BufferGeometry {
+  return merge([boxAt([0.46, 0.14, 0.3], [0.82, 4.16, 0], '#FFF4C2')])
+}
+
+/** Planter: a concrete box with a round shrub and a few flowers. */
+export function planterGeometry(): THREE.BufferGeometry {
+  return merge([
+    boxAt([1.0, 0.5, 1.0], [0, 0.25, 0], '#D9CBB0'),
+    boxAt([0.9, 0.06, 0.9], [0, 0.5, 0], '#6B4B33'),
+    paint(new THREE.SphereGeometry(0.42, 8, 6).scale(1, 0.8, 1).translate(0, 0.82, 0), '#4FB06D'),
+    paint(new THREE.SphereGeometry(0.1, 6, 4).translate(0.22, 1.05, 0.15), '#F29E4C'),
+    paint(new THREE.SphereGeometry(0.1, 6, 4).translate(-0.2, 0.98, -0.18), '#E5484D'),
+  ])
+}
+
+/** One bay of the energy-yard fence: a post and two rails, 1 m long along x. */
+export function yardFenceGeometry(): THREE.BufferGeometry {
+  return merge([
+    cylAt(0.05, 1.3, [-0.5, 0.65, 0], PALETTE.metal, 6),
+    boxAt([1.0, 0.05, 0.04], [0, 1.2, 0], PALETTE.metal),
+    boxAt([1.0, 0.05, 0.04], [0, 0.6, 0], PALETTE.metal),
+    boxAt([1.0, 0.04, 0.02], [0, 0.9, 0], PALETTE.yellow),
+  ])
+}

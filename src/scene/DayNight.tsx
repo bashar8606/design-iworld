@@ -4,7 +4,7 @@ import * as THREE from 'three'
 import { getContent } from '../game/content.ts'
 import { activeEvent } from '../game/world.ts'
 import { useGame } from '../store/gameStore.ts'
-import { glowLime, glowTeal } from './materials.ts'
+import { glowLamp, glowLime, glowTeal } from './materials.ts'
 
 // Colour keys across the day (dayTime 0..1). Night → dawn → day → dusk → night.
 const KEYS: {
@@ -187,6 +187,7 @@ export function DayNight({ shadows = true }: { shadows?: boolean }) {
     const night = 1 - Math.min(1, state.sun * 2)
     glowTeal.emissiveIntensity = 0.35 + 1.6 * night
     glowLime.emissiveIntensity = 0.5 + 1.8 * night
+    glowLamp.emissiveIntensity = 0.1 + 2.4 * night
   })
 
   return (

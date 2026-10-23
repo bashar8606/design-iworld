@@ -42,6 +42,23 @@ export interface PadDef {
   opensZone?: string
 }
 
+export interface SitePlan {
+  /** The paved walkway between the chargers and everything else. */
+  plaza?: { minX: number; maxX: number; minZ: number; maxZ: number }
+  /** The fenced energy yard, with a gate in its west side. */
+  yard?: {
+    minX: number
+    maxX: number
+    minZ: number
+    maxZ: number
+    gateMinZ: number
+    gateMaxZ: number
+  }
+  /** Buildings that come with a zone (shown once it is bought). */
+  buildings?: { kind: 'staffHut'; pos: Vec2; zone?: string }[]
+  decor?: { kind: 'palm' | 'lamp' | 'planter'; pos: Vec2 }[]
+}
+
 /** A piece of the lot the player buys with a land pad (the first zone is owned from the start). */
 export interface ZoneDef {
   id: string
@@ -134,6 +151,10 @@ export interface MapContent {
     bonusPerTaxi: number
   }
   pads: PadDef[]
+  /** Once the car wash is built, leaving cars drive through it along these points. */
+  washRoute?: Vec2[]
+  /** Fixed parts of the site plan: paving, the energy yard, buildings and scenery. */
+  site?: SitePlan
   /** The lot in pieces; maps without zones are all open from the start. */
   zones?: ZoneDef[]
   initial: { cash: number; firstCarType?: string; chargerTier?: number }

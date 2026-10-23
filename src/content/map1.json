@@ -2,12 +2,12 @@
   "id": "map1",
   "name": "Desert Highway Stop",
   "theme": "desert",
-  "layoutVersion": 2,
+  "layoutVersion": 3,
   "bounds": {
     "minX": -11.2,
-    "maxX": 11.6,
-    "minZ": -21.5,
-    "maxZ": 18
+    "maxX": 16.0,
+    "minZ": -24.0,
+    "maxZ": 27.8
   },
   "day": {
     "lengthSeconds": 360,
@@ -21,8 +21,8 @@
   },
   "player": {
     "start": {
-      "x": -0.5,
-      "z": -2.5
+      "x": 1.2,
+      "z": 2.0
     },
     "speed": 5,
     "plugSeconds": 0.5,
@@ -36,33 +36,33 @@
   },
   "road": {
     "laneX": -12.4,
-    "spawnZ": -28,
-    "despawnZ": 36,
-    "entranceZ": -22,
+    "spawnZ": -32,
+    "despawnZ": 40,
+    "entranceZ": -24.5,
     "exitZ": 21,
     "carSpeed": 7
   },
   "lane": {
     "x": -9.8,
-    "entryZ": -21,
-    "exitZ": 18.5
+    "entryZ": -23.5,
+    "exitZ": 19
   },
   "queueSlots": [
     {
       "x": -9.8,
-      "z": -4.0
+      "z": -3.5
     },
     {
       "x": -9.8,
-      "z": -9.2
+      "z": -8.7
     },
     {
       "x": -9.8,
-      "z": -14.4
+      "z": -13.9
     },
     {
       "x": -9.8,
-      "z": -19.6
+      "z": -19.1
     }
   ],
   "bays": [
@@ -70,66 +70,66 @@
       "id": "bay1",
       "car": {
         "x": -4.6,
-        "z": -1
+        "z": 0
       },
       "post": {
         "x": -1.5,
-        "z": -1
+        "z": 0
       }
     },
     {
       "id": "bay2",
       "car": {
         "x": -4.6,
-        "z": 2.2
+        "z": 3.2
       },
       "post": {
         "x": -1.5,
-        "z": 2.2
+        "z": 3.2
       }
     },
     {
       "id": "bay3",
       "car": {
         "x": -4.6,
-        "z": 5.4
+        "z": 6.4
       },
       "post": {
         "x": -1.5,
-        "z": 5.4
+        "z": 6.4
       }
     },
     {
       "id": "bay4",
       "car": {
         "x": -4.6,
-        "z": 8.6
+        "z": 9.6
       },
       "post": {
         "x": -1.5,
-        "z": 8.6
+        "z": 9.6
       }
     },
     {
       "id": "bay5",
       "car": {
         "x": -4.6,
-        "z": 11.8
+        "z": 12.8
       },
       "post": {
         "x": -1.5,
-        "z": 11.8
+        "z": 12.8
       }
     },
     {
       "id": "bay6",
       "car": {
         "x": -4.6,
-        "z": 15
+        "z": 16.0
       },
       "post": {
         "x": -1.5,
-        "z": 15
+        "z": 16.0
       }
     }
   ],
@@ -180,19 +180,19 @@
       "name": "Roadside plot",
       "bounds": {
         "minX": -8.4,
-        "maxX": 11.6,
-        "minZ": -6.8,
-        "maxZ": 4.0
+        "maxX": 16.0,
+        "minZ": -1.8,
+        "maxZ": 7.8
       }
     },
     {
       "id": "restStop",
-      "name": "Rest stop",
+      "name": "Café & staff",
       "bounds": {
         "minX": -8.4,
-        "maxX": 11.6,
-        "minZ": 4.0,
-        "maxZ": 10.2
+        "maxX": 16.0,
+        "minZ": -12.0,
+        "maxZ": -1.8
       }
     },
     {
@@ -200,9 +200,9 @@
       "name": "Solar field",
       "bounds": {
         "minX": -8.4,
-        "maxX": 11.6,
-        "minZ": -16.5,
-        "maxZ": -6.8
+        "maxX": 16.0,
+        "minZ": 7.8,
+        "maxZ": 19.0
       }
     },
     {
@@ -210,9 +210,9 @@
       "name": "Wash bay",
       "bounds": {
         "minX": -8.4,
-        "maxX": 11.6,
-        "minZ": 10.2,
-        "maxZ": 18
+        "maxX": 16.0,
+        "minZ": 19.0,
+        "maxZ": 27.8
       }
     }
   ],
@@ -224,7 +224,7 @@
       "price": 0,
       "pos": {
         "x": -0.9,
-        "z": -1
+        "z": 0.0
       },
       "bay": "bay1"
     },
@@ -234,8 +234,12 @@
       "label": "Solar row",
       "price": 0,
       "pos": {
-        "x": 6.5,
-        "z": -3.5
+        "x": 3.4,
+        "z": 5.3
+      },
+      "buildPos": {
+        "x": 9.25,
+        "z": 5.3
       }
     },
     {
@@ -245,7 +249,7 @@
       "price": 25,
       "pos": {
         "x": -0.9,
-        "z": 2.2
+        "z": 3.2
       },
       "bay": "bay2"
     },
@@ -255,10 +259,14 @@
       "label": "Solar row",
       "price": 30,
       "pos": {
-        "x": 6.5,
-        "z": -5.7
+        "x": 14.9,
+        "z": 6.6
       },
-      "unlockAfter": ["charger2"]
+      "unlockAfter": ["charger2"],
+      "buildPos": {
+        "x": 9.25,
+        "z": 7.1
+      }
     },
     {
       "id": "battery1",
@@ -266,10 +274,22 @@
       "label": "Battery",
       "price": 40,
       "pos": {
-        "x": 3.4,
-        "z": 2.2
+        "x": 7.8,
+        "z": 0.0
       },
       "unlockAfter": ["panel2"]
+    },
+    {
+      "id": "landRestStop",
+      "kind": "land",
+      "label": "Buy land: Café & staff",
+      "price": 120,
+      "pos": {
+        "x": 2.4,
+        "z": -0.4
+      },
+      "unlockAfter": ["battery1"],
+      "opensZone": "restStop"
     },
     {
       "id": "technician1",
@@ -277,22 +297,11 @@
       "label": "Hire technician",
       "price": 160,
       "pos": {
-        "x": 3.2,
-        "z": -1.3
+        "x": 6.0,
+        "z": -4.4
       },
-      "unlockAfter": ["battery1"]
-    },
-    {
-      "id": "landRestStop",
-      "kind": "land",
-      "label": "Buy land: Rest stop",
-      "price": 200,
-      "pos": {
-        "x": 9.8,
-        "z": 2.4
-      },
-      "unlockAfter": ["technician1"],
-      "opensZone": "restStop"
+      "unlockAfter": ["battery1"],
+      "zone": "restStop"
     },
     {
       "id": "cafe",
@@ -300,8 +309,8 @@
       "label": "Café",
       "price": 400,
       "pos": {
-        "x": 8.4,
-        "z": 5.4
+        "x": 1.8,
+        "z": -7.6
       },
       "unlockAfter": ["technician1"],
       "zone": "restStop"
@@ -313,11 +322,10 @@
       "price": 300,
       "pos": {
         "x": -0.9,
-        "z": 5.4
+        "z": 6.4
       },
       "unlockAfter": ["technician1"],
-      "bay": "bay3",
-      "zone": "restStop"
+      "bay": "bay3"
     },
     {
       "id": "landSolarField",
@@ -325,8 +333,8 @@
       "label": "Buy land: Solar field",
       "price": 350,
       "pos": {
-        "x": 0.6,
-        "z": -5.2
+        "x": 2.4,
+        "z": 6.4
       },
       "unlockAfter": ["charger3"],
       "opensZone": "solarField"
@@ -337,11 +345,15 @@
       "label": "Solar row",
       "price": 500,
       "pos": {
-        "x": 6.5,
-        "z": -7.9
+        "x": 3.4,
+        "z": 9.2
       },
       "unlockAfter": ["charger3"],
-      "zone": "solarField"
+      "zone": "solarField",
+      "buildPos": {
+        "x": 9.25,
+        "z": 9.2
+      }
     },
     {
       "id": "cashier1",
@@ -349,10 +361,11 @@
       "label": "Hire cashier",
       "price": 900,
       "pos": {
-        "x": 5.6,
-        "z": -1.3
+        "x": 8.4,
+        "z": -4.4
       },
-      "unlockAfter": ["cafe"]
+      "unlockAfter": ["cafe"],
+      "zone": "restStop"
     },
     {
       "id": "battery2",
@@ -360,11 +373,10 @@
       "label": "Battery",
       "price": 1400,
       "pos": {
-        "x": 3.4,
-        "z": 5.8
+        "x": 12.2,
+        "z": 0.0
       },
-      "unlockAfter": ["panel3"],
-      "zone": "restStop"
+      "unlockAfter": ["panel3"]
     },
     {
       "id": "charger4",
@@ -373,11 +385,11 @@
       "price": 1800,
       "pos": {
         "x": -0.9,
-        "z": 8.6
+        "z": 9.6
       },
       "unlockAfter": ["battery2"],
       "bay": "bay4",
-      "zone": "restStop"
+      "zone": "solarField"
     },
     {
       "id": "panel4",
@@ -385,11 +397,15 @@
       "label": "Solar row",
       "price": 2600,
       "pos": {
-        "x": 6.5,
-        "z": -10.1
+        "x": 14.9,
+        "z": 11.4
       },
       "unlockAfter": ["charger4"],
-      "zone": "solarField"
+      "zone": "solarField",
+      "buildPos": {
+        "x": 9.25,
+        "z": 11.4
+      }
     },
     {
       "id": "robot1",
@@ -397,10 +413,11 @@
       "label": "Cleaning robot",
       "price": 3600,
       "pos": {
-        "x": 8.0,
-        "z": -1.3
+        "x": 10.8,
+        "z": -4.4
       },
-      "unlockAfter": ["panel4"]
+      "unlockAfter": ["panel4"],
+      "zone": "restStop"
     },
     {
       "id": "landWashBay",
@@ -408,12 +425,12 @@
       "label": "Buy land: Wash bay",
       "price": 3000,
       "pos": {
-        "x": 3.4,
-        "z": 8.8
+        "x": 2.4,
+        "z": 17.6
       },
       "unlockAfter": ["robot1"],
       "opensZone": "washBay",
-      "zone": "restStop"
+      "zone": "solarField"
     },
     {
       "id": "carWash",
@@ -421,8 +438,8 @@
       "label": "Car wash",
       "price": 5600,
       "pos": {
-        "x": 8.4,
-        "z": 14.4
+        "x": -5.0,
+        "z": 22.6
       },
       "unlockAfter": ["robot1"],
       "zone": "washBay"
@@ -433,10 +450,11 @@
       "label": "Hire technician",
       "price": 5400,
       "pos": {
-        "x": 10.4,
-        "z": -1.3
+        "x": 13.2,
+        "z": -4.4
       },
-      "unlockAfter": ["charger4"]
+      "unlockAfter": ["charger4"],
+      "zone": "restStop"
     },
     {
       "id": "charger5",
@@ -445,11 +463,11 @@
       "price": 8400,
       "pos": {
         "x": -0.9,
-        "z": 11.8
+        "z": 12.8
       },
       "unlockAfter": ["carWash"],
       "bay": "bay5",
-      "zone": "washBay"
+      "zone": "solarField"
     },
     {
       "id": "panel5",
@@ -457,11 +475,15 @@
       "label": "Solar row",
       "price": 12000,
       "pos": {
-        "x": 6.5,
-        "z": -12.3
+        "x": 3.4,
+        "z": 13.6
       },
       "unlockAfter": ["charger5"],
-      "zone": "solarField"
+      "zone": "solarField",
+      "buildPos": {
+        "x": 9.25,
+        "z": 13.6
+      }
     },
     {
       "id": "battery3",
@@ -469,11 +491,10 @@
       "label": "Battery",
       "price": 16800,
       "pos": {
-        "x": 3.4,
-        "z": 12.0
+        "x": 7.8,
+        "z": 3.2
       },
-      "unlockAfter": ["panel5"],
-      "zone": "washBay"
+      "unlockAfter": ["panel5"]
     },
     {
       "id": "charger6",
@@ -482,11 +503,11 @@
       "price": 24000,
       "pos": {
         "x": -0.9,
-        "z": 15
+        "z": 16.0
       },
       "unlockAfter": ["battery3"],
       "bay": "bay6",
-      "zone": "washBay"
+      "zone": "solarField"
     },
     {
       "id": "panel6",
@@ -494,13 +515,252 @@
       "label": "Solar row",
       "price": 33000,
       "pos": {
-        "x": 6.5,
-        "z": -14.5
+        "x": 14.9,
+        "z": 15.8
       },
       "unlockAfter": ["charger6"],
-      "zone": "solarField"
+      "zone": "solarField",
+      "buildPos": {
+        "x": 9.25,
+        "z": 15.8
+      }
     }
   ],
+  "washRoute": [
+    {
+      "x": -9.8,
+      "z": 18.4
+    },
+    {
+      "x": -5.0,
+      "z": 18.4
+    },
+    {
+      "x": -5.0,
+      "z": 26.8
+    },
+    {
+      "x": -12.4,
+      "z": 26.8
+    }
+  ],
+  "site": {
+    "plaza": {
+      "minX": -0.6,
+      "maxX": 4.6,
+      "minZ": -10.0,
+      "maxZ": 17.8
+    },
+    "yard": {
+      "minX": 5.5,
+      "maxX": 14.5,
+      "minZ": -1.5,
+      "maxZ": 4.6,
+      "gateMinZ": 0.9,
+      "gateMaxZ": 2.3
+    },
+    "buildings": [
+      {
+        "kind": "staffHut",
+        "pos": {
+          "x": 8.6,
+          "z": -8.4
+        },
+        "zone": "restStop"
+      }
+    ],
+    "decor": [
+      {
+        "kind": "lamp",
+        "pos": {
+          "x": -8.1,
+          "z": -20
+        }
+      },
+      {
+        "kind": "lamp",
+        "pos": {
+          "x": -8.1,
+          "z": -12
+        }
+      },
+      {
+        "kind": "lamp",
+        "pos": {
+          "x": -8.1,
+          "z": -4
+        }
+      },
+      {
+        "kind": "lamp",
+        "pos": {
+          "x": -8.1,
+          "z": 4.8
+        }
+      },
+      {
+        "kind": "lamp",
+        "pos": {
+          "x": -8.1,
+          "z": 11.2
+        }
+      },
+      {
+        "kind": "lamp",
+        "pos": {
+          "x": -8.1,
+          "z": 20.6
+        }
+      },
+      {
+        "kind": "palm",
+        "pos": {
+          "x": -17.2,
+          "z": -26
+        }
+      },
+      {
+        "kind": "palm",
+        "pos": {
+          "x": -17.2,
+          "z": -18
+        }
+      },
+      {
+        "kind": "palm",
+        "pos": {
+          "x": -17.2,
+          "z": -10
+        }
+      },
+      {
+        "kind": "palm",
+        "pos": {
+          "x": -17.2,
+          "z": -2
+        }
+      },
+      {
+        "kind": "palm",
+        "pos": {
+          "x": -17.2,
+          "z": 6
+        }
+      },
+      {
+        "kind": "palm",
+        "pos": {
+          "x": -17.2,
+          "z": 14
+        }
+      },
+      {
+        "kind": "palm",
+        "pos": {
+          "x": 17.2,
+          "z": -9
+        }
+      },
+      {
+        "kind": "palm",
+        "pos": {
+          "x": -3.2,
+          "z": -11.0
+        }
+      },
+      {
+        "kind": "planter",
+        "pos": {
+          "x": 4.6,
+          "z": -1.0
+        }
+      },
+      {
+        "kind": "planter",
+        "pos": {
+          "x": 4.6,
+          "z": 11.6
+        }
+      },
+      {
+        "kind": "planter",
+        "pos": {
+          "x": 4.6,
+          "z": 16.9
+        }
+      },
+      {
+        "kind": "planter",
+        "pos": {
+          "x": -0.4,
+          "z": -10.6
+        }
+      },
+      {
+        "kind": "planter",
+        "pos": {
+          "x": 4.0,
+          "z": -10.6
+        }
+      },
+      {
+        "kind": "palm",
+        "pos": {
+          "x": -3.0,
+          "z": -13.4
+        }
+      },
+      {
+        "kind": "palm",
+        "pos": {
+          "x": 3.0,
+          "z": -13.4
+        }
+      },
+      {
+        "kind": "palm",
+        "pos": {
+          "x": 9.0,
+          "z": -13.4
+        }
+      },
+      {
+        "kind": "palm",
+        "pos": {
+          "x": 15.0,
+          "z": -13.4
+        }
+      },
+      {
+        "kind": "planter",
+        "pos": {
+          "x": 0.6,
+          "z": 24.4
+        }
+      },
+      {
+        "kind": "planter",
+        "pos": {
+          "x": 3.6,
+          "z": 25.4
+        }
+      },
+      {
+        "kind": "planter",
+        "pos": {
+          "x": 15.2,
+          "z": 9.0
+        }
+      },
+      {
+        "kind": "planter",
+        "pos": {
+          "x": 15.2,
+          "z": 13.6
+        }
+      }
+    ]
+  },
   "initial": {
     "cash": 0,
     "firstCarType": "scooter"

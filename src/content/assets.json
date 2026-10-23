@@ -125,6 +125,36 @@
       "route": "code",
       "source": "src/scene/props/geometry.ts",
       "triangleLimit": 300
+    },
+    "staffHut": {
+      "route": "code",
+      "source": "src/scene/props/geometry.ts",
+      "triangleLimit": 200
+    },
+    "palm": {
+      "route": "code",
+      "source": "src/scene/props/geometry.ts",
+      "triangleLimit": 400
+    },
+    "lampPole": {
+      "route": "code",
+      "source": "src/scene/props/geometry.ts",
+      "triangleLimit": 120
+    },
+    "lampHead": {
+      "route": "code",
+      "source": "src/scene/props/geometry.ts",
+      "triangleLimit": 24
+    },
+    "planter": {
+      "route": "code",
+      "source": "src/scene/props/geometry.ts",
+      "triangleLimit": 300
+    },
+    "yardFence": {
+      "route": "code",
+      "source": "src/scene/props/geometry.ts",
+      "triangleLimit": 120
     }
   }
 }

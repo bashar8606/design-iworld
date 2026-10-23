@@ -11,11 +11,11 @@ describe('zones', () => {
   })
 
   it('keep pads in land not yet bought closed', () => {
-    const s = withPads(newGame(), 'charger2', 'panel2', 'battery1', 'technician1')
+    const s = withPads(newGame(), 'charger2', 'panel2', 'battery1')
     const open = openPads(s, content).map((p) => p.id)
     expect(open).toContain('landRestStop')
-    expect(open).not.toContain('cafe')
-    expect(open).not.toContain('charger3')
+    // The technician's spot is by the staff hut, in the café & staff land.
+    expect(open).not.toContain('technician1')
   })
 
   it('open the zone and its pads once the land pad is paid for', () => {
@@ -30,12 +30,13 @@ describe('zones', () => {
   })
 
   it('stop the player at the fence of land they do not own', () => {
-    let s = { ...at(newGame(), 0, 2), nextArrivalAt: 1e9 }
-    s = run(s, 4, walkTo({ x: 0, z: 9 }))
-    expect(s.player.pos.z).toBeCloseTo(4, 1)
+    const border = content.map.zones!.find((z) => z.id === 'roadside')!.bounds.minZ
+    let s = { ...at(newGame(), 2, 2), nextArrivalAt: 1e9 }
+    s = run(s, 4, walkTo({ x: 2, z: -6 }))
+    expect(s.player.pos.z).toBeCloseTo(border, 1)
     s = withPads(s, 'landRestStop')
-    s = run(s, 4, walkTo({ x: 0, z: 9 }))
-    expect(s.player.pos.z).toBeGreaterThan(8.5)
+    s = run(s, 4, walkTo({ x: 2, z: -6 }))
+    expect(s.player.pos.z).toBeLessThan(-5.5)
   })
 
   it('give old saves the land under things they already built', () => {

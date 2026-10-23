@@ -21,6 +21,11 @@ const F = footprintsJson as {
   vehicleHalfWidth: number
   bayDepth: number
   laneHalfWidth: number
+  staffHut: Half
+  palm: Half
+  lamp: Half
+  planter: Half
+  fence: number
   queueGap: number
   cafeQueue: Box
 }
@@ -35,7 +40,8 @@ interface Box {
   maxZ: number
 }
 
-export type FootprintKind = 'item' | 'pad' | 'vehicle' | 'post' | 'walk' | 'lane'
+export type FootprintKind =
+  'item' | 'pad' | 'vehicle' | 'post' | 'walk' | 'lane' | 'decor' | 'fence' | 'route' | 'plaza'
 
 export interface Footprint extends Box {
   name: string
@@ -140,7 +146,9 @@ export function footprints(content: Content): Footprint[] {
   for (const pad of map.pads) {
     const at = itemPos(pad)
     const size = pad.kind === 'land' ? F.landPad : F.pad
-    add(`pad ${pad.id}`, 'pad', around(pad.pos.x, pad.pos.z, { hx: size, hz: size }), pad.id)
+    // Free pads are built before the game starts, so their pad is never on the ground.
+    if (pad.price > 0)
+      add(`pad ${pad.id}`, 'pad', around(pad.pos.x, pad.pos.z, { hx: size, hz: size }), pad.id)
     switch (pad.kind) {
       case 'charger': {
         const bay = map.bays.find((b) => b.id === pad.bay)
@@ -180,6 +188,59 @@ export function footprints(content: Content): Footprint[] {
         add(`${pad.kind} ${pad.id}`, 'item', around(at.x, at.z, F.staff), pad.id)
     }
   }
+  const site = map.site
+  if (site?.plaza) add('plaza', 'plaza', site.plaza)
+  if (site?.yard) {
+    const y = site.yard
+    const t = F.fence
+    add('yard fence north', 'fence', {
+      minX: y.minX,
+      maxX: y.maxX,
+      minZ: y.minZ - t,
+      maxZ: y.minZ + t,
+    })
+    add('yard fence south', 'fence', {
+      minX: y.minX,
+      maxX: y.maxX,
+      minZ: y.maxZ - t,
+      maxZ: y.maxZ + t,
+    })
+    add('yard fence east', 'fence', {
+      minX: y.maxX - t,
+      maxX: y.maxX + t,
+      minZ: y.minZ,
+      maxZ: y.maxZ,
+    })
+    add('yard fence west', 'fence', {
+      minX: y.minX - t,
+      maxX: y.minX + t,
+      minZ: y.minZ,
+      maxZ: y.gateMinZ,
+    })
+    add('yard fence west ', 'fence', {
+      minX: y.minX - t,
+      maxX: y.minX + t,
+      minZ: y.gateMaxZ,
+      maxZ: y.maxZ,
+    })
+  }
+  for (const [i, b] of (site?.buildings ?? []).entries())
+    add(`${b.kind} ${i}`, 'item', around(b.pos.x, b.pos.z, F[b.kind]))
+  for (const [i, d] of (site?.decor ?? []).entries())
+    add(`${d.kind} ${i}`, 'decor', around(d.pos.x, d.pos.z, F[d.kind]))
+  // The way out through the car wash, as wide as a car.
+  const route = map.washRoute ?? []
+  for (let i = 1; i < route.length; i++) {
+    const a = route[i - 1]!
+    const b = route[i]!
+    const w = F.vehicleHalfWidth
+    add(`wash route leg ${i}`, 'route', {
+      minX: Math.min(a.x, b.x) - w,
+      maxX: Math.max(a.x, b.x) + w,
+      minZ: Math.min(a.z, b.z) - w,
+      maxZ: Math.max(a.z, b.z) + w,
+    })
+  }
   const longest = longestVehicle(content)
   for (const bay of map.bays) {
     const stop = bayStop(bay, longest)
@@ -203,7 +264,14 @@ export function layoutProblems(content: Content): string[] {
   const { map } = content
   const all = footprints(content)
   const problems = new Set<string>()
-  const solid = all.filter((f) => f.kind === 'item' || f.kind === 'walk' || f.kind === 'post')
+  const solid = all.filter(
+    (f) =>
+      f.kind === 'item' ||
+      f.kind === 'walk' ||
+      f.kind === 'post' ||
+      f.kind === 'decor' ||
+      f.kind === 'fence',
+  )
   const vehicles = all.filter((f) => f.kind === 'vehicle')
   const pads = all.filter((f) => f.kind === 'pad')
   const lane = all.find((f) => f.kind === 'lane')!
@@ -215,6 +283,7 @@ export function layoutProblems(content: Content): string[] {
       const b = solid[j]!
       if (a.padId === b.padId) continue
       if (a.kind === 'post' && b.kind === 'post') continue
+      if (a.kind === 'fence' && b.kind === 'fence') continue
       if (overlaps(a, b)) problems.add(`${a.name} overlaps ${b.name}`)
     }
     for (const v of vehicles)
@@ -232,16 +301,36 @@ export function layoutProblems(content: Content): string[] {
       if (q !== p && q.name > p.name && overlaps(p, q)) problems.add(`${p.name} touches ${q.name}`)
   }
 
-  // Everything inside the map.
+  // Industry stays out of the customers' plaza.
+  const plaza = all.find((f) => f.kind === 'plaza')
+  if (plaza)
+    for (const f of all)
+      if (/^(battery|turbine|yard)/.test(f.name) && overlaps(f, plaza))
+        problems.add(`${f.name} stands on the customers' plaza`)
+
+  // Cars leaving through the car wash have a clear way.
+  for (const leg of all.filter((f) => f.kind === 'route'))
+    for (const f of [...solid, ...vehicles, ...pads])
+      if (f.name !== 'car wash' && f.padId !== 'carWash' && overlaps(leg, f))
+        problems.add(`${f.name} blocks the ${leg.name}`)
+
+  // Everything inside the map (scenery may stand outside it).
   const b = map.bounds
-  for (const f of [...solid, ...pads, ...vehicles])
+  for (const f of [...solid.filter((s) => s.kind !== 'decor'), ...pads, ...vehicles])
     if (f.minX < b.minX || f.maxX > b.maxX || f.minZ < b.minZ || f.maxZ > b.maxZ)
       problems.add(`${f.name} is outside the map`)
 
   // Zone fences only cross gaps; pads stand in the zone they belong to.
-  for (const zone of map.zones ?? []) {
+  // Fences stand only where one zone meets another.
+  const zones = map.zones ?? []
+  const fenceEdges = new Set(
+    zones.flatMap((z) =>
+      zones.filter((o) => o.bounds.minZ === z.bounds.maxZ).map(() => z.bounds.maxZ),
+    ),
+  )
+  for (const zone of zones) {
     for (const edge of [zone.bounds.minZ, zone.bounds.maxZ]) {
-      if (edge <= b.minZ || edge >= b.maxZ) continue
+      if (!fenceEdges.has(edge)) continue
       for (const f of [...solid, ...pads])
         if (f.maxX > zone.bounds.minX && f.minZ < edge - 0.05 && f.maxZ > edge + 0.05)
           problems.add(`the fence at z=${edge} runs through ${f.name}`)

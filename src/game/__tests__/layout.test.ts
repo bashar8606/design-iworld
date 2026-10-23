@@ -3,6 +3,7 @@ import { MAP_ORDER, getContent } from '../content.ts'
 import { chargePort, footprints, layoutProblems, overlaps } from '../layout.ts'
 import { deserializeSave, serializeSave } from '../save.ts'
 import { createInitialState } from '../state.ts'
+import { tick } from '../tick.ts'
 
 /** Maps still on the old layout; they move to the standard layout after map 1 is approved. */
 const PENDING = new Set(['map2', 'map3'])
@@ -47,7 +48,9 @@ describe('map layouts', () => {
   it('keeps every footprint off the entry lane on map 1', () => {
     const all = footprints(getContent('map1'))
     const lane = all.find((f) => f.kind === 'lane')!
-    expect(all.filter((f) => f.kind !== 'lane' && overlaps(f, lane))).toEqual([])
+    // The way out crosses the lane on purpose; everything built stays off it.
+    const built = all.filter((f) => !['lane', 'route', 'plaza'].includes(f.kind))
+    expect(built.filter((f) => overlaps(f, lane))).toEqual([])
   })
 
   it('moves staff, cash and cars when a save from an older layout loads', () => {
@@ -74,5 +77,28 @@ describe('map layouts', () => {
     expect(loaded.staff[0]!.home).toEqual(pad.pos)
     expect(loaded.cars).toEqual([])
     expect(loaded.layoutVersion).toBe(getContent('map1').map.layoutVersion)
+  })
+
+  it('sends happy drivers out through the car wash once it is built', () => {
+    const content = getContent('map1')
+    const wash = content.map.pads.find((p) => p.kind === 'carWash')!
+    const through = (built: boolean) => {
+      let s = { ...createInitialState('map1', { seed: 3 }), nextArrivalAt: 0 }
+      if (built) s = { ...s, facilities: { ...s.facilities, carWash: true } }
+      s = { ...s, player: { ...s.player, pos: { ...content.map.bays[0]!.post } } }
+      let passed = false
+      for (let i = 0; i < 3000 && !passed; i++) {
+        s = tick(s, 0.1)
+        passed = s.cars.some(
+          (c) =>
+            c.phase === 'leaving' &&
+            Math.abs(c.pos.x - wash.pos.x) < 0.5 &&
+            Math.abs(c.pos.z - wash.pos.z) < 2,
+        )
+      }
+      return passed
+    }
+    expect(through(true)).toBe(true)
+    expect(through(false)).toBe(false)
   })
 })

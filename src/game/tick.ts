@@ -440,11 +440,21 @@ export function spawnCar(s: GameState, type: string, vip: boolean, rng: Rng, con
 function updateCars(s: GameState, dt: number, content: Content, events: GameEvent[]) {
   const { map } = content
   const slots = map.queueSlots
-  const exitPath = (from: Vec2): Vec2[] => [
-    { x: map.lane.x, z: Math.max(from.z, map.lane.exitZ) },
-    { x: map.road.laneX, z: map.road.exitZ },
-    { x: map.road.laneX, z: map.road.despawnZ },
-  ]
+  // Happy drivers leave through the car wash once there is one; angry ones go straight out.
+  const exitPath = (from: Vec2, wash: boolean): Vec2[] => {
+    const route = wash && s.facilities.carWash ? (map.washRoute ?? []) : []
+    if (route.length > 0)
+      return [
+        { x: map.lane.x, z: Math.max(from.z, route[0]!.z) },
+        ...route,
+        { x: map.road.laneX, z: map.road.despawnZ },
+      ]
+    return [
+      { x: map.lane.x, z: Math.max(from.z, map.lane.exitZ) },
+      { x: map.road.laneX, z: map.road.exitZ },
+      { x: map.road.laneX, z: map.road.despawnZ },
+    ]
+  }
 
   for (const car of s.cars) {
     // Move.
@@ -498,7 +508,7 @@ function updateCars(s: GameState, dt: number, content: Content, events: GameEven
         if (arrived && car.reversing) {
           car.reversing = false
           releaseBay(s, car)
-          car.path = exitPath(car.pos)
+          car.path = exitPath(car.pos, car.phase === 'leaving')
         }
         break
       default:

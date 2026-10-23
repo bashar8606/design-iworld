@@ -12,7 +12,8 @@ import { initialStoreMode, startStoreMode, useStoreMode } from './store/storeMod
 import { startTracking } from './store/tracking.ts'
 import { startTutorial, useTutorial } from './store/tutorial.ts'
 import { useUi } from './store/uiStore.ts'
-import { AdOffer, SolarBoostButton } from './ui/AdButtons.tsx'
+import { AdOffer } from './ui/AdButtons.tsx'
+import { BottomNav } from './ui/BottomNav.tsx'
 import {
   ContractBanner,
   EventBanner,
@@ -27,10 +28,12 @@ import { DebugMenu } from './ui/DebugMenu.tsx'
 import { ErrorBoundary } from './ui/ErrorBoundary.tsx'
 import { FeedbackSheet } from './ui/FeedbackSheet.tsx'
 import { Hud } from './ui/Hud.tsx'
+import { MapSheet } from './ui/MapSheet.tsx'
+import { MissionCard, MissionsSheet } from './ui/Missions.tsx'
 import { PerfOverlay } from './ui/PerfOverlay.tsx'
 import { ShopSheet, StarterPackCard } from './ui/ShopSheet.tsx'
 import { CreditsSheet, SettingsSheet } from './ui/SettingsSheet.tsx'
-import { NearbyUpgrade, UpgradeSheet } from './ui/UpgradeSheet.tsx'
+import { UpgradeCard, UpgradeSheet } from './ui/UpgradeSheet.tsx'
 import { useKeyboardControls } from './ui/useKeyboardControls.ts'
 
 // The device performance test loads the full layout before anything renders.
@@ -55,6 +58,10 @@ function Sheets() {
       return <ShopSheet />
     case 'greenCredits':
       return <GreenCreditsSheet />
+    case 'missions':
+      return <MissionsSheet />
+    case 'map':
+      return <MapSheet />
     default:
       return null
   }
@@ -83,9 +90,6 @@ export default function App() {
   const welcomeBackReady = useAds((s) => s.ready === 'welcome_back')
   useKeyboardControls()
   const open = useUi((s) => s.open)
-  const hasCredits = useGame(
-    (s) => s.state.prestige.greenCredits > 0 || s.state.prestige.incomeLevel > 0,
-  )
   const sell = () => {
     useGame.getState().dispatch({ type: 'sellToUtility' })
     open('greenCredits')
@@ -96,41 +100,18 @@ export default function App() {
       <StormOverlay />
       <ErrorBoundary name="hud">
         <Hud allowDebug={!store}>
-          <EventBanner />
-          <ContractBanner />
-          {!store && <TutorialHint />}
+          <div className="hud-under-bar">
+            <div className="hud-banners">
+              <EventBanner />
+              <ContractBanner />
+              {!store && <TutorialHint />}
+            </div>
+            {!store && <MissionCard />}
+          </div>
           <div className="hud-bottom">
             {!store && <AdOffer />}
-            {!store && <NearbyUpgrade />}
-            <div className="hud-bottom-buttons">
-              {!store && <SolarBoostButton />}
-              {hasCredits && (
-                <button
-                  className="hud-fab"
-                  data-hud-control
-                  onClick={() => open('greenCredits')}
-                  aria-label="Green Credits"
-                >
-                  🌿
-                </button>
-              )}
-              <button
-                className="hud-fab"
-                data-hud-control
-                onClick={() => open('shop')}
-                aria-label="Shop"
-              >
-                🛒
-              </button>
-              <button
-                className="hud-fab"
-                data-hud-control
-                onClick={() => open('upgrades')}
-                aria-label="Upgrades"
-              >
-                🔧
-              </button>
-            </div>
+            {!store && <UpgradeCard />}
+            <BottomNav store={store} />
           </div>
         </Hud>
       </ErrorBoundary>

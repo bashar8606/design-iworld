@@ -1,4 +1,5 @@
 import { getContent } from './content.ts'
+import { initialMissions } from './missions.ts'
 import { Rng } from './rng.ts'
 import type { Content, GameState, PadDef } from './types.ts'
 import { batteryCapacity, bayDef, dayClock, sunIntensity } from './world.ts'
@@ -70,12 +71,14 @@ export function createInitialState(mapId = 'map1', options: NewGameOptions = {})
     milestones: { firstCashAt: null, firstNightSurvived: null },
     mapComplete: false,
     ledger: options.carry?.ledger ?? null,
+    missions: { seq: 0, completed: 0, active: [] },
     events: [],
   }
   // Boost timers are sim-time based; a new map restarts the clock.
   state.boosts = { ...state.boosts, adIncomeUntil: 0 }
   state.seed = rng.seed
 
+  state.missions = initialMissions(state)
   for (const pad of map.pads) {
     if (pad.price === 0) buildPadItem(state, pad, content)
   }

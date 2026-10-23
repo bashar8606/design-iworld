@@ -4,7 +4,11 @@ import { Suspense, lazy } from 'react'
 import App from './App.tsx'
 import { initCrashReporting } from './platform/crash.ts'
 import { APP_VERSION } from './store/tracking.ts'
+import '@fontsource/fredoka/latin-500.css'
+import '@fontsource/fredoka/latin-700.css'
+import '@fontsource/lilita-one/latin-400.css'
 import './index.css'
+import './ui/game-ui.css'
 
 // iOS ignores user-scalable=no in some cases; block pinch and double-tap zoom directly.
 for (const type of ['gesturestart', 'gesturechange', 'gestureend']) {
@@ -20,6 +24,8 @@ if (import.meta.env.DEV) {
 }
 
 void initCrashReporting(APP_VERSION)
+// Floating cash amounts are drawn on canvases, which only use fonts that have already loaded.
+void document.fonts?.load('64px "Lilita One"')
 
 const isGallery =
   window.location.pathname.replace(/\/$/, '').endsWith('/gallery') ||

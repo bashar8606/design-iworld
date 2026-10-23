@@ -303,6 +303,20 @@ export type GameEvent =
   | { type: 'contractFailed' }
   | { type: 'mapComplete' }
 
+export type MissionKind =
+  'serveCars' | 'collectCash' | 'buildPads' | 'surviveNight' | 'upgrade' | 'serveTaxis'
+
+export interface Mission {
+  id: string
+  kind: MissionKind
+  /** With {n} standing for the target. */
+  title: string
+  target: number
+  progress: number
+  rewardGems: number
+  rewardCash: number
+}
+
 export interface GameState {
   version: number
   mapId: string
@@ -371,6 +385,7 @@ export interface GameState {
    * are written together. null until this install first checks its purchases.
    */
   ledger: string[] | null
+  missions: { seq: number; completed: number; active: Mission[] }
   /** Events produced by the last tick(s); the store drains them. */
   events: GameEvent[]
 }

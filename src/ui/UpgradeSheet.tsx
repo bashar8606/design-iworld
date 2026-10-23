@@ -6,10 +6,11 @@ import { useGame } from '../store/gameStore.ts'
 import { useTutorial } from '../store/tutorial.ts'
 import { useUi } from '../store/uiStore.ts'
 import { formatCash, formatDuration } from './format.ts'
+import { PAD_ICONS } from './icons.ts'
 import { Sheet } from './Sheet.tsx'
 import { type UpgradeOption, upgradeOptions } from './upgrades.ts'
 
-function UpgradeRow({ option, compact = false }: { option: UpgradeOption; compact?: boolean }) {
+function UpgradeRow({ option }: { option: UpgradeOption }) {
   const cash = useGame((s) => s.state.cash)
   const time = useGame((s) => Math.floor(s.state.time))
   const dispatch = useGame((s) => s.dispatch)
@@ -18,9 +19,14 @@ function UpgradeRow({ option, compact = false }: { option: UpgradeOption; compac
   const gemCost = busy ? gemsToSkip(option.upgradingUntil - time) : 0
   const affordable = option.price !== null && cash >= option.price
   return (
-    <div className={`upgrade-row${compact ? ' upgrade-compact' : ''}`}>
+    <div className="upgrade-row">
+      <span className="upgrade-row-icon" aria-hidden>
+        {PAD_ICONS[option.kind]}
+      </span>
       <div className="upgrade-text">
-        <strong>{option.title}</strong>
+        <strong>
+          {option.title} <span className="level-badge">Lv. {option.level}</span>
+        </strong>
         <span>
           {option.from}
           {option.to && ` → ${option.to}`}
@@ -71,9 +77,9 @@ export function UpgradeSheet() {
   )
 }
 
-/** When the player stands by something upgradeable, offer its next upgrade in a small card. */
-export function NearbyUpgrade() {
-  const option = useGame((s) => {
+/** When the player stands by something upgradeable, a card with its next level and price. */
+export function UpgradeCard() {
+  const json = useGame((s) => {
     const content = getContent(s.state.mapId)
     const near = upgradeOptions(s.state, content)
       .filter((o) => o.to || o.upgradingUntil > 0)
@@ -82,12 +88,70 @@ export function NearbyUpgrade() {
       .sort((a, b) => a.d - b.d)[0]
     return near ? JSON.stringify(near.o) : null
   })
+  const cash = useGame((s) => s.state.cash)
+  const time = useGame((s) => Math.floor(s.state.time))
+  const gems = useGame((s) => s.state.gems)
+  const dispatch = useGame((s) => s.dispatch)
   const sheet = useUi((s) => s.sheet)
   const tutorial = useTutorial((s) => s.active)
-  if (!option || sheet || tutorial) return null
+  if (!json || sheet || tutorial) return null
+  const option = JSON.parse(json) as UpgradeOption
+  const busy = option.upgradingUntil > 0
+  const left = option.upgradingUntil - time
+  const gemCost = busy ? gemsToSkip(left) : 0
+  const affordable = option.price !== null && cash >= option.price
   return (
-    <div className="nearby-upgrade" data-hud-control>
-      <UpgradeRow option={JSON.parse(option) as UpgradeOption} compact />
+    <div className="upgrade-card" data-hud-control role="group" aria-label={option.title}>
+      <div className="upgrade-card-head">
+        <span className="upgrade-card-icon" aria-hidden>
+          {PAD_ICONS[option.kind]}
+        </span>
+        <div className="upgrade-card-title">
+          <strong>
+            {option.title} <span className="level-badge">Lv. {option.level}</span>
+          </strong>
+          <span>{option.description}</span>
+          {option.stats.length > 0 && !busy && (
+            <div className="upgrade-card-stats">
+              {option.stats.map((stat) => (
+                <span key={stat} className="stat-chip">
+                  {stat}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+      <div className="upgrade-card-foot">
+        <span className="upgrade-card-time">
+          ⏱{' '}
+          {busy
+            ? `${formatDuration(left)} left`
+            : option.buildSeconds > 0
+              ? formatDuration(option.buildSeconds)
+              : 'Instant'}
+        </span>
+        {busy ? (
+          <button
+            className="btn-upgrade"
+            disabled={gems < gemCost}
+            onClick={() => dispatch({ type: 'skipUpgradeWithGems', id: option.id })}
+          >
+            💎 {gemCost} <small>Finish now</small>
+          </button>
+        ) : (
+          <button
+            className="btn-upgrade"
+            disabled={!affordable}
+            onClick={() => dispatch(option.action)}
+          >
+            <span className="btn-upgrade-arrow" aria-hidden>
+              ⬆
+            </span>
+            {formatCash(option.price ?? 0)} <small>Upgrade</small>
+          </button>
+        )}
+      </div>
     </div>
   )
 }

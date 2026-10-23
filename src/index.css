@@ -59,95 +59,10 @@ body {
   justify-content: flex-start;
 }
 
-.hud-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.hud-pill {
-  pointer-events: auto;
-  background: var(--panel);
-  border-radius: 999px;
-  padding: 6px 14px;
-  font-weight: 700;
-  font-size: 16px;
-  box-shadow: 0 2px 6px rgb(0 0 0 / 0.12);
-}
-
-.hud-bar-center {
-  justify-content: center;
-  margin-top: 8px;
-}
-
-.hud-cash {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 20px;
-  min-width: 96px;
-  justify-content: center;
-}
-
-.hud-coin {
-  color: #f7c948;
-  text-shadow: 0 0 2px #b38712;
-}
-
-.hud-clock {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 2px 12px 2px 2px;
-  border: none;
-  font: inherit;
-  font-weight: 700;
-  color: var(--ink);
-  min-height: 48px;
-}
-
-.hud-energy {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 13px;
-  padding: 6px 12px;
-}
-
-.hud-alert {
-  background: #ffe1e1;
-  animation: pulse 0.8s ease-in-out infinite alternate;
-}
-
 @keyframes pulse {
   to {
     transform: scale(1.04);
   }
-}
-
-.hud-battery {
-  position: relative;
-  width: 84px;
-  height: 18px;
-  border-radius: 9px;
-  background: rgb(30 53 87 / 0.15);
-  overflow: hidden;
-}
-
-.hud-battery-fill {
-  position: absolute;
-  inset: 0 auto 0 0;
-  background: linear-gradient(90deg, #a6e22e, #19b5a5);
-  transition: width 0.3s;
-}
-
-.hud-battery-label {
-  position: relative;
-  display: block;
-  text-align: center;
-  font-size: 11px;
-  line-height: 18px;
 }
 
 .hud-toasts {
@@ -284,72 +199,7 @@ body {
   color: #ff8a80;
 }
 
-/* ---------------------------------------------------------------- HUD buttons */
-
-.hud-right {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.hud-icon,
-.hud-fab {
-  pointer-events: auto;
-  border: none;
-  background: var(--panel);
-  border-radius: 50%;
-  box-shadow: 0 2px 6px rgb(0 0 0 / 0.15);
-  font-size: 22px;
-  width: 48px;
-  height: 48px;
-  display: grid;
-  place-items: center;
-}
-
-.hud-fab {
-  width: 60px;
-  height: 60px;
-  font-size: 28px;
-}
-
-.hud-bottom {
-  margin-top: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  align-items: stretch;
-}
-
-.hud-bottom-buttons {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-}
-
 /* ---------------------------------------------------------------- banners */
-
-.event-banner,
-.tutorial-hint {
-  align-self: center;
-  margin-top: 10px;
-  padding: 8px 16px;
-  border-radius: 14px;
-  font-weight: 700;
-  font-size: 15px;
-  text-align: center;
-  box-shadow: 0 2px 8px rgb(0 0 0 / 0.15);
-  max-width: 92%;
-}
-
-.event-sandstorm {
-  background: #f6e0b5;
-  color: #7a4b12;
-}
-
-.event-heatwave {
-  background: #ffd9c2;
-  color: #a33a12;
-}
 
 .tutorial-hint {
   background: #1e3557;
@@ -559,14 +409,6 @@ body {
   padding: 0 8px;
 }
 
-.nearby-upgrade {
-  pointer-events: auto;
-  align-self: center;
-  width: min(420px, 100%);
-  box-shadow: 0 4px 14px rgb(0 0 0 / 0.18);
-  border-radius: 14px;
-}
-
 .credits-line {
   margin: 4px 0;
 }
@@ -649,36 +491,6 @@ body {
 
 /* ---------------------------------------------------------------- ads and shop */
 
-.boost-button {
-  pointer-events: auto;
-  border: none;
-  border-radius: 18px;
-  min-width: 72px;
-  min-height: 60px;
-  padding: 6px 10px;
-  background: linear-gradient(160deg, #f7c948, #f29e4c);
-  color: #1e3557;
-  font: inherit;
-  font-weight: 800;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 3px 8px rgb(0 0 0 / 0.2);
-}
-
-.boost-button:disabled {
-  opacity: 0.9;
-}
-
-.boost-active {
-  background: linear-gradient(160deg, #a6e22e, #19b5a5);
-}
-
-.boost-label {
-  font-size: 12px;
-}
-
 .ad-offer {
   pointer-events: auto;
   align-self: center;
@@ -732,9 +544,4 @@ body {
 
 .storm-on {
   opacity: 1;
-}
-
-.contract-banner {
-  background: #fff4c2;
-  color: #1e3557;
 }

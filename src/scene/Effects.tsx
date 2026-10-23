@@ -75,10 +75,10 @@ export function Effects() {
           float({ x: cafe.pos.x, z: cafe.pos.z + 0.6 }, `☕ +${formatCash(e.cafe)}`, '#7A5230', 3.4)
         if (e.carWash > 0 && wash) float(wash.pos, `🫧 +${formatCash(e.carWash)}`, '#1E6FA8', 4.4)
       } else if (e.type === 'cashCollected') {
-        float(e.pos, `+${formatCash(e.amount)}`, '#2E7D32')
-      } else if (e.type === 'carLost') {
-        const car = useGame.getState().state.cars.find((c) => c.id === e.carId)
-        if (car) float(car.pos, '😠', '#E5484D')
+        const sprite = makeCoinSprite(`+${formatCash(e.amount)}`)
+        sprite.position.set(e.pos.x, 2.2, e.pos.z)
+        group.current?.add(sprite)
+        floaters.current.push({ sprite, life: 1.2 })
       }
     })
   }, [])
@@ -153,6 +153,56 @@ function makeTextSprite(text: string, color: string): THREE.Sprite {
     }),
   )
   sprite.scale.set(2.4, 0.9, 1)
+  sprite.renderOrder = 20
+  return sprite
+}
+
+/** "+$24" in white game type beside a gold coin, for collected cash. */
+function makeCoinSprite(text: string): THREE.Sprite {
+  const canvas = document.createElement('canvas')
+  canvas.width = 320
+  canvas.height = 96
+  const ctx = canvas.getContext('2d')!
+  ctx.font = '64px "Lilita One", system-ui, sans-serif'
+  const width = ctx.measureText(text).width
+  const left = (canvas.width - (width + 76)) / 2
+  // Coin
+  const cx = left + 34
+  const grad = ctx.createLinearGradient(0, 16, 0, 84)
+  grad.addColorStop(0, '#FFE27A')
+  grad.addColorStop(1, '#F2A516')
+  ctx.beginPath()
+  ctx.arc(cx, 50, 30, 0, Math.PI * 2)
+  ctx.fillStyle = grad
+  ctx.fill()
+  ctx.lineWidth = 5
+  ctx.strokeStyle = '#B86E00'
+  ctx.stroke()
+  ctx.fillStyle = '#B86E00'
+  ctx.font = '40px "Lilita One", system-ui, sans-serif'
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'middle'
+  ctx.fillText('$', cx, 52)
+  // Amount
+  ctx.font = '64px "Lilita One", system-ui, sans-serif'
+  ctx.textAlign = 'left'
+  ctx.lineJoin = 'round'
+  ctx.lineWidth = 12
+  ctx.strokeStyle = '#1E5B2A'
+  ctx.strokeText(text, left + 76, 52)
+  ctx.fillStyle = '#FFFFFF'
+  ctx.fillText(text, left + 76, 52)
+  const texture = new THREE.CanvasTexture(canvas)
+  texture.colorSpace = THREE.SRGBColorSpace
+  const sprite = new THREE.Sprite(
+    new THREE.SpriteMaterial({
+      map: texture,
+      transparent: true,
+      depthTest: false,
+      toneMapped: false,
+    }),
+  )
+  sprite.scale.set(3, 0.9, 1)
   sprite.renderOrder = 20
   return sprite
 }

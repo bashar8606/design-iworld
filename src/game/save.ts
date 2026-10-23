@@ -1,3 +1,4 @@
+import { initialMissions } from './missions.ts'
 import { SAVE_VERSION } from './state.ts'
 import type { GameState } from './types.ts'
 
@@ -51,6 +52,8 @@ export function deserializeSave(json: string | null): SaveFile | null {
     if (typeof state.mapId !== 'string' || typeof state.time !== 'number') return null
     // Saves from before the purchase ledger existed.
     if (!('ledger' in state)) state.ledger = null
+    // Saves from before missions existed get a fresh set.
+    if (!('missions' in state)) state.missions = initialMissions(state as unknown as GameState)
     return { version: SAVE_VERSION, savedAt: raw.savedAt, state: state as unknown as GameState }
   } catch {
     return null

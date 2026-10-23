@@ -1,6 +1,7 @@
 // Player actions outside movement: upgrades, rewards, purchases and the prestige reset.
 // Each returns a new state (or the same one when the action is not allowed).
 import { getContent, nextMapId } from './content.ts'
+import { missionDone, nextMission, progressMissions } from './missions.ts'
 import { Rng } from './rng.ts'
 import { createInitialState } from './state.ts'
 import { cloneState, spawnCar } from './tick.ts'
@@ -20,6 +21,8 @@ export type GameAction =
   /** Prestige: sell the completed map for Green Credits and move to the next map. */
   | { type: 'sellToUtility' }
   | { type: 'buyIncomeLevel' }
+  /** Collects a finished mission's reward and brings in the next mission. */
+  | { type: 'claimMission'; id: string }
   /** Purchase grants and the updated ledger, applied together. */
   | {
       type: 'applyPurchases'
@@ -62,6 +65,18 @@ export function applyAction(
       return sellToUtility(state, nextMapId(state.mapId), content)
     case 'buyIncomeLevel':
       return buyIncomeLevel(state, content)
+    case 'claimMission': {
+      const i = state.missions.active.findIndex((m) => m.id === action.id)
+      const mission = state.missions.active[i]
+      if (!mission || !missionDone(mission)) return state
+      const s = cloneState(state)
+      s.cash += mission.rewardCash
+      s.gems += mission.rewardGems
+      s.missions.completed += 1
+      s.missions.active.splice(i, 1)
+      s.missions.active.splice(i, 0, nextMission(s))
+      return s
+    }
     case 'debugAddCash': {
       const s = cloneState(state)
       s.cash += action.amount
@@ -92,6 +107,7 @@ export function upgradeEquipment(state: GameState, id: string, content: Content)
   if (tier.buildSeconds > 0) item.upgradingUntil = s.time + tier.buildSeconds
   else item.tier += 1
   s.events = [{ type: 'upgradeDone', id }]
+  progressMissions(s, s.events)
   return s
 }
 

@@ -15,6 +15,7 @@ import { PerfProbe } from './PerfProbe.tsx'
 import { Player, Staff } from './People.tsx'
 import { BakedContactShadow, BlobShadows } from './Shadows.tsx'
 import { TutorialArrow } from './TutorialArrow.tsx'
+import { UpgradeArrows } from './UpgradeArrows.tsx'
 import { Weather } from './Weather.tsx'
 import { quality } from './quality.ts'
 
@@ -60,6 +61,7 @@ export function World({
         <Drivers />
         <Effects />
         <TutorialArrow />
+        <UpgradeArrows />
         <Weather />
         {!shadows && <BakedContactShadow />}
         {!shadows && <BlobShadows />}

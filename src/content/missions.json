@@ -1,0 +1,45 @@
+{
+  "slots": 3,
+  "growth": 1.35,
+  "minCashReward": 20,
+  "templates": [
+    { "kind": "serveCars", "title": "Serve {n} car{s}", "base": 8, "gems": 3, "cashMinutes": 1.5 },
+    {
+      "kind": "collectCash",
+      "title": "Collect {n}",
+      "baseMinutes": 3,
+      "gems": 3,
+      "cashMinutes": 1
+    },
+    {
+      "kind": "buildPads",
+      "title": "Build {n} new thing{s}",
+      "base": 1,
+      "gems": 5,
+      "cashMinutes": 1
+    },
+    {
+      "kind": "surviveNight",
+      "title": "Get through {n} night{s}",
+      "base": 1,
+      "gems": 5,
+      "cashMinutes": 2
+    },
+    {
+      "kind": "upgrade",
+      "title": "Upgrade {n} time{s}",
+      "base": 1,
+      "gems": 4,
+      "cashMinutes": 1.5,
+      "unlockAfter": "technician1"
+    },
+    {
+      "kind": "serveTaxis",
+      "title": "Serve {n} taxi{s}",
+      "base": 3,
+      "gems": 5,
+      "cashMinutes": 2,
+      "unlockAfter": "charger4"
+    }
+  ]
+}

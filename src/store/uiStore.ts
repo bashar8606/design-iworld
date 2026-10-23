@@ -1,7 +1,16 @@
 import { create } from 'zustand'
 
 export type Sheet =
-  'settings' | 'upgrades' | 'shop' | 'debug' | 'credits' | 'feedback' | 'greenCredits' | null
+  | 'settings'
+  | 'upgrades'
+  | 'shop'
+  | 'debug'
+  | 'credits'
+  | 'feedback'
+  | 'greenCredits'
+  | 'missions'
+  | 'map'
+  | null
 
 export interface UiStore {
   sheet: Sheet

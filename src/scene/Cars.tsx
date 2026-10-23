@@ -1,10 +1,13 @@
+import { Html } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { useMemo, useRef } from 'react'
 import * as THREE from 'three'
+import { useShallow } from 'zustand/react/shallow'
 import { getContent } from '../game/content.ts'
-import type { Car } from '../game/types.ts'
+import type { Car, GameState } from '../game/types.ts'
+import { chargerPowerKw } from '../game/world.ts'
 import { tickAlpha, useGame } from '../store/gameStore.ts'
-import { FACE_CAMERA } from './billboard.ts'
+import { formatDuration } from '../ui/format.ts'
 import { lerp, lerpAngle } from './interp.ts'
 import { type ModelName, useModelGeometry } from './models/useModelGeometry.ts'
 
@@ -35,7 +38,7 @@ export function Cars() {
       {CAR_MODELS.map((model) => (
         <CarInstances key={model} model={model} />
       ))}
-      <CarRings />
+      <CarBubbles />
     </>
   )
 }
@@ -77,57 +80,97 @@ function CarInstances({ model }: { model: ModelName }) {
   )
 }
 
-const PATIENCE_FULL = new THREE.Color('#19B5A5')
-const PATIENCE_EMPTY = new THREE.Color('#E5484D')
-const CHARGING = new THREE.Color('#A6E22E')
+type Bubble =
+  | { kind: 'none' }
+  | { kind: 'charge'; percent: number; seconds: number; stalled: boolean }
+  | { kind: 'mood'; emoji: string; urgent: boolean }
 
-/** A ring over each waiting car (teal → red as patience runs out) or charging car (lime, grows). */
-function CarRings() {
-  const ref = useRef<THREE.InstancedMesh>(null)
-  const geometry = useMemo(() => new THREE.RingGeometry(0.32, 0.5, 20), [])
-  const material = useMemo(
-    () => new THREE.MeshBasicMaterial({ toneMapped: false, depthTest: false, transparent: true }),
-    [],
-  )
-  const color = useMemo(() => new THREE.Color(), [])
-  useFrame(({ clock }) => {
-    const mesh = ref.current
-    if (!mesh) return
-    const { state, prev } = useGame.getState()
-    const t = tickAlpha()
-    const prevById = new Map(prev.cars.map((c) => [c.id, c]))
-    let i = 0
-    for (const car of state.cars) {
-      const waiting = car.phase === 'queue' || car.phase === 'waiting' || car.phase === 'toBay'
-      const charging = car.phase === 'charging'
-      if (!waiting && !charging) continue
-      const p = carPose(car, prevById.get(car.id), t)
-      let s: number
-      if (waiting) {
-        const f = Math.max(0, car.patience / car.patienceMax)
-        color.copy(PATIENCE_EMPTY).lerp(PATIENCE_FULL, f)
-        s = f < 0.3 ? 1 + 0.15 * Math.sin(clock.elapsedTime * 12) : 1
-      } else {
-        color.copy(CHARGING)
-        s = 0.4 + 0.6 * Math.min(1, car.energyDelivered / car.energyNeeded)
-      }
-      pos.set(p.x, 2.6, p.z)
-      scale.set(s, s, s)
-      mesh.setMatrixAt(i, m4.compose(pos, FACE_CAMERA, scale))
-      mesh.setColorAt(i, color)
-      i++
+/** What the bubble over a car shows: charge progress, or how the driver feels. */
+function carBubble(state: GameState, id: number): Bubble {
+  const car = state.cars.find((c) => c.id === id)
+  if (!car) return { kind: 'none' }
+  if (car.phase === 'charging') {
+    const content = getContent(state.mapId)
+    const charger = state.chargers.find((c) => c.carId === id)
+    const kw = charger ? chargerPowerKw(charger, content) : 0
+    const remaining = Math.max(0, car.energyNeeded - car.energyDelivered)
+    return {
+      kind: 'charge',
+      percent: Math.floor((car.energyDelivered / car.energyNeeded) * 100),
+      seconds: kw > 0 ? Math.ceil(remaining / (kw * content.map.energy.kwhPerKwSecond)) : 0,
+      stalled: state.energy.blackout,
     }
-    scale.set(1, 1, 1)
-    mesh.count = i
-    mesh.instanceMatrix.needsUpdate = true
-    if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true
-  })
+  }
+  if (car.phase === 'angry') return { kind: 'mood', emoji: '😡', urgent: false }
+  if (car.phase === 'leaving') return { kind: 'mood', emoji: '😍', urgent: false }
+  const f = car.patience / car.patienceMax
+  return f > 0.6
+    ? { kind: 'mood', emoji: '🙂', urgent: false }
+    : f > 0.3
+      ? { kind: 'mood', emoji: '😐', urgent: false }
+      : { kind: 'mood', emoji: '😡', urgent: true }
+}
+
+const BUBBLE_PHASES = new Set<Car['phase']>([
+  'queue',
+  'toBay',
+  'waiting',
+  'charging',
+  'leaving',
+  'angry',
+])
+
+/** A speech bubble over each car in the station: battery and time left, or the driver's mood. */
+function CarBubbles() {
+  const ids = useGame(
+    useShallow((s) => s.state.cars.filter((c) => BUBBLE_PHASES.has(c.phase)).map((c) => c.id)),
+  )
   return (
-    <instancedMesh
-      ref={ref}
-      args={[geometry, material, 60]}
-      frustumCulled={false}
-      renderOrder={10}
-    />
+    <>
+      {ids.map((id) => (
+        <CarBubble key={id} id={id} />
+      ))}
+    </>
+  )
+}
+
+function CarBubble({ id }: { id: number }) {
+  const group = useRef<THREE.Group>(null)
+  const bubble = useGame(useShallow((s) => carBubble(s.state, id)))
+  useFrame(() => {
+    const { state, prev } = useGame.getState()
+    const car = state.cars.find((c) => c.id === id)
+    if (!car || !group.current) return
+    const p = carPose(
+      car,
+      prev.cars.find((c) => c.id === id),
+      tickAlpha(),
+    )
+    group.current.position.set(p.x, 2.3, p.z)
+  })
+  if (bubble.kind === 'none') return null
+  return (
+    <group ref={group}>
+      <Html center zIndexRange={[5, 0]} style={{ pointerEvents: 'none' }}>
+        {bubble.kind === 'charge' ? (
+          <div className={`car-bubble bubble-charge${bubble.stalled ? ' is-stalled' : ''}`}>
+            <span className="bubble-battery" aria-hidden>
+              <span style={{ height: `${bubble.percent}%` }} />
+            </span>
+            <span className="bubble-text">
+              <strong>{bubble.percent}%</strong>
+              <small>{bubble.stalled ? 'No power' : formatDuration(bubble.seconds)}</small>
+            </span>
+          </div>
+        ) : (
+          <div
+            key={bubble.emoji}
+            className={`car-bubble bubble-mood${bubble.urgent ? ' is-urgent' : ''}${bubble.emoji === '😍' ? ' is-happy' : ''}`}
+          >
+            {bubble.emoji}
+          </div>
+        )}
+      </Html>
+    </group>
   )
 }

@@ -1,4 +1,5 @@
 import { getContent } from './content.ts'
+import { cloneMissions, progressMissions } from './missions.ts'
 import { Rng } from './rng.ts'
 import { buildPadItem } from './state.ts'
 import type {
@@ -54,6 +55,7 @@ export function cloneState(s: GameState): GameState {
     prestige: { ...s.prestige },
     stats: { ...s.stats },
     milestones: { ...s.milestones },
+    missions: cloneMissions(s.missions),
     events: [],
   }
 }
@@ -86,6 +88,7 @@ export function tick(
   updateDust(s, dt, content)
   updateContract(s, rng, content, events)
   if (options.offline) autoCollect(s)
+  progressMissions(s, events)
 
   if (!s.mapComplete && content.map.pads.every((p) => s.pads[p.id]?.built)) {
     s.mapComplete = true

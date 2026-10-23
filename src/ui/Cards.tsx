@@ -68,23 +68,40 @@ export function EventBanner() {
     }),
   )
   if (!info.kind) return null
-  const texts = {
-    sandstorm: [
-      `🌪️ Sandstorm in ${info.seconds} s: panels will drop to half power`,
-      `🌪️ Sandstorm! Panels at half power · ${info.seconds} s`,
-    ],
-    heatwave: [
-      `🔥 Heatwave in ${info.seconds} s: double the cars tonight`,
-      `🔥 Heatwave! Double the cars · ${info.seconds} s`,
-    ],
-    nightRush: [
-      `🌙 Night rush in ${info.seconds} s: busy late evening ahead`,
-      `🌙 Night rush! Extra cars · ${info.seconds} s`,
-    ],
-  } as const
-  const text = texts[info.kind][info.phase === 'soon' ? 0 : 1]
-  return <div className={`event-banner event-${info.kind}`}>{text}</div>
+  const soon = info.phase === 'soon'
+  const look = EVENT_LOOKS[info.kind]
+  return (
+    <div className={`event-banner event-${info.kind}${soon ? ' is-soon' : ''}`} role="status">
+      <span className="event-icon" aria-hidden>
+        {look.icon}
+      </span>
+      <span className="event-text">
+        <strong>{soon ? look.soon : look.title}</strong>
+        <small>{look.effect}</small>
+      </span>
+      <span className="event-timer">
+        {soon ? 'in ' : '⏱ '}
+        {formatDuration(info.seconds)}
+      </span>
+    </div>
+  )
 }
+
+const EVENT_LOOKS = {
+  sandstorm: {
+    icon: '🌪️',
+    title: 'SANDSTORM!',
+    soon: 'Sandstorm coming',
+    effect: 'Panels at half power',
+  },
+  heatwave: { icon: '🔥', title: 'HEATWAVE!', soon: 'Heatwave coming', effect: 'Double the cars!' },
+  nightRush: {
+    icon: '🌙',
+    title: 'NIGHT RUSH!',
+    soon: 'Night rush coming',
+    effect: 'Extra cars late',
+  },
+} as const
 
 /** One-line tutorial hint at the top of the screen. */
 export function TutorialHint() {

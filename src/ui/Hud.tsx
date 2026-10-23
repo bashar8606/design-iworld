@@ -1,13 +1,112 @@
 import { useEffect, useRef, useState } from 'react'
-import { useUi } from '../store/uiStore.ts'
 import { getContent } from '../game/content.ts'
+import { isNight } from '../game/world.ts'
 import { onGameEvent } from '../store/events.ts'
 import { useGame } from '../store/gameStore.ts'
-import { formatCash } from './format.ts'
+import { useUi } from '../store/uiStore.ts'
+import { clockTime, formatCash } from './format.ts'
 
-/** Cash that rolls toward its new value instead of jumping. */
-function RollingCash() {
+const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+
+/** Day number, weekday and clock time; five quick taps open the debug menu. */
+function TimePill({ onTap }: { onTap: () => void }) {
+  // Rounded to 10 game minutes so the clock ticks without re-rendering every frame.
+  const dayTime = useGame((s) => Math.floor(s.state.dayTime * 144) / 144)
+  const day = useGame((s) => s.state.day)
+  const mapId = useGame((s) => s.state.mapId)
+  const night = isNight(dayTime, getContent(mapId).map)
+  return (
+    <button
+      className="top-time"
+      data-hud-control
+      onClick={onTap}
+      aria-label={`Day ${day + 1}, ${clockTime(dayTime)}`}
+    >
+      <span className={`top-time-icon${night ? ' is-night' : ''}`} aria-hidden>
+        {night ? '🌙' : '☀️'}
+      </span>
+      <span className="top-time-text">
+        <strong>Day {day + 1}</strong>
+        <small>
+          {WEEKDAYS[day % 7]} {clockTime(dayTime)}
+        </small>
+      </span>
+    </button>
+  )
+}
+
+/** Battery glyph whose fill and colour follow the stored charge. */
+function BatteryIcon({ fill }: { fill: number }) {
+  const color = fill > 0.5 ? '#2BB673' : fill > 0.2 ? '#F2B233' : '#E5484D'
+  return (
+    <svg className="energy-battery" viewBox="0 0 16 26" aria-hidden>
+      <rect x="4.5" y="0.5" width="7" height="3" rx="1" fill="#1E2A44" />
+      <rect
+        x="1"
+        y="3"
+        width="14"
+        height="22"
+        rx="3"
+        fill="#FFFFFF"
+        stroke="#1E2A44"
+        strokeWidth="2"
+      />
+      <rect x="3.5" y={5.5 + 17 * (1 - fill)} width="9" height={17 * fill} rx="1.5" fill={color} />
+      <path
+        d="M9 9 L5.5 15 H8 L7 20 L10.5 13.5 H8 Z"
+        fill="#FFFFFF"
+        opacity={fill > 0.25 ? 1 : 0}
+      />
+    </svg>
+  )
+}
+
+/** Panels in, battery level, chargers out. */
+function EnergyPanel() {
+  const produced = useGame((s) => Math.round(s.state.energy.produced))
+  const delivered = useGame((s) => Math.round(s.state.energy.delivered))
+  const capacity = useGame((s) => s.state.energy.capacity)
+  const fill = useGame((s) =>
+    s.state.energy.capacity > 0
+      ? Math.round((s.state.energy.stored / s.state.energy.capacity) * 100) / 100
+      : 0,
+  )
+  const blackout = useGame((s) => s.state.energy.blackout)
+  return (
+    <div className={`top-energy${blackout ? ' is-alert' : ''}`} aria-label="Energy">
+      <div className="energy-stat">
+        <span className="energy-icon" aria-hidden>
+          ☀️
+        </span>
+        <span>
+          <strong>{produced} kW</strong>
+          <small>Generating</small>
+        </span>
+      </div>
+      <div className="energy-stat">
+        <BatteryIcon fill={fill} />
+        <span>
+          <strong>{capacity > 0 ? `${Math.round(fill * 100)}%` : '—'}</strong>
+          <small>{capacity > 0 ? 'Storage' : 'No battery'}</small>
+        </span>
+      </div>
+      <div className="energy-stat">
+        <span className="energy-icon energy-bolt" aria-hidden>
+          ⚡
+        </span>
+        <span>
+          <strong>{delivered} kW</strong>
+          <small>Consuming</small>
+        </span>
+      </div>
+    </div>
+  )
+}
+
+/** Cash that rolls toward its new value; the + opens the shop. */
+function CashPill() {
   const cash = useGame((s) => Math.floor(s.state.cash))
+  const open = useUi((s) => s.open)
   const [shown, setShown] = useState(cash)
   const shownRef = useRef(cash)
   useEffect(() => {
@@ -27,75 +126,19 @@ function RollingCash() {
     return () => cancelAnimationFrame(frame)
   }, [cash])
   return (
-    <div className="hud-pill hud-cash" aria-label="Cash">
-      <span className="hud-coin">●</span>
-      {formatCash(shown)}
-    </div>
-  )
-}
-
-/** Day-night dial: the sun or moon marker travels round as the day passes. */
-function ClockDial({ onTap }: { onTap?: () => void }) {
-  const dayTime = useGame((s) => Math.round(s.state.dayTime * 200) / 200)
-  const day = useGame((s) => s.state.day)
-  const mapId = useGame((s) => s.state.mapId)
-  const { sunrise, sunset } = getContent(mapId).map.day
-  const night = dayTime <= sunrise || dayTime >= sunset
-  const angle = dayTime * Math.PI * 2 - Math.PI / 2
-  const r = 17
-  // Daylight arc from sunrise to sunset.
-  const a0 = sunrise * Math.PI * 2 - Math.PI / 2
-  const a1 = sunset * Math.PI * 2 - Math.PI / 2
-  const arc = `M ${22 + r * Math.cos(a0)} ${22 + r * Math.sin(a0)} A ${r} ${r} 0 1 1 ${22 + r * Math.cos(a1)} ${22 + r * Math.sin(a1)}`
-  return (
-    <button
-      className="hud-pill hud-clock"
-      data-hud-control
-      onClick={onTap}
-      aria-label={`Day ${day + 1}, ${night ? 'night' : 'day'}`}
-    >
-      <svg width="44" height="44" viewBox="0 0 44 44">
-        <circle
-          cx="22"
-          cy="22"
-          r={r}
-          fill={night ? '#1D2756' : '#CFE9F7'}
-          stroke="#1E3557"
-          strokeOpacity="0.2"
-          strokeWidth="4"
-        />
-        <path d={arc} fill="none" stroke="#F7C948" strokeWidth="4" strokeLinecap="round" />
-        <circle
-          cx={22 + r * Math.cos(angle)}
-          cy={22 + r * Math.sin(angle)}
-          r="5"
-          fill={night ? '#E8ECFF' : '#F29E4C'}
-        />
-      </svg>
-      <span>Day {day + 1}</span>
-    </button>
-  )
-}
-
-/** Panels in, battery level, chargers out. */
-function EnergyBar() {
-  const produced = useGame((s) => Math.round(s.state.energy.produced))
-  const delivered = useGame((s) => Math.round(s.state.energy.delivered))
-  const capacity = useGame((s) => s.state.energy.capacity)
-  const fill = useGame((s) =>
-    s.state.energy.capacity > 0
-      ? Math.round((s.state.energy.stored / s.state.energy.capacity) * 100)
-      : 0,
-  )
-  const blackout = useGame((s) => s.state.energy.blackout)
-  return (
-    <div className={`hud-pill hud-energy${blackout ? ' hud-alert' : ''}`} aria-label="Energy">
-      <span title="Panels in">☀️ {produced} kW</span>
-      <span className="hud-battery" title="Battery">
-        <span className="hud-battery-fill" style={{ width: `${capacity > 0 ? fill : 0}%` }} />
-        <span className="hud-battery-label">{capacity > 0 ? `${fill}%` : 'no battery'}</span>
+    <div className="top-cash" aria-label="Cash">
+      <span className="top-cash-icon" aria-hidden>
+        💵
       </span>
-      <span title="Chargers out">⚡ {delivered} kW</span>
+      <strong>{formatCash(shown)}</strong>
+      <button
+        className="top-cash-plus"
+        data-hud-control
+        onClick={() => open('shop')}
+        aria-label="Shop"
+      >
+        +
+      </button>
     </div>
   )
 }
@@ -106,7 +149,7 @@ interface Toast {
   tone: 'bad' | 'good' | 'info'
 }
 
-/** Short messages: angry drivers, events, milestones. */
+/** Short messages: angry drivers, nightfall, contracts, milestones. */
 function Toasts() {
   const [toasts, setToasts] = useState<Toast[]>([])
   const lastAngry = useRef(0)
@@ -129,13 +172,6 @@ function Toasts() {
             : 'A driver got tired of waiting',
           'bad',
         )
-      } else if (e.type === 'eventAnnounced') {
-        push(
-          e.kind === 'sandstorm'
-            ? 'Sandstorm in 30 s: panels at half power'
-            : 'Heatwave tonight: double the cars',
-          'info',
-        )
       } else if (e.type === 'nightStarted') {
         push(
           state.energy.capacity > 0
@@ -148,7 +184,7 @@ function Toasts() {
       } else if (e.type === 'mapComplete') {
         push('Map complete!', 'good')
       } else if (e.type === 'contractDone') {
-        push(`Fleet contract done: +$${Math.round(e.bonus).toLocaleString('en-US')}`, 'good')
+        push(`Fleet contract done: +${formatCash(e.bonus)}`, 'good')
       } else if (e.type === 'contractFailed') {
         push('The fleet contract ran out of time', 'bad')
       }
@@ -189,22 +225,10 @@ export function Hud({
   const onClockTap = useFiveTaps(() => allowDebug && open('debug'))
   return (
     <div className="hud">
-      <div className="hud-bar">
-        <ClockDial onTap={onClockTap} />
-        <div className="hud-right">
-          <RollingCash />
-          <button
-            className="hud-icon"
-            data-hud-control
-            onClick={() => open('settings')}
-            aria-label="Settings"
-          >
-            ⚙️
-          </button>
-        </div>
-      </div>
-      <div className="hud-bar hud-bar-center">
-        <EnergyBar />
+      <div className="top-bar">
+        <TimePill onTap={onClockTap} />
+        <EnergyPanel />
+        <CashPill />
       </div>
       <Toasts />
       {children}

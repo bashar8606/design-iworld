@@ -4,7 +4,7 @@ import type { EconomyContent } from '../types.ts'
 import type { QuarryAllContent, QuarryContent } from './types.ts'
 
 const quarries: Record<string, QuarryContent> = {
-  quarry1: quarry1Json as QuarryContent,
+  quarry1: quarry1Json as unknown as QuarryContent,
 }
 
 export const QUARRY_ORDER = ['quarry1']

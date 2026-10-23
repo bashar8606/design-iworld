@@ -6,10 +6,10 @@
     "afterMap": "map1"
   },
   "bounds": {
-    "minX": -24,
-    "maxX": 26,
-    "minZ": -18,
-    "maxZ": 16
+    "minX": -23,
+    "maxX": 25,
+    "minZ": -16,
+    "maxZ": 15
   },
   "day": {
     "lengthSeconds": 360,
@@ -20,10 +20,14 @@
   },
   "player": {
     "start": {
-      "x": 12,
-      "z": 8
+      "x": 10,
+      "z": 5
     },
-    "speed": 5
+    "speed": 5,
+    "padRadius": 1.15,
+    "pickupRadius": 1.3,
+    "buildSeconds": 1.2,
+    "minDrainPerSecond": 15
   },
   "site": {
     "clearing": {
@@ -39,13 +43,143 @@
       "rz": 8.5
     },
     "cabin": {
-      "x": 14,
-      "z": 11,
+      "x": 14.5,
+      "z": 1.8,
       "rotation": 0
     },
     "sign": {
-      "x": 21,
-      "z": 13.5
+      "x": 24,
+      "z": 10.8
+    }
+  },
+  "mining": {
+    "radius": 1.8,
+    "secondsPerRock": 0.45,
+    "tonsPerRock": 0.25,
+    "dropRadius": 1.9,
+    "dropSecondsPerRock": 0.08
+  },
+  "faces": [
+    {
+      "id": "face1",
+      "pos": {
+        "x": -3.2,
+        "z": 2.4
+      },
+      "rocks": 16,
+      "regenSecondsPerRock": 1.2
+    },
+    {
+      "id": "face2",
+      "pos": {
+        "x": -8.6,
+        "z": 3.4
+      },
+      "rocks": 16,
+      "regenSecondsPerRock": 1.2
+    },
+    {
+      "id": "face3",
+      "pos": {
+        "x": -14.2,
+        "z": 2.4
+      },
+      "rocks": 16,
+      "regenSecondsPerRock": 1.2
+    }
+  ],
+  "crusher": {
+    "pos": {
+      "x": 5,
+      "z": -4
+    },
+    "hopper": {
+      "x": 2.5,
+      "z": -4
+    },
+    "hopperTons": 4,
+    "beltSeconds": 3,
+    "beltEnd": {
+      "x": 5,
+      "z": 3.2
+    }
+  },
+  "stockpiles": [
+    {
+      "id": "gravel",
+      "product": "gravel",
+      "pos": {
+        "x": 5,
+        "z": 4.4
+      },
+      "capacityTons": 30
+    }
+  ],
+  "products": {
+    "gravel": {
+      "name": "Gravel",
+      "pricePerTon": 6
+    }
+  },
+  "upgrades": {
+    "backpack": {
+      "name": "Backpack",
+      "icon": "🎒",
+      "pad": {
+        "x": 17.4,
+        "z": 4.9
+      },
+      "levels": [8, 12, 16, 24, 32],
+      "prices": [60, 180, 520, 1400]
+    },
+    "crusher": {
+      "name": "Crusher",
+      "icon": "⚙️",
+      "pad": {
+        "x": 8.4,
+        "z": -4.4
+      },
+      "levels": [0.5, 0.7, 0.95, 1.25, 1.6],
+      "prices": [90, 320, 900, 2400]
+    }
+  },
+  "buyers": {
+    "firstDelaySeconds": 10,
+    "everySeconds": [7, 12],
+    "speed": 6,
+    "loadTonsPerSecond": 1,
+    "types": [
+      {
+        "id": "pickup",
+        "name": "Pickup",
+        "loadTons": 2,
+        "patienceSeconds": 45,
+        "weight": 1,
+        "color": "#F7F7F2"
+      }
+    ],
+    "road": {
+      "z": 8,
+      "spawnX": 44,
+      "bayX": 5,
+      "queueSpacing": 5.4,
+      "maxWaiting": 4,
+      "exit": [
+        {
+          "x": -2,
+          "z": 8
+        },
+        {
+          "x": -2,
+          "z": 36
+        }
+      ]
+    }
+  },
+  "office": {
+    "counter": {
+      "x": 13.4,
+      "z": 4.4
     }
   },
   "forest": {
@@ -55,14 +189,45 @@
     "extent": 34
   },
   "hills": [
-    { "x": -48, "z": -44, "r": 26, "h": 11 },
-    { "x": -8, "z": -58, "r": 30, "h": 14 },
-    { "x": 36, "z": -50, "r": 24, "h": 10 },
-    { "x": -62, "z": -6, "r": 22, "h": 8 },
-    { "x": 62, "z": -14, "r": 22, "h": 9 }
+    {
+      "x": -48,
+      "z": -44,
+      "r": 26,
+      "h": 11
+    },
+    {
+      "x": -8,
+      "z": -58,
+      "r": 30,
+      "h": 14
+    },
+    {
+      "x": 36,
+      "z": -50,
+      "r": 24,
+      "h": 10
+    },
+    {
+      "x": -62,
+      "z": -6,
+      "r": 22,
+      "h": 8
+    },
+    {
+      "x": 62,
+      "z": -14,
+      "r": 22,
+      "h": 9
+    }
   ],
   "next": [
-    { "id": "quarry2", "name": "Red Canyon Copper" },
-    { "id": "quarry3", "name": "Glacier Marble" }
+    {
+      "id": "quarry2",
+      "name": "Red Canyon Copper"
+    },
+    {
+      "id": "quarry3",
+      "name": "Glacier Marble"
+    }
   ]
 }

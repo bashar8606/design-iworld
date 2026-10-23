@@ -2,7 +2,7 @@ import type { BusinessId } from './business.ts'
 import { emptyCollection } from './collection.ts'
 import { getContent } from './content.ts'
 import { initialMissions } from './missions.ts'
-import { isQuarryState } from './quarry/state.ts'
+import { isQuarryState, normalizeQuarry } from './quarry/state.ts'
 import type { QuarryState } from './quarry/types.ts'
 import { SAVE_VERSION } from './state.ts'
 import type { GameState } from './types.ts'
@@ -44,6 +44,7 @@ export function serializeSave(
     ...NO_EXTRAS,
     ...extras,
   }
+  if (file.quarry) file.quarry = { ...file.quarry, events: [] }
   return JSON.stringify(file)
 }
 
@@ -96,7 +97,7 @@ export function deserializeSave(json: string | null): SaveFile | null {
     for (const car of (state.cars as { golden?: boolean }[] | undefined) ?? []) car.golden ??= false
     grantBuiltZones(state as unknown as GameState)
     moveToLayout(state as unknown as GameState)
-    const quarry = isQuarryState(raw.quarry) ? raw.quarry : null
+    const quarry = isQuarryState(raw.quarry) ? normalizeQuarry(raw.quarry) : null
     return {
       version: SAVE_VERSION,
       savedAt: raw.savedAt,

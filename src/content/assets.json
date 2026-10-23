@@ -185,6 +185,21 @@
       "route": "code",
       "source": "src/scene/props/geometry.ts",
       "triangleLimit": 40
+    },
+    "crusher": {
+      "route": "code",
+      "source": "src/scene/props/geometry.ts",
+      "triangleLimit": 500
+    },
+    "pickup": {
+      "route": "code",
+      "source": "src/scene/props/geometry.ts",
+      "triangleLimit": 400
+    },
+    "conveyorSection": {
+      "route": "code",
+      "source": "src/scene/props/geometry.ts",
+      "triangleLimit": 40
     }
   }
 }

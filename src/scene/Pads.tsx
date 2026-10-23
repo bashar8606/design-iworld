@@ -2,7 +2,7 @@ import { useEffect, useMemo } from 'react'
 import * as THREE from 'three'
 import { useShallow } from 'zustand/react/shallow'
 import { getContent } from '../game/content.ts'
-import type { PadDef } from '../game/types.ts'
+import type { PadDef, Vec2 } from '../game/types.ts'
 import { openPads } from '../game/world.ts'
 import { useGame } from '../store/gameStore.ts'
 import { formatCash } from '../ui/format.ts'
@@ -27,7 +27,14 @@ const SIZE = 256
 /** Flat on the ground, turned so the label reads upright from the camera. */
 const PAD_ROTATION = new THREE.Euler(-Math.PI / 2, (CAMERA_AZIMUTH_DEG * Math.PI) / 180, 0, 'YXZ')
 
-function drawPad(ctx: CanvasRenderingContext2D, pad: PadDef, paid: number) {
+interface PadLook {
+  icon: string
+  price: number
+  /** Dashed outline colour. */
+  accent: string
+}
+
+function drawPad(ctx: CanvasRenderingContext2D, pad: PadLook, paid: number) {
   const left = pad.price - paid
   const fill = pad.price > 0 ? paid / pad.price : 1
   ctx.clearRect(0, 0, SIZE, SIZE)
@@ -36,7 +43,7 @@ function drawPad(ctx: CanvasRenderingContext2D, pad: PadDef, paid: number) {
   ctx.fill()
   ctx.setLineDash([18, 12])
   ctx.lineWidth = 8
-  ctx.strokeStyle = pad.kind === 'land' ? '#F29E4C' : '#19B5A5'
+  ctx.strokeStyle = pad.accent
   roundRect(ctx, 10, 10, SIZE - 20, SIZE - 20, 34)
   ctx.stroke()
   ctx.setLineDash([])
@@ -50,7 +57,7 @@ function drawPad(ctx: CanvasRenderingContext2D, pad: PadDef, paid: number) {
   ctx.textAlign = 'center'
   ctx.textBaseline = 'middle'
   ctx.font = '84px system-ui, "Apple Color Emoji", sans-serif'
-  ctx.fillText(PAD_ICONS[pad.kind], SIZE / 2, 86)
+  ctx.fillText(pad.icon, SIZE / 2, 86)
   ctx.fillStyle = '#1E3557'
   ctx.font = 'bold 44px system-ui, -apple-system, sans-serif'
   ctx.fillText(formatCash(Math.ceil(left)), SIZE / 2, 160)
@@ -75,6 +82,29 @@ function roundRect(
 
 function Pad({ pad }: { pad: PadDef }) {
   const paid = useGame((s) => Math.floor(s.state.pads[pad.id]?.paid ?? 0))
+  return (
+    <PadMarker
+      pos={pad.pos}
+      y={pad.y}
+      icon={PAD_ICONS[pad.kind]}
+      price={pad.price}
+      paid={paid}
+      accent={pad.kind === 'land' ? '#F29E4C' : '#19B5A5'}
+      size={pad.kind === 'land' ? 2.4 : 2.1}
+    />
+  )
+}
+
+/** A pad on the ground: icon, the price left and a fill bar (also used by the quarry). */
+export function PadMarker({
+  pos,
+  y = 0,
+  icon,
+  price,
+  paid,
+  accent,
+  size = 2.1,
+}: PadLook & { pos: Vec2; y?: number; paid: number; size?: number }) {
   const { canvas, texture } = useMemo(() => {
     const canvas = document.createElement('canvas')
     canvas.width = SIZE
@@ -85,17 +115,13 @@ function Pad({ pad }: { pad: PadDef }) {
     return { canvas, texture }
   }, [])
   useEffect(() => {
-    drawPad(canvas.getContext('2d')!, pad, paid)
+    drawPad(canvas.getContext('2d')!, { icon, price, accent }, paid)
     texture.needsUpdate = true
-  }, [canvas, texture, pad, paid])
+  }, [canvas, texture, icon, price, accent, paid])
   useEffect(() => () => texture.dispose(), [texture])
   return (
-    <mesh
-      position={[pad.pos.x, (pad.y ?? 0) + 0.03, pad.pos.z]}
-      rotation={PAD_ROTATION}
-      renderOrder={2}
-    >
-      <planeGeometry args={pad.kind === 'land' ? [2.4, 2.4] : [2.1, 2.1]} />
+    <mesh position={[pos.x, y + 0.03, pos.z]} rotation={PAD_ROTATION} renderOrder={2}>
+      <planeGeometry args={[size, size]} />
       <meshBasicMaterial map={texture} transparent depthWrite={false} toneMapped={false} />
     </mesh>
   )

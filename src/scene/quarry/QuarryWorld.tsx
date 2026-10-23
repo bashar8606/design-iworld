@@ -5,7 +5,9 @@ import { getQuarryContent } from '../../game/quarry/content.ts'
 import type { QuarryContent } from '../../game/quarry/types.ts'
 import { tickAlpha, useGame } from '../../store/gameStore.ts'
 import { sceneView } from '../../store/view.ts'
+import { Effects } from '../Effects.tsx'
 import { lerp } from '../interp.ts'
+import { QuarryLoop } from './QuarryLoop.tsx'
 import { propMaterial } from '../materials.ts'
 import {
   boulderGeometry,
@@ -74,8 +76,11 @@ function forestPlacements(q: QuarryContent): Placement[] {
     const z = c.minZ - e + rand() * (c.maxZ - c.minZ + 2 * e)
     const inSite = x > c.minX - m && x < c.maxX + m && z > c.minZ - m && z < c.maxZ + m
     if (inSite) continue
-    // Keep the entrance road on the east side open.
-    if (x > c.maxX && Math.abs(z - q.site.sign.z) < 3) continue
+    // Keep the entrance road (east) and the exit road (south) open.
+    const { road } = q.buyers
+    if (x > c.maxX - m && Math.abs(z - road.z) < 3.5) continue
+    const exit = road.exit.at(-1)!
+    if (z > c.maxZ - m && Math.abs(x - exit.x) < 3.5) continue
     out.push({ x, z, s: 0.9 + rand() * 0.9, r: rand() * Math.PI * 2 })
   }
   return out
@@ -162,7 +167,9 @@ export function QuarryWorld({ shadows = false }: { shadows?: boolean }) {
   const hills = useMemo(() => q.hills.map((h) => ({ x: h.x, z: h.z, s: h.r, sy: h.h, r: 0 })), [q])
   const c = q.site.clearing
   const { pit, cabin, sign } = q.site
-  const roadZ = sign.z
+  const { road } = q.buyers
+  const exit = road.exit.at(-1)!
+  const turn = road.exit[0]!
   return (
     <group>
       <mesh rotation-x={-Math.PI / 2} position={[0, -0.02, 0]} receiveShadow>
@@ -177,10 +184,22 @@ export function QuarryWorld({ shadows = false }: { shadows?: boolean }) {
         <planeGeometry args={[c.maxX - c.minX, c.maxZ - c.minZ]} />
         <meshStandardMaterial color="#CDB68C" roughness={1} />
       </mesh>
-      {/* The gravel access road in from the east. */}
-      <mesh rotation-x={-Math.PI / 2} position={[c.maxX + 20, 0.005, roadZ]} receiveShadow>
-        <planeGeometry args={[42, 4]} />
-        <meshStandardMaterial color="#B8A584" roughness={1} />
+      {/* The haul road buyers drive: in from the east, out to the south. */}
+      <mesh
+        rotation-x={-Math.PI / 2}
+        position={[(road.spawnX + turn.x) / 2, 0.006, road.z]}
+        receiveShadow
+      >
+        <planeGeometry args={[road.spawnX - turn.x + 4, 4]} />
+        <meshStandardMaterial color="#9F9479" roughness={1} />
+      </mesh>
+      <mesh
+        rotation-x={-Math.PI / 2}
+        position={[exit.x, 0.006, (turn.z + exit.z) / 2]}
+        receiveShadow
+      >
+        <planeGeometry args={[4, exit.z - turn.z + 4]} />
+        <meshStandardMaterial color="#9F9479" roughness={1} />
       </mesh>
       {/* Where the top bench will be cut. */}
       <mesh
@@ -212,6 +231,8 @@ export function QuarryWorld({ shadows = false }: { shadows?: boolean }) {
         castShadow={shadows}
       />
       {!shadows && <PlayerShadow />}
+      <QuarryLoop />
+      <Effects />
     </group>
   )
 }

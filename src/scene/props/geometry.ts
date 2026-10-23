@@ -499,3 +499,61 @@ export function surveyStakeGeometry(): THREE.BufferGeometry {
 export function boulderGeometry(): THREE.BufferGeometry {
   return merge([paint(new THREE.DodecahedronGeometry(0.6, 0).scale(1, 0.7, 0.85), '#9A948A')])
 }
+
+/**
+ * The jaw crusher: a steel frame in quarry yellow, the jaw box, a motor with its flywheel and
+ * a hopper on the -x side (at x = -2.5) where rock is tipped in.
+ */
+export function crusherGeometry(): THREE.BufferGeometry {
+  const hopper = new THREE.CylinderGeometry(1.25, 0.55, 1.1, 4, 1, true).rotateY(Math.PI / 4)
+  const hopperFloor = new THREE.CylinderGeometry(0.55, 0.55, 0.06, 4).rotateY(Math.PI / 4)
+  return merge([
+    boxAt([4.2, 0.3, 2.6], [-0.4, 0.15, 0], '#8C8579'),
+    boxAt([0.25, 2.2, 0.25], [-1.6, 1.3, -1.0], PALETTE.yellow),
+    boxAt([0.25, 2.2, 0.25], [-1.6, 1.3, 1.0], PALETTE.yellow),
+    boxAt([0.25, 2.2, 0.25], [1.0, 1.3, -1.0], PALETTE.yellow),
+    boxAt([0.25, 2.2, 0.25], [1.0, 1.3, 1.0], PALETTE.yellow),
+    boxAt([2.9, 0.25, 2.3], [-0.3, 2.45, 0], PALETTE.yellow),
+    boxAt([1.6, 1.5, 1.5], [0, 1.4, 0], '#5A5F66'),
+    boxAt([0.4, 1.2, 1.3], [-0.85, 1.6, 0], '#3B3E43'),
+    cylAt(0.65, 0.22, [0.2, 1.7, 0.95], PALETTE.dark, 14, [Math.PI / 2, 0, 0]),
+    boxAt([0.9, 0.7, 0.7], [1.6, 0.75, -0.6], '#2E6DB4'),
+    paint(hopper.translate(-2.5, 3.15, 0), PALETTE.yellow),
+    paint(hopperFloor.translate(-2.5, 2.62, 0), '#3B3E43'),
+    boxAt([1.6, 0.18, 0.18], [-1.75, 2.62, 0], PALETTE.yellow),
+    boxAt([0.12, 2.6, 0.12], [-3.1, 1.3, -0.6], PALETTE.yellow),
+    boxAt([0.12, 2.6, 0.12], [-3.1, 1.3, 0.6], PALETTE.yellow),
+  ])
+}
+
+/** A white pickup truck, 4.6 m long along +z, with an open bed at the back. */
+export function pickupGeometry(): THREE.BufferGeometry {
+  return merge([
+    boxAt([1.8, 0.55, 4.5], [0, 0.65, 0], PALETTE.white),
+    boxAt([1.7, 0.75, 1.6], [0, 1.25, 0.55], PALETTE.white),
+    boxAt([1.72, 0.5, 0.06], [0, 1.3, 1.36], '#9DD8F0'),
+    boxAt([1.74, 0.42, 1.0], [0, 1.3, 0.6], '#9DD8F0'),
+    boxAt([1.8, 0.45, 0.08], [0, 1.15, -0.25], PALETTE.white),
+    boxAt([0.08, 0.45, 1.9], [-0.86, 1.15, -1.2], PALETTE.white),
+    boxAt([0.08, 0.45, 1.9], [0.86, 1.15, -1.2], PALETTE.white),
+    boxAt([1.8, 0.45, 0.08], [0, 1.15, -2.17], PALETTE.white),
+    boxAt([1.9, 0.18, 0.2], [0, 0.5, 2.25], PALETTE.dark),
+    boxAt([1.9, 0.18, 0.2], [0, 0.5, -2.25], PALETTE.dark),
+    boxAt([0.5, 0.18, 0.05], [-0.55, 0.85, 2.26], PALETTE.yellow),
+    boxAt([0.5, 0.18, 0.05], [0.55, 0.85, 2.26], PALETTE.yellow),
+    ...[-1, 1].flatMap((sx) =>
+      [-1.45, 1.45].map((z) =>
+        cylAt(0.38, 0.3, [sx * 0.88, 0.38, z], PALETTE.dark, 10, [0, 0, Math.PI / 2]),
+      ),
+    ),
+  ])
+}
+
+/** A short section of conveyor: belt, side rails and a leg, 1 m long along +z. */
+export function conveyorSectionGeometry(): THREE.BufferGeometry {
+  return merge([
+    boxAt([0.7, 0.06, 1.0], [0, 0, 0], '#2B2B2E'),
+    boxAt([0.08, 0.16, 1.0], [-0.39, 0.05, 0], PALETTE.yellow),
+    boxAt([0.08, 0.16, 1.0], [0.39, 0.05, 0], PALETTE.yellow),
+  ])
+}

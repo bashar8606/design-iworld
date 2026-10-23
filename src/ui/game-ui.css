@@ -1095,6 +1095,7 @@
 
 .quarry-card {
   pointer-events: auto;
+  align-self: center;
   display: flex;
   align-items: flex-start;
   gap: 10px;
@@ -1198,4 +1199,37 @@
   margin: 0;
   font-size: 13px;
   opacity: 0.7;
+}
+
+.quarry-status {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.quarry-status span {
+  padding: 4px 10px;
+  border-radius: 12px;
+  background: rgb(255 255 255 / 0.92);
+  color: var(--ui-ink);
+  font-weight: 700;
+  font-size: 14px;
+  box-shadow: 0 2px 0 var(--ui-edge);
+  white-space: nowrap;
+}
+
+.quarry-hint {
+  background: linear-gradient(#ffd75e, var(--ui-gold));
+  color: #3b2a00;
+}
+
+.top-bar .quarry-name {
+  grid-column: 1 / -1;
+  grid-row: 2;
+}
+
+.top-bar .quarry-cash {
+  grid-column: 3;
+  grid-row: 1;
 }

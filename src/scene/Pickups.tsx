@@ -11,8 +11,16 @@ const quat = new THREE.Quaternion()
 const one = new THREE.Vector3(1, 1, 1)
 const up = new THREE.Vector3(0, 1, 0)
 
+interface Stack {
+  id: number
+  amount: number
+  pos: { x: number; z: number }
+}
+
+const stationStacks = (): Stack[] => useGame.getState().state.pickups
+
 /** Cash stacks waiting to be collected, as instanced bills that bob gently. */
-export function Pickups() {
+export function Pickups({ stacks = stationStacks }: { stacks?: () => Stack[] }) {
   const ref = useRef<THREE.InstancedMesh>(null)
   const geometry = useMemo(() => new THREE.BoxGeometry(0.5, 0.06, 0.28), [])
   const material = useMemo(
@@ -22,9 +30,8 @@ export function Pickups() {
   useFrame(({ clock }) => {
     const mesh = ref.current
     if (!mesh) return
-    const { pickups } = useGame.getState().state
     let i = 0
-    for (const p of pickups) {
+    for (const p of stacks()) {
       const bob = 0.08 * Math.sin(clock.elapsedTime * 3 + p.id)
       for (let b = 0; b < billsFor(p.amount) && i < MAX_BILLS; b++) {
         pos.set(p.pos.x + ((b % 2) - 0.5) * 0.05, 0.12 + b * 0.065 + bob, p.pos.z)

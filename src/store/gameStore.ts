@@ -137,15 +137,21 @@ export function startGameLoop(): () => void {
       let quarry = store.quarry
       let prev = quarry
       let steps = 0
-      while (accumulator >= TICK_SECONDS && steps < MAX_STEPS_PER_FRAME) {
+      const events = []
+      while (
+        accumulator >= TICK_SECONDS &&
+        steps < MAX_STEPS_PER_FRAME * Math.max(1, store.speed)
+      ) {
         prev = quarry
         quarry = tickQuarry(quarry, TICK_SECONDS, useGame.getState().input)
+        events.push(...quarry.events)
         accumulator -= TICK_SECONDS
         steps++
       }
       if (steps > 0) {
         if (accumulator > TICK_SECONDS) accumulator = 0
         useGame.setState({ quarry, quarryPrev: prev, tickedAt: now })
+        emitGameEvents(events)
       }
     } else if (!store.paused) {
       accumulator += elapsed * store.speed

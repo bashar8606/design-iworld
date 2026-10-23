@@ -74,7 +74,8 @@ export function startTracking(): () => void {
         break
       }
       case 'carLost':
-        track('car_lost', { blackout: useGame.getState().state.energy.blackout })
+        if (useGame.getState().business === 'quarry') track('quarry_buyer_lost')
+        else track('car_lost', { blackout: useGame.getState().state.energy.blackout })
         break
       case 'dayStarted':
         track('night_survived', { survived: e.survived, day: e.day })

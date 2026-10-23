@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import { getQuarryContent } from '../game/quarry/content.ts'
+import { quarryHint } from '../game/quarry/hint.ts'
+import { backpackCapacity } from '../game/quarry/state.ts'
 import { isNight } from '../game/world.ts'
 import { goToBusiness } from '../store/businessSwitch.ts'
 import { useGame } from '../store/gameStore.ts'
 import { useUi } from '../store/uiStore.ts'
 import { NavButton } from './BottomNav.tsx'
 import { useFiveTaps } from './useFiveTaps.ts'
-import { clockTime } from './format.ts'
+import { clockTime, formatCash } from './format.ts'
 
 const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
@@ -35,15 +37,23 @@ function QuarryTimePill({ onTap }: { onTap: () => void }) {
   )
 }
 
-/** Rosa's welcome on the empty site, until digging arrives. */
+function QuarryCash() {
+  const cash = useGame((s) => Math.floor(s.quarry?.cash ?? 0))
+  return (
+    <div className="top-cash quarry-cash" aria-label="Quarry cash">
+      <span className="top-cash-icon" aria-hidden>
+        💵
+      </span>
+      <strong>{formatCash(cash)}</strong>
+    </div>
+  )
+}
+
+/** Rosa's welcome, until the first cash is collected or the player closes it. */
 function SiteCard() {
   const [open, setOpen] = useState(true)
-  if (!open)
-    return (
-      <button className="quarry-chip" data-hud-control onClick={() => setOpen(true)}>
-        ⛏ Site survey
-      </button>
-    )
+  const earned = useGame((s) => (s.quarry?.stats.totalEarned ?? 0) > 0)
+  if (!open || earned) return null
   return (
     <div className="quarry-card" role="status">
       <span className="quarry-avatar" aria-hidden>
@@ -52,10 +62,7 @@ function SiteCard() {
       <div className="quarry-card-text">
         <small>Rosa · site manager</small>
         <strong>Welcome to Pine Ridge!</strong>
-        <p>
-          The pit is pegged out and the office is in. Digging starts soon: pickaxe, crusher, dump
-          trucks and the first buyers.
-        </p>
+        <p>Mine rock, tip it into the crusher, and the pickups buy the gravel.</p>
       </div>
       <button
         className="quarry-card-close"
@@ -67,6 +74,40 @@ function SiteCard() {
       </button>
     </div>
   )
+}
+
+/** Backpack, hopper and pile at a glance. */
+function SiteStatus() {
+  const quarryId = useGame((s) => s.quarry?.quarryId ?? 'quarry1')
+  const { quarry } = getQuarryContent(quarryId)
+  const pile = quarry.stockpiles[0]!
+  const carry = useGame((s) => s.quarry?.player.carry ?? 0)
+  const cap = useGame((s) => (s.quarry ? backpackCapacity(s.quarry, quarry) : 0))
+  const hopper = useGame((s) => Math.round((s.quarry?.hopper ?? 0) * 4) / 4)
+  const gravel = useGame((s) => Math.floor(s.quarry?.piles[pile.id] ?? 0))
+  return (
+    <div className="quarry-status" aria-label="Site status">
+      <span title="Rock in your backpack">
+        🎒 {carry}/{cap}
+      </span>
+      <span title="Rock in the crusher hopper">
+        ⚙️ {hopper}/{quarry.crusher.hopperTons} t
+      </span>
+      <span title="Gravel on the pile">
+        ⛰️ {gravel}/{pile.capacityTons} t
+      </span>
+    </div>
+  )
+}
+
+function Hint() {
+  const quarryId = useGame((s) => s.quarry?.quarryId ?? 'quarry1')
+  const { quarry } = getQuarryContent(quarryId)
+  const text = useGame((s) =>
+    s.quarry && s.quarry.stats.totalEarned < 150 ? quarryHint(s.quarry, quarry).text : null,
+  )
+  if (!text) return null
+  return <div className="tutorial-hint quarry-hint">👉 {text}</div>
 }
 
 /** The quarry's HUD: clock, site name, the way back to the station and the map. */
@@ -82,18 +123,14 @@ export function QuarryHud({ allowDebug = true }: { allowDebug?: boolean }) {
         <div className="quarry-name">
           <span aria-hidden>⛏</span> {name}
         </div>
-        <button
-          className="top-cash quarry-back"
-          data-hud-control
-          onClick={() => goToBusiness('station')}
-        >
-          <span aria-hidden>⚡</span> Station
-        </button>
+        <QuarryCash />
       </div>
       <div className="hud-under-bar">
-        <SiteCard />
+        <SiteStatus />
+        <Hint />
       </div>
       <div className="hud-bottom">
+        <SiteCard />
         <nav className="bottom-nav" aria-label="Menu">
           <NavButton tone="white" icon="🗺️" label="Map" onClick={() => open('map')} />
           <NavButton

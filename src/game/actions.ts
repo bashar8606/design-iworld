@@ -17,6 +17,12 @@ export type GameAction =
   | { type: 'grant'; cash?: number; gems?: number; permanentX2?: boolean }
   | { type: 'skipUpgradeWithGems'; id: string }
   | { type: 'debugAddCash'; amount: number }
+  /** Purchase grants and the updated ledger, applied together. */
+  | {
+      type: 'applyPurchases'
+      grants: { cash?: number; gems?: number; permanentX2?: boolean }[]
+      ledger: string[]
+    }
 
 export function applyAction(
   state: GameState,
@@ -39,6 +45,16 @@ export function applyAction(
     }
     case 'skipUpgradeWithGems':
       return skipUpgradeWithGems(state, action.id)
+    case 'applyPurchases': {
+      const s = cloneState(state)
+      for (const g of action.grants) {
+        s.cash += g.cash ?? 0
+        s.gems += g.gems ?? 0
+        if (g.permanentX2) s.boosts.permanentX2 = true
+      }
+      s.ledger = action.ledger
+      return s
+    }
     case 'debugAddCash': {
       const s = cloneState(state)
       s.cash += action.amount
@@ -179,6 +195,7 @@ export function sellToUtility(state: GameState, nextMapId: string, content: Cont
     carry: {
       gems: state.gems,
       boosts: state.boosts,
+      ledger: state.ledger,
       prestige: {
         ...state.prestige,
         greenCredits: state.prestige.greenCredits + credits,

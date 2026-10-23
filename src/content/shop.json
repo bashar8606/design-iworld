@@ -1,0 +1,48 @@
+{
+  "entitlements": { "noAds": "no_ads" },
+  "offering": "default",
+  "products": [
+    {
+      "id": "remove_ads",
+      "type": "nonConsumable",
+      "title": "Remove ads",
+      "description": "No more forced ads. Rewarded ads stay optional.",
+      "grants": { "entitlement": "no_ads" }
+    },
+    {
+      "id": "starter_pack",
+      "type": "nonConsumable",
+      "title": "Starter pack",
+      "description": "$2,000 cash and 60 gems to get going.",
+      "grants": { "cash": 2000, "gems": 60 }
+    },
+    {
+      "id": "income_x2",
+      "type": "nonConsumable",
+      "title": "Permanent 2x income",
+      "description": "Every sale earns double, forever.",
+      "grants": { "permanentX2": true }
+    },
+    {
+      "id": "gems_small",
+      "type": "consumable",
+      "title": "Pouch of gems",
+      "description": "80 gems",
+      "grants": { "gems": 80 }
+    },
+    {
+      "id": "gems_medium",
+      "type": "consumable",
+      "title": "Chest of gems",
+      "description": "250 gems",
+      "grants": { "gems": 250 }
+    },
+    {
+      "id": "gems_large",
+      "type": "consumable",
+      "title": "Vault of gems",
+      "description": "700 gems",
+      "grants": { "gems": 700 }
+    }
+  ]
+}

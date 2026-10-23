@@ -354,6 +354,11 @@ export interface GameState {
     firstNightSurvived: boolean | null
   }
   mapComplete: boolean
+  /**
+   * Store transaction ids already granted, saved with the game so a grant and its ledger entry
+   * are written together. null until this install first checks its purchases.
+   */
+  ledger: string[] | null
   /** Events produced by the last tick(s); the store drains them. */
   events: GameEvent[]
 }

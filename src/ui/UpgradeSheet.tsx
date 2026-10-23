@@ -1,4 +1,5 @@
 import { useShallow } from 'zustand/react/shallow'
+import { gemsToSkip } from '../game/actions.ts'
 import { getContent } from '../game/content.ts'
 import { dist } from '../game/vec.ts'
 import { useGame } from '../store/gameStore.ts'
@@ -12,7 +13,9 @@ function UpgradeRow({ option, compact = false }: { option: UpgradeOption; compac
   const cash = useGame((s) => s.state.cash)
   const time = useGame((s) => Math.floor(s.state.time))
   const dispatch = useGame((s) => s.dispatch)
+  const gems = useGame((s) => s.state.gems)
   const busy = option.upgradingUntil > 0
+  const gemCost = busy ? gemsToSkip(option.upgradingUntil - time) : 0
   const affordable = option.price !== null && cash >= option.price
   return (
     <div className={`upgrade-row${compact ? ' upgrade-compact' : ''}`}>
@@ -36,8 +39,17 @@ function UpgradeRow({ option, compact = false }: { option: UpgradeOption; compac
         >
           {formatCash(option.price ?? 0)}
         </button>
+      ) : busy && option.action.type === 'upgrade' ? (
+        <button
+          className="btn btn-buy"
+          disabled={gems < gemCost}
+          onClick={() => dispatch({ type: 'skipUpgradeWithGems', id: option.id })}
+          aria-label={`Finish now for ${gemCost} gems`}
+        >
+          💎 {gemCost}
+        </button>
       ) : (
-        <span className="upgrade-max">{busy ? 'Building…' : 'Max'}</span>
+        <span className="upgrade-max">Max</span>
       )}
     </div>
   )

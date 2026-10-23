@@ -49,6 +49,8 @@ export function deserializeSave(json: string | null): SaveFile | null {
     if (raw.version > SAVE_VERSION) return null
     const state = migrate({ version: raw.version, state: raw.state as Record<string, unknown> })
     if (typeof state.mapId !== 'string' || typeof state.time !== 'number') return null
+    // Saves from before the purchase ledger existed.
+    if (!('ledger' in state)) state.ledger = null
     return { version: SAVE_VERSION, savedAt: raw.savedAt, state: state as unknown as GameState }
   } catch {
     return null

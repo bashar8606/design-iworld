@@ -1,12 +1,12 @@
 import credits from '../content/credits.json'
 import links from '../content/links.json'
-import { platform } from '../platform/index.ts'
+import { restorePurchases } from '../store/shop.ts'
 import { useSettings } from '../store/settings.ts'
 import { APP_VERSION } from '../store/tracking.ts'
 import { useUi } from '../store/uiStore.ts'
 import { Sheet, Toggle } from './Sheet.tsx'
 
-export function SettingsSheet({ onRestore }: { onRestore?: () => void }) {
+export function SettingsSheet() {
   const open = useUi((s) => s.open)
   const settings = useSettings()
   return (
@@ -23,10 +23,7 @@ export function SettingsSheet({ onRestore }: { onRestore?: () => void }) {
         onChange={() => settings.toggle('haptics')}
       />
       <div className="sheet-actions">
-        <button
-          className="btn"
-          onClick={() => (onRestore ? onRestore() : void platform.purchases.restore())}
-        >
+        <button className="btn" onClick={() => void restorePurchases()}>
           Restore purchases
         </button>
         <button className="btn" onClick={() => open('feedback')}>

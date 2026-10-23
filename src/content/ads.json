@@ -1,0 +1,35 @@
+{
+  "ios": {
+    "appId": "ca-app-pub-3940256099942544~1458002511",
+    "placements": {
+      "solar_boost": "",
+      "welcome_back": "",
+      "instant_build": "",
+      "vip_car": "",
+      "blackout_rescue": "",
+      "daily_chest": ""
+    },
+    "interstitial": ""
+  },
+  "testIds": {
+    "rewarded": "ca-app-pub-3940256099942544/1712485313",
+    "interstitial": "ca-app-pub-3940256099942544/4411468910"
+  },
+  "rules": {
+    "interstitialMinGapSeconds": 180,
+    "noInterstitialFirstSeconds": 600,
+    "welcomeBackMinAwaySeconds": 3600,
+    "instantBuildMinSeconds": 120,
+    "milestonePads": [
+      "cafe",
+      "battery2",
+      "charger4",
+      "robot1",
+      "carWash",
+      "charger5",
+      "battery3",
+      "charger6"
+    ]
+  },
+  "dailyChest": { "gems": 5, "cashMinutes": 5 }
+}

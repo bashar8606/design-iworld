@@ -12,7 +12,7 @@ export const NEVER = 1e12
 export interface NewGameOptions {
   seed?: number
   /** Carried across maps by the prestige reset. */
-  carry?: Pick<GameState, 'prestige' | 'gems' | 'boosts'>
+  carry?: Pick<GameState, 'prestige' | 'gems' | 'boosts' | 'ledger'>
 }
 
 export function createInitialState(mapId = 'map1', options: NewGameOptions = {}): GameState {
@@ -68,6 +68,7 @@ export function createInitialState(mapId = 'map1', options: NewGameOptions = {})
     },
     milestones: { firstCashAt: null, firstNightSurvived: null },
     mapComplete: false,
+    ledger: options.carry?.ledger ?? null,
     events: [],
   }
   // Boost timers are sim-time based; a new map restarts the clock.

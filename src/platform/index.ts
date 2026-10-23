@@ -2,10 +2,11 @@ import { Capacitor } from '@capacitor/core'
 import { type Ads, webAds } from './ads.ts'
 import { type Analytics, createPostHogAnalytics, webAnalytics } from './analytics.ts'
 import { type Haptics, nativeHaptics, webHaptics } from './haptics.ts'
+import { type Lifecycle, nativeLifecycle, webLifecycle } from './lifecycle.ts'
 import { type Purchases, webPurchases } from './purchases.ts'
 import { type Storage, nativeStorage, webStorage } from './storage.ts'
 
-export type { Ads, Analytics, Haptics, Purchases, Storage }
+export type { Ads, Analytics, Haptics, Lifecycle, Purchases, Storage }
 
 export interface Platform {
   isNative: boolean
@@ -14,6 +15,7 @@ export interface Platform {
   storage: Storage
   haptics: Haptics
   analytics: Analytics
+  lifecycle: Lifecycle
 }
 
 const postHogKey = import.meta.env.VITE_POSTHOG_KEY as string | undefined
@@ -30,6 +32,7 @@ export function createPlatform(): Platform {
     analytics: postHogKey ? createPostHogAnalytics(postHogKey, postHogHost) : webAnalytics,
     storage: isNative ? nativeStorage : webStorage,
     haptics: isNative ? nativeHaptics : webHaptics,
+    lifecycle: isNative ? nativeLifecycle : webLifecycle,
   }
 }
 

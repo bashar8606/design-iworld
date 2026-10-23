@@ -22,6 +22,15 @@ export interface GameStore {
   setSpeed: (speed: number) => void
 }
 
+type ActionListener = (action: GameAction) => void
+const actionListeners = new Set<ActionListener>()
+
+/** Called after every action that changed the state (purchases, rewards, upgrades). */
+export function onAction(listener: ActionListener): () => void {
+  actionListeners.add(listener)
+  return () => actionListeners.delete(listener)
+}
+
 export const useGame = create<GameStore>()((set, get) => ({
   state: createInitialState(),
   prev: createInitialState(),
@@ -35,6 +44,7 @@ export const useGame = create<GameStore>()((set, get) => ({
     if (next === get().state) return
     emitGameEvents(next.events)
     set({ state: { ...next, events: [] }, prev: get().prev })
+    for (const listener of actionListeners) listener(action)
   },
   replace: (state) => set({ state, prev: state, tickedAt: performance.now() }),
   setPaused: (paused) => set({ paused }),

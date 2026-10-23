@@ -7,6 +7,7 @@ import type { Charger } from '../game/types.ts'
 import { bayDef } from '../game/world.ts'
 import { useGame } from '../store/gameStore.ts'
 import { cableMaterial, glowLime, glowTeal, propMaterial } from './materials.ts'
+import { popScale } from './buildPop.ts'
 import { useModelGeometry } from './models/useModelGeometry.ts'
 import { cableGeometry } from './props/cableGeometry.ts'
 import {
@@ -25,6 +26,13 @@ import {
 
 const useMap = () => getContent(useGame((s) => s.state.mapId)).map
 const padPos = (map: ReturnType<typeof useMap>, id: string) => map.pads.find((p) => p.id === id)!
+
+/** Squash-and-stretch for an item that was just built or upgraded. */
+function applyPop(group: THREE.Group | null, id: string) {
+  if (!group) return
+  const k = popScale(id)
+  group.scale.set(1 / Math.sqrt(k), k, 1 / Math.sqrt(k))
+}
 
 // ---------------------------------------------------------------------------
 // Solar panels: every module of every row in one instanced mesh.
@@ -127,18 +135,39 @@ export function Batteries() {
         const [id, tier] = k.split(':')
         const pad = padPos(map, id!)
         return (
-          <BatteryUnit key={id} tier={Number(tier)} x={pad.pos.x} z={pad.pos.z} y={pad.y ?? 0} />
+          <BatteryUnit
+            key={id}
+            id={id!}
+            tier={Number(tier)}
+            x={pad.pos.x}
+            z={pad.pos.z}
+            y={pad.y ?? 0}
+          />
         )
       })}
     </>
   )
 }
 
-function BatteryUnit({ tier, x, z, y }: { tier: number; x: number; z: number; y: number }) {
+function BatteryUnit({
+  id,
+  tier,
+  x,
+  z,
+  y,
+}: {
+  id: string
+  tier: number
+  x: number
+  z: number
+  y: number
+}) {
   const geometry = useMemo(() => batteryGeometry(tier), [tier])
   const strip = batteryStrip(tier)
   const ref = useRef<THREE.Mesh>(null)
+  const group = useRef<THREE.Group>(null)
   useFrame(() => {
+    applyPop(group.current, id)
     const { energy } = useGame.getState().state
     const fill = energy.capacity > 0 ? energy.stored / energy.capacity : 0
     if (ref.current) {
@@ -148,7 +177,7 @@ function BatteryUnit({ tier, x, z, y }: { tier: number; x: number; z: number; y:
   })
   // Rotated so the long side faces the camera.
   return (
-    <group position={[x, y, z]} rotation-y={tier === 0 ? 0 : Math.PI / 2}>
+    <group ref={group} position={[x, y, z]} rotation-y={tier === 0 ? 0 : Math.PI / 2}>
       <mesh geometry={geometry} material={propMaterial} castShadow receiveShadow />
       <mesh
         ref={ref}

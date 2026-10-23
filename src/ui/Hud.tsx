@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { useUi } from '../store/uiStore.ts'
 import { getContent } from '../game/content.ts'
 import { onGameEvent } from '../store/events.ts'
 import { useGame } from '../store/gameStore.ts'
@@ -160,18 +161,37 @@ function Toasts() {
   )
 }
 
-export function Hud({
-  onClockTap,
-  children,
-}: {
-  onClockTap?: () => void
-  children?: React.ReactNode
-}) {
+/** Five quick taps on the clock open the hidden debug menu. */
+function useFiveTaps(onFive: () => void) {
+  const taps = useRef<number[]>([])
+  return () => {
+    const now = performance.now()
+    taps.current = [...taps.current.filter((t) => now - t < 1500), now]
+    if (taps.current.length >= 5) {
+      taps.current = []
+      onFive()
+    }
+  }
+}
+
+export function Hud({ children }: { children?: React.ReactNode }) {
+  const open = useUi((s) => s.open)
+  const onClockTap = useFiveTaps(() => open('debug'))
   return (
     <div className="hud">
       <div className="hud-bar">
         <ClockDial onTap={onClockTap} />
-        <RollingCash />
+        <div className="hud-right">
+          <RollingCash />
+          <button
+            className="hud-icon"
+            data-hud-control
+            onClick={() => open('settings')}
+            aria-label="Settings"
+          >
+            ⚙️
+          </button>
+        </div>
       </div>
       <div className="hud-bar hud-bar-center">
         <EnergyBar />

@@ -15,15 +15,18 @@
     "assets:optimize": "tsx tools/assets/optimize.ts",
     "assets:check": "tsx tools/assets/check.ts",
     "assets:blender": "python3 tools/assets/build_blender.py",
-    "assets:polyhaven": "tsx tools/assets/polyhaven.ts"
+    "assets:polyhaven": "tsx tools/assets/polyhaven.ts",
+    "audio:generate": "tsx tools/audio/generate.ts"
   },
   "dependencies": {
+    "@capacitor/app": "^8.1.2",
     "@capacitor/core": "^8.5.3",
     "@capacitor/haptics": "^8.0.2",
     "@capacitor/ios": "^8.5.3",
     "@capacitor/preferences": "^8.0.1",
     "@react-three/drei": "^10.7.9",
     "@react-three/fiber": "^9.8.2",
+    "howler": "^2.2.4",
     "posthog-js": "^1.438.19",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
@@ -38,6 +41,7 @@
     "@gltf-transform/core": "^4.5.1",
     "@gltf-transform/extensions": "^4.5.1",
     "@gltf-transform/functions": "^4.5.1",
+    "@types/howler": "^2.2.13",
     "@types/node": "^26.6.5",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",

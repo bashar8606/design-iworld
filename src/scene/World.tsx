@@ -1,5 +1,6 @@
 import { Canvas } from '@react-three/fiber'
 import { Suspense } from 'react'
+import { useGame } from '../store/gameStore.ts'
 import { CameraRig } from './CameraRig.tsx'
 import { Cars } from './Cars.tsx'
 import { DayNight } from './DayNight.tsx'
@@ -12,6 +13,7 @@ import { Pickups } from './Pickups.tsx'
 import { PerfProbe } from './PerfProbe.tsx'
 import { Player, Staff } from './People.tsx'
 import { BakedContactShadow, BlobShadows } from './Shadows.tsx'
+import { TutorialArrow } from './TutorialArrow.tsx'
 import { quality } from './quality.ts'
 
 export interface WorldProps {
@@ -29,8 +31,11 @@ export function World({
   overview = false,
   children,
 }: WorldProps) {
+  // Nothing renders while the app is in the background.
+  const paused = useGame((s) => s.paused)
   return (
     <Canvas
+      frameloop={paused ? 'never' : 'always'}
       shadows={shadows ? 'percentage' : false}
       dpr={[1, maxDpr]}
       gl={{ antialias: true, powerPreference: 'high-performance' }}
@@ -51,6 +56,7 @@ export function World({
         <Player />
         <Staff />
         <Effects />
+        <TutorialArrow />
         {!shadows && <BakedContactShadow />}
         {!shadows && <BlobShadows />}
         {children}

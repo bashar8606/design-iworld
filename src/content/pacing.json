@@ -1,0 +1,25 @@
+{
+  "targets": {
+    "firstCashSeconds": 15,
+    "firstChargerSeconds": 60,
+    "firstBatterySeconds": 240,
+    "firstTechnicianSeconds": 480,
+    "mapCompleteDays": [3, 5]
+  },
+  "tolerance": 0.25,
+  "adBoostMaxSpeedup": 0.3,
+  "schedules": {
+    "engaged": [
+      { "hour": 8, "minutes": 20 },
+      { "hour": 13, "minutes": 15 },
+      { "hour": 18, "minutes": 15 },
+      { "hour": 22, "minutes": 15 }
+    ],
+    "idle": [
+      { "hour": 8, "minutes": 5 },
+      { "hour": 13, "minutes": 5 },
+      { "hour": 21, "minutes": 5 }
+    ]
+  },
+  "adsPerDay": 3
+}

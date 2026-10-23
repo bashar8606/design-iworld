@@ -2,7 +2,7 @@
   "scooter": {
     "model": "scooter",
     "energyKwh": [2, 3.5],
-    "pricePerKwh": 1.4,
+    "pricePerKwh": 2.8,
     "patienceSeconds": 40,
     "speed": 7.5,
     "length": 1.8
@@ -10,7 +10,7 @@
   "hatchback": {
     "model": "hatchback",
     "energyKwh": [4.5, 7],
-    "pricePerKwh": 1.0,
+    "pricePerKwh": 2.4,
     "patienceSeconds": 45,
     "speed": 7,
     "length": 3.8
@@ -18,7 +18,7 @@
   "sedan": {
     "model": "sedan",
     "energyKwh": [9, 14],
-    "pricePerKwh": 1.0,
+    "pricePerKwh": 2.2,
     "patienceSeconds": 50,
     "speed": 7,
     "length": 4.6
@@ -26,7 +26,7 @@
   "taxi": {
     "model": "taxi",
     "energyKwh": [7, 10],
-    "pricePerKwh": 1.2,
+    "pricePerKwh": 2.6,
     "patienceSeconds": 30,
     "speed": 7.5,
     "length": 4.4

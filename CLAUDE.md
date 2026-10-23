@@ -11,6 +11,7 @@ charge and pay. Vite + React 19 + TypeScript (strict), React Three Fiber, zustan
 - `npm run lint` / `npm run format` — ESLint / Prettier
 - `npm run sim -- --minutes 30` — headless balancing simulation (`tools/sim/index.ts`)
 - `npm run ios` — build, `cap sync ios`, open Xcode
+- `npm run assets:blender` / `assets:optimize` / `assets:check` / `assets:polyhaven` — asset pipeline
 
 Run `npm run lint`, `npx tsc -b` and `npm test` before every commit.
 
@@ -20,10 +21,13 @@ Run `npm run lint`, `npx tsc -b` and `npm test` before every commit.
 - `src/scene/` — React Three Fiber: world, chargers, panels, cars, player, sky
 - `src/ui/` — HUD, upgrade sheets, ad buttons, shop
 - `src/platform/` — ads, purchases, storage, haptics, analytics (+ web stubs)
+- `src/store/` — zustand store, the fixed-step game loop and the game-event bus
+- `src/gallery/` — the /gallery asset viewer
 - `src/content/` — JSON config: map, upgrades, cars, events, economy
 - `assets-src/` — .blend files, Blender scripts, raw exports, Poly Haven originals
 - `public/models/` — compressed .glb files; `public/textures/` — 512 px WebP textures and the HDRI
-- `tools/sim/` — headless balancing simulation
+- `tools/sim/` — balancing bots (greedy, smart, idle), CSV + HTML report, `--tune`
+- `tools/assets/` — Blender rebuild, glTF optimize + gltfjsx, budget check, Poly Haven download
 - `ios/` — Capacitor iOS project (Swift Package Manager)
 
 ## Rules
@@ -36,3 +40,5 @@ Run `npm run lint`, `npx tsc -b` and `npm test` before every commit.
 - Performance budget on an iPhone 3-4 years old: 60 fps, under 100 draw calls, under 150k
   triangles, textures at most 1024 px. Repeated objects use instancing.
 - Save after every purchase and when the app goes to the background.
+- After changing any price or rate, run `npm run sim -- --tune` and keep the smart and idle bots
+  within 25% of `src/content/pacing.json`.

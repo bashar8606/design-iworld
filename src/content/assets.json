@@ -1,0 +1,93 @@
+{
+  "models": {
+    "hatchback": {
+      "route": "blender",
+      "source": "assets-src/blender/scripts/hatchback.py",
+      "triangleLimit": 3000,
+      "drawCallLimit": 1
+    },
+    "sedan": {
+      "route": "blender",
+      "source": "assets-src/blender/scripts/sedan.py",
+      "triangleLimit": 3000,
+      "drawCallLimit": 1
+    },
+    "taxi": {
+      "route": "blender",
+      "source": "assets-src/blender/scripts/taxi.py",
+      "triangleLimit": 3000,
+      "drawCallLimit": 1
+    },
+    "scooter": {
+      "route": "blender",
+      "source": "assets-src/blender/scripts/scooter.py",
+      "triangleLimit": 1500,
+      "drawCallLimit": 1
+    },
+    "cafe": {
+      "route": "blender",
+      "source": "assets-src/blender/scripts/cafe.py",
+      "triangleLimit": 2500,
+      "drawCallLimit": 1
+    },
+    "fast_charger": {
+      "route": "blender",
+      "source": "assets-src/blender/scripts/fast_charger.py",
+      "triangleLimit": 1500,
+      "drawCallLimit": 1
+    },
+    "worker": {
+      "route": "blender",
+      "source": "assets-src/blender/scripts/worker.py",
+      "triangleLimit": 4000,
+      "drawCallLimit": 1
+    }
+  },
+  "props": {
+    "panelRow": {
+      "route": "code",
+      "source": "src/scene/props/geometry.ts",
+      "triangleLimit": 400
+    },
+    "battery": {
+      "route": "code",
+      "source": "src/scene/props/geometry.ts",
+      "triangleLimit": 400
+    },
+    "charger7": {
+      "route": "code",
+      "source": "src/scene/props/geometry.ts",
+      "triangleLimit": 300
+    },
+    "charger22": {
+      "route": "code",
+      "source": "src/scene/props/geometry.ts",
+      "triangleLimit": 400
+    },
+    "canopy": {
+      "route": "code",
+      "source": "src/scene/props/geometry.ts",
+      "triangleLimit": 800
+    },
+    "carWash": {
+      "route": "code",
+      "source": "src/scene/props/geometry.ts",
+      "triangleLimit": 800
+    },
+    "dune": {
+      "route": "code",
+      "source": "src/scene/props/geometry.ts",
+      "triangleLimit": 120
+    },
+    "cable": {
+      "route": "code",
+      "source": "src/scene/props/Cable.tsx",
+      "triangleLimit": 300
+    },
+    "robot": {
+      "route": "code",
+      "source": "src/scene/props/geometry.ts",
+      "triangleLimit": 300
+    }
+  }
+}

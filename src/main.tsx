@@ -1,5 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { Suspense, lazy } from 'react'
 import App from './App.tsx'
 import './index.css'
 
@@ -9,8 +10,26 @@ for (const type of ['gesturestart', 'gesturechange', 'gestureend']) {
 }
 document.addEventListener('dblclick', (event) => event.preventDefault(), { passive: false })
 
+// Dev and playtest builds expose the store for scripted checks and the debug menu.
+if (import.meta.env.DEV) {
+  void import('./store/gameStore.ts').then(({ useGame }) => {
+    ;(window as unknown as { __game: typeof useGame }).__game = useGame
+  })
+}
+
+const isGallery =
+  window.location.pathname.replace(/\/$/, '').endsWith('/gallery') ||
+  new URLSearchParams(window.location.search).has('gallery')
+const Gallery = lazy(() => import('./gallery/Gallery.tsx').then((m) => ({ default: m.Gallery })))
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    {isGallery ? (
+      <Suspense fallback={null}>
+        <Gallery />
+      </Suspense>
+    ) : (
+      <App />
+    )}
   </StrictMode>,
 )

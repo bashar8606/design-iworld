@@ -18,6 +18,17 @@ export default defineConfig(
     extends: [reactHooks.configs.flat['recommended-latest'], reactRefresh.configs.vite],
   },
   {
+    // three.js objects (textures, materials, instanced meshes) are mutable by design; R3F code
+    // updates them from effects and frame callbacks.
+    files: ['src/scene/**/*.tsx', 'src/gallery/**/*.tsx'],
+    rules: { 'react-hooks/immutability': 'off' },
+  },
+  {
+    // The entry point only mounts the app.
+    files: ['src/main.tsx'],
+    rules: { 'react-refresh/only-export-components': 'off' },
+  },
+  {
     // The simulation must run without rendering (tests, tools/sim).
     files: ['src/game/**/*.ts'],
     rules: {

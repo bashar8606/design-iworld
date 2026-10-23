@@ -1,0 +1,7 @@
+{
+  "sand": { "type": "textures", "tags": ["sand", "desert", "fine"], "pick": null },
+  "asphalt": { "type": "textures", "tags": ["asphalt", "road"], "pick": null },
+  "concrete": { "type": "textures", "tags": ["concrete", "floor", "pavement"], "pick": null },
+  "metal": { "type": "textures", "tags": ["brushed", "metal"], "pick": null },
+  "sky": { "type": "hdris", "tags": ["sunset", "clear", "outdoor", "warm"], "pick": null }
+}

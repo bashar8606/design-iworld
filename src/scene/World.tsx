@@ -1,32 +1,47 @@
 import { Canvas } from '@react-three/fiber'
+import { Suspense } from 'react'
 import { CameraRig } from './CameraRig.tsx'
-import { Charger } from './Charger.tsx'
+import { Cars } from './Cars.tsx'
+import { DayNight } from './DayNight.tsx'
+import { Effects } from './Effects.tsx'
+import { Batteries, Chargers, Facilities, SolarPanels } from './Equipment.tsx'
 import { Ground } from './Ground.tsx'
+import { Lighting } from './Lighting.tsx'
+import { Pads } from './Pads.tsx'
+import { Pickups } from './Pickups.tsx'
+import { Player, Staff } from './People.tsx'
 
-export function World() {
+export interface WorldProps {
+  /** Real-time shadows; the device build uses a baked contact shadow instead. */
+  shadows?: boolean
+  maxDpr?: number
+  children?: React.ReactNode
+}
+
+export function World({ shadows = true, maxDpr = 2, children }: WorldProps) {
   return (
     <Canvas
-      shadows="percentage"
-      dpr={[1, 2]}
+      shadows={shadows ? 'percentage' : false}
+      dpr={[1, maxDpr]}
       gl={{ antialias: true, powerPreference: 'high-performance' }}
     >
-      <color attach="background" args={['#bfe3f2']} />
       <CameraRig />
-
-      <hemisphereLight args={['#fff6e0', '#d9c08e', 0.9]} />
-      <directionalLight
-        position={[8, 14, 6]}
-        intensity={2.2}
-        castShadow
-        shadow-mapSize={[1024, 1024]}
-        shadow-camera-left={-16}
-        shadow-camera-right={16}
-        shadow-camera-top={16}
-        shadow-camera-bottom={-16}
-      />
-
-      <Ground />
-      <Charger position={[-3.5, 0, 0]} />
+      <DayNight shadows={shadows} />
+      <Suspense fallback={null}>
+        <Lighting />
+        <Ground />
+        <SolarPanels />
+        <Batteries />
+        <Chargers />
+        <Facilities />
+        <Pads />
+        <Pickups />
+        <Cars />
+        <Player />
+        <Staff />
+        <Effects />
+        {children}
+      </Suspense>
     </Canvas>
   )
 }

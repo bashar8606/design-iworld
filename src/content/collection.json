@@ -1,0 +1,64 @@
+{
+  "goldenChance": 0.03,
+  "goldenAfterCars": 20,
+  "goldenPayMultiplier": 2,
+  "setBonusGems": 50,
+  "cards": [
+    {
+      "id": "scooter",
+      "car": "scooter",
+      "name": "Scooter",
+      "stars": [1, 25, 100],
+      "gems": [2, 4, 8]
+    },
+    {
+      "id": "hatchback",
+      "car": "hatchback",
+      "name": "Hatchback",
+      "stars": [1, 25, 100],
+      "gems": [2, 4, 8]
+    },
+    { "id": "sedan", "car": "sedan", "name": "Sedan", "stars": [1, 25, 100], "gems": [2, 4, 8] },
+    { "id": "taxi", "car": "taxi", "name": "Taxi", "stars": [1, 25, 100], "gems": [2, 4, 8] },
+    {
+      "id": "vip",
+      "car": "sedan",
+      "vip": true,
+      "name": "VIP limo",
+      "stars": [1, 5, 20],
+      "gems": [5, 8, 15]
+    },
+    {
+      "id": "scooter:gold",
+      "car": "scooter",
+      "golden": true,
+      "name": "Golden scooter",
+      "stars": [1, 3, 10],
+      "gems": [5, 8, 15]
+    },
+    {
+      "id": "hatchback:gold",
+      "car": "hatchback",
+      "golden": true,
+      "name": "Golden hatchback",
+      "stars": [1, 3, 10],
+      "gems": [5, 8, 15]
+    },
+    {
+      "id": "sedan:gold",
+      "car": "sedan",
+      "golden": true,
+      "name": "Golden sedan",
+      "stars": [1, 3, 10],
+      "gems": [5, 8, 15]
+    },
+    {
+      "id": "taxi:gold",
+      "car": "taxi",
+      "golden": true,
+      "name": "Golden taxi",
+      "stars": [1, 3, 10],
+      "gems": [5, 8, 15]
+    }
+  ]
+}

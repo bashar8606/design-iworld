@@ -227,6 +227,8 @@ export interface Car {
   id: number
   type: string
   vip: boolean
+  /** Rare golden cars pay more and have their own album cards. */
+  golden: boolean
   phase: CarPhase
   pos: Vec2
   heading: number
@@ -323,6 +325,8 @@ export type GameEvent =
   | { type: 'contractDone'; bonus: number }
   | { type: 'contractFailed' }
   | { type: 'mapComplete' }
+  /** The first car of a kind served: a new card in the album. */
+  | { type: 'cardFound'; cardId: string }
 
 export type MissionKind =
   'serveCars' | 'collectCash' | 'buildPads' | 'surviveNight' | 'upgrade' | 'serveTaxis'
@@ -407,6 +411,8 @@ export interface GameState {
    */
   ledger: string[] | null
   missions: { seq: number; completed: number; active: Mission[] }
+  /** Car album: cars served per card and stars claimed per card. Carried across maps. */
+  collection: { served: Record<string, number>; claimed: Record<string, number> }
   /** Events produced by the last tick(s); the store drains them. */
   events: GameEvent[]
 }

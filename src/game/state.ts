@@ -1,3 +1,4 @@
+import { emptyCollection } from './collection.ts'
 import { getContent } from './content.ts'
 import { initialMissions } from './missions.ts'
 import { Rng } from './rng.ts'
@@ -13,7 +14,7 @@ export const NEVER = 1e12
 export interface NewGameOptions {
   seed?: number
   /** Carried across maps by the prestige reset. */
-  carry?: Pick<GameState, 'prestige' | 'gems' | 'boosts' | 'ledger'>
+  carry?: Pick<GameState, 'prestige' | 'gems' | 'boosts' | 'ledger' | 'collection'>
 }
 
 export function createInitialState(mapId = 'map1', options: NewGameOptions = {}): GameState {
@@ -72,6 +73,7 @@ export function createInitialState(mapId = 'map1', options: NewGameOptions = {})
     mapComplete: false,
     ledger: options.carry?.ledger ?? null,
     missions: { seq: 0, completed: 0, active: [] },
+    collection: options.carry?.collection ?? emptyCollection(),
     events: [],
   }
   // Boost timers are sim-time based; a new map restarts the clock.

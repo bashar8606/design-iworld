@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
+import { albumClaimable } from '../game/collection.ts'
 import { missionDone } from '../game/missions.ts'
 import type { Mission } from '../game/types.ts'
 import { useGame } from '../store/gameStore.ts'
@@ -6,6 +8,7 @@ import { useTutorial } from '../store/tutorial.ts'
 import { useUi } from '../store/uiStore.ts'
 import { formatCash } from './format.ts'
 import { missionCount, missionTitle } from './missionText.ts'
+import { Album } from './Album.tsx'
 import { Sheet } from './Sheet.tsx'
 
 /** The active missions, compared by content so the selector stays stable between ticks. */
@@ -57,11 +60,41 @@ export function MissionCard() {
 }
 
 export function MissionsSheet() {
-  const missions = useMissions()
   const open = useUi((s) => s.open)
+  const [tab, setTab] = useState<'missions' | 'album'>('missions')
+  const missionsReady = useGame((s) => s.state.missions.active.filter(missionDone).length)
+  const albumReady = useGame((s) => albumClaimable(s.state))
+  return (
+    <Sheet title={tab === 'album' ? 'Car album' : 'Missions'} onClose={() => open(null)}>
+      <div className="sheet-tabs" role="tablist">
+        {(
+          [
+            ['missions', '🎁 Missions', missionsReady],
+            ['album', '📒 Album', albumReady],
+          ] as const
+        ).map(([id, label, badge]) => (
+          <button
+            key={id}
+            role="tab"
+            aria-selected={tab === id}
+            className={`sheet-tab${tab === id ? ' is-active' : ''}`}
+            onClick={() => setTab(id)}
+          >
+            {label}
+            {badge > 0 && <span className="nav-badge sheet-tab-badge">{badge}</span>}
+          </button>
+        ))}
+      </div>
+      {tab === 'album' ? <Album /> : <MissionList />}
+    </Sheet>
+  )
+}
+
+function MissionList() {
+  const missions = useMissions()
   const dispatch = useGame((s) => s.dispatch)
   return (
-    <Sheet title="Missions" onClose={() => open(null)}>
+    <>
       {missions.map((m) => {
         const done = missionDone(m)
         return (
@@ -87,6 +120,6 @@ export function MissionsSheet() {
         )
       })}
       <p className="sheet-note">A new mission takes the place of each one you claim.</p>
-    </Sheet>
+    </>
   )
 }

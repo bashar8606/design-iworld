@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { collection } from '../game/collection.ts'
 import { getContent } from '../game/content.ts'
 import { isNight, isPadUnlocked } from '../game/world.ts'
 import { onGameEvent } from '../store/events.ts'
@@ -192,6 +193,12 @@ function Toasts() {
         for (const land of map.pads.filter((p) => p.opensZone && p.unlockAfter?.includes(e.padId)))
           if (isPadUnlocked(state, land, map))
             push(`New land for sale: ${zoneName(land.opensZone)}`, 'info')
+      } else if (e.type === 'cardFound') {
+        const card = collection.cards.find((c) => c.id === e.cardId)
+        if (card) push(`New in your car album: ${card.name}!`, 'good')
+      } else if (e.type === 'carArrived') {
+        const car = state.cars.find((c) => c.id === e.carId)
+        if (car?.golden) push(`A golden ${car.type} is here: it pays double!`, 'good')
       } else if (e.type === 'mapComplete') {
         push('Map complete!', 'good')
       } else if (e.type === 'contractDone') {

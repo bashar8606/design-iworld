@@ -1,3 +1,4 @@
+import { collection, recordServed } from './collection.ts'
 import { getContent } from './content.ts'
 import { cloneMissions, progressMissions } from './missions.ts'
 import { Rng } from './rng.ts'
@@ -56,6 +57,7 @@ export function cloneState(s: GameState): GameState {
     stats: { ...s.stats },
     milestones: { ...s.milestones },
     missions: cloneMissions(s.missions),
+    collection: { ...s.collection },
     events: [],
   }
 }
@@ -410,6 +412,10 @@ export function spawnCar(s: GameState, type: string, vip: boolean, rng: Rng, con
     id: s.nextCarId++,
     type,
     vip,
+    golden:
+      !vip &&
+      s.stats.carsServed >= collection.goldenAfterCars &&
+      rng.next() < collection.goldenChance,
     phase: 'approach',
     pos: { x: map.road.laneX, z: map.road.spawnZ },
     heading: 0,
@@ -639,7 +645,11 @@ function chargeCars(
     if (car.energyDelivered < car.energyNeeded - 1e-6) continue
 
     const def = cars[car.type] ?? cars.hatchback!
-    let amount = car.energyNeeded * def.pricePerKwh * (car.vip ? map.vip.payMultiplier : 1)
+    let amount =
+      car.energyNeeded *
+      def.pricePerKwh *
+      (car.vip ? map.vip.payMultiplier : 1) *
+      (car.golden ? collection.goldenPayMultiplier : 1)
     // Drivers who wait spend money at the café and car wash.
     const extra = Math.min(
       Math.max(0, car.dwell - map.spending.minDwellSeconds),
@@ -669,6 +679,7 @@ function chargeCars(
       if (s.contract) s.contract.taxisServed += 1
     }
     events.push({ type: 'carPaid', carId: car.id, amount, pos: bay.post, cafe, carWash })
+    recordServed(s, car, events)
 
     car.phase = 'leaving'
     car.reversing = true

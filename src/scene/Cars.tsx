@@ -14,6 +14,7 @@ import { type ModelName, useModelGeometry } from './models/useModelGeometry.ts'
 const MAX_PER_MODEL = 40
 const CAR_MODELS: ModelName[] = ['hatchback', 'sedan', 'taxi', 'scooter']
 const VIP_TINT = new THREE.Color('#FFE08A')
+const GOLDEN_TINT = new THREE.Color('#FFB300')
 const WHITE = new THREE.Color('#FFFFFF')
 
 const m4 = new THREE.Matrix4()
@@ -62,7 +63,7 @@ function CarInstances({ model }: { model: ModelName }) {
       // Models face -Z; the simulation's heading 0 faces +Z.
       quat.setFromAxisAngle(up, p.heading + Math.PI)
       mesh.setMatrixAt(i, m4.compose(pos, quat, scale))
-      mesh.setColorAt(i, car.vip ? VIP_TINT : WHITE)
+      mesh.setColorAt(i, car.golden ? GOLDEN_TINT : car.vip ? VIP_TINT : WHITE)
       i++
     }
     mesh.count = i
@@ -137,6 +138,7 @@ function CarBubbles() {
 function CarBubble({ id }: { id: number }) {
   const group = useRef<THREE.Group>(null)
   const bubble = useGame(useShallow((s) => carBubble(s.state, id)))
+  const golden = useGame((s) => !!s.state.cars.find((c) => c.id === id)?.golden)
   useFrame(() => {
     const { state, prev } = useGame.getState()
     const car = state.cars.find((c) => c.id === id)
@@ -153,7 +155,9 @@ function CarBubble({ id }: { id: number }) {
     <group ref={group}>
       <Html center zIndexRange={[5, 0]} style={{ pointerEvents: 'none' }}>
         {bubble.kind === 'charge' ? (
-          <div className={`car-bubble bubble-charge${bubble.stalled ? ' is-stalled' : ''}`}>
+          <div
+            className={`car-bubble bubble-charge${bubble.stalled ? ' is-stalled' : ''}${golden ? ' is-golden' : ''}`}
+          >
             <span className="bubble-battery" aria-hidden>
               <span style={{ height: `${bubble.percent}%` }} />
             </span>
@@ -165,7 +169,7 @@ function CarBubble({ id }: { id: number }) {
         ) : (
           <div
             key={bubble.emoji}
-            className={`car-bubble bubble-mood${bubble.urgent ? ' is-urgent' : ''}${bubble.emoji === '😍' ? ' is-happy' : ''}`}
+            className={`car-bubble bubble-mood${bubble.urgent ? ' is-urgent' : ''}${bubble.emoji === '😍' ? ' is-happy' : ''}${golden ? ' is-golden' : ''}`}
           >
             {bubble.emoji}
           </div>

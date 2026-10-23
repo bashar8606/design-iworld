@@ -1,3 +1,4 @@
+import { emptyCollection } from './collection.ts'
 import { getContent } from './content.ts'
 import { initialMissions } from './missions.ts'
 import { SAVE_VERSION } from './state.ts'
@@ -55,6 +56,9 @@ export function deserializeSave(json: string | null): SaveFile | null {
     if (!('ledger' in state)) state.ledger = null
     // Saves from before missions existed get a fresh set.
     if (!('missions' in state)) state.missions = initialMissions(state as unknown as GameState)
+    // Saves from before the car album, and cars on the road from before golden cars.
+    if (!('collection' in state)) state.collection = emptyCollection()
+    for (const car of (state.cars as { golden?: boolean }[] | undefined) ?? []) car.golden ??= false
     grantBuiltZones(state as unknown as GameState)
     return { version: SAVE_VERSION, savedAt: raw.savedAt, state: state as unknown as GameState }
   } catch {

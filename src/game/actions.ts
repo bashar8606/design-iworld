@@ -1,5 +1,6 @@
 // Player actions outside movement: upgrades, rewards, purchases and the prestige reset.
 // Each returns a new state (or the same one when the action is not allowed).
+import { claimCard } from './collection.ts'
 import { getContent, nextMapId } from './content.ts'
 import { missionDone, nextMission, progressMissions } from './missions.ts'
 import { Rng } from './rng.ts'
@@ -23,6 +24,8 @@ export type GameAction =
   | { type: 'buyIncomeLevel' }
   /** Collects a finished mission's reward and brings in the next mission. */
   | { type: 'claimMission'; id: string }
+  /** Collects the gems for the stars earned on an album card (or the full-set bonus). */
+  | { type: 'claimCard'; id: string }
   /** Purchase grants and the updated ledger, applied together. */
   | {
       type: 'applyPurchases'
@@ -65,6 +68,8 @@ export function applyAction(
       return sellToUtility(state, nextMapId(state.mapId), content)
     case 'buyIncomeLevel':
       return buyIncomeLevel(state, content)
+    case 'claimCard':
+      return claimCard(state, action.id)
     case 'claimMission': {
       const i = state.missions.active.findIndex((m) => m.id === action.id)
       const mission = state.missions.active[i]
@@ -219,6 +224,7 @@ export function sellToUtility(state: GameState, nextMapId: string, content: Cont
       gems: state.gems,
       boosts: state.boosts,
       ledger: state.ledger,
+      collection: state.collection,
       prestige: {
         ...state.prestige,
         greenCredits: state.prestige.greenCredits + credits,

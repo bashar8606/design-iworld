@@ -1,4 +1,5 @@
 // Mission labels and the nav badge count, shared by the mission card, sheet and bottom nav.
+import { albumClaimable } from '../game/collection.ts'
 import { missionDone } from '../game/missions.ts'
 import type { Mission } from '../game/types.ts'
 import { useGame } from '../store/gameStore.ts'
@@ -16,7 +17,9 @@ export function missionCount(m: Mission): string {
   return `${Math.floor(m.progress)}/${m.target}`
 }
 
-/** Missions ready to claim, for the nav badge. */
+/** Missions and album stars ready to claim, for the nav badge. */
 export function useClaimableMissions(): number {
-  return useGame((s) => s.state.missions.active.filter(missionDone).length)
+  return useGame(
+    (s) => s.state.missions.active.filter(missionDone).length + albumClaimable(s.state),
+  )
 }

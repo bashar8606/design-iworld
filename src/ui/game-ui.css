@@ -857,3 +857,121 @@
 .hud-toasts {
   top: calc(max(12px, var(--safe-top)) + 150px);
 }
+
+/* ---------------------------------------------------------------- sheet tabs and car album */
+
+.sheet-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  padding: 4px;
+  border-radius: 14px;
+  background: #eceff4;
+}
+
+.sheet-tab {
+  position: relative;
+  border: none;
+  border-radius: 11px;
+  min-height: 40px;
+  background: none;
+  color: var(--ui-ink);
+  font: inherit;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.sheet-tab.is-active {
+  background: white;
+  box-shadow: 0 2px 0 var(--ui-edge);
+}
+
+.sheet-tab-badge {
+  top: -4px;
+  right: 6px;
+}
+
+.album-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.album-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 10px 6px 8px;
+  border-radius: 16px;
+  background: white;
+  box-shadow: 0 3px 0 var(--ui-edge);
+  text-align: center;
+  min-width: 0;
+}
+
+.album-card.is-golden {
+  background: linear-gradient(#fff6cc, #ffe27a);
+  box-shadow: 0 3px 0 #d39b00;
+}
+
+.album-card.is-vip {
+  background: linear-gradient(#efe8ff, #d8c8ff);
+  box-shadow: 0 3px 0 var(--ui-purple-dark);
+}
+
+.album-art {
+  font-size: 38px;
+  line-height: 1.1;
+}
+
+.album-card.is-locked .album-art {
+  filter: grayscale(1) brightness(0.2) opacity(0.45);
+}
+
+.album-name {
+  font-size: 13px;
+  line-height: 1.1;
+  min-height: 2.2em;
+  display: grid;
+  place-items: center;
+}
+
+.album-stars {
+  font-size: 16px;
+  letter-spacing: 1px;
+  color: #cfd5de;
+}
+
+.album-stars .is-on {
+  color: #ffb300;
+  text-shadow: 0 1px 0 #b86e00;
+}
+
+.album-next {
+  font-size: 11px;
+  font-weight: 600;
+  opacity: 0.65;
+  min-height: 34px;
+  display: grid;
+  place-items: center;
+}
+
+.album-claim {
+  min-height: 34px;
+  min-width: 0;
+  width: 100%;
+  padding: 4px 6px;
+  font-size: 15px;
+}
+
+.car-bubble.is-golden {
+  background: linear-gradient(#fff6cc, #ffd34d);
+  box-shadow:
+    0 0 0 2px #ffb300,
+    0 3px 10px rgb(255 179 0 / 0.6);
+}
+
+.car-bubble.is-golden::after {
+  border-top-color: #ffd34d;
+}

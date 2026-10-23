@@ -76,6 +76,31 @@
       }
     ]
   },
+  "windTurbine": {
+    "tiers": [
+      {
+        "id": "small",
+        "label": "Small turbine",
+        "ratingKw": 40,
+        "upgradePrice": 0,
+        "buildSeconds": 0
+      },
+      {
+        "id": "tall",
+        "label": "Tall turbine",
+        "ratingKw": 90,
+        "upgradePrice": 120000,
+        "buildSeconds": 180
+      },
+      {
+        "id": "giant",
+        "label": "Giant turbine",
+        "ratingKw": 160,
+        "upgradePrice": 600000,
+        "buildSeconds": 300
+      }
+    ]
+  },
   "staff": {
     "technician": {
       "speed": 3,

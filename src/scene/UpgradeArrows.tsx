@@ -9,7 +9,10 @@ import { upgradeOptions } from '../ui/upgrades.ts'
 import { FACE_CAMERA } from './billboard.ts'
 
 const MAX_ARROWS = 32
-const HEIGHT = { charger: 2.5, panelRow: 2.2, battery: 2.9 } as Record<string, number>
+const HEIGHT = { charger: 2.5, panelRow: 2.2, battery: 2.9, windTurbine: 3.2 } as Record<
+  string,
+  number
+>
 
 /** A round green badge with a white up arrow. */
 function arrowTexture(): THREE.CanvasTexture {

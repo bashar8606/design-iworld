@@ -15,9 +15,10 @@ export type PadKind =
   | 'cashier'
   | 'robot'
   | 'land'
+  | 'windTurbine'
 
 export type StaffKind = 'technician' | 'cashier' | 'robot'
-export type EquipmentKind = 'charger' | 'panelRow' | 'battery'
+export type EquipmentKind = 'charger' | 'panelRow' | 'battery' | 'windTurbine'
 
 export interface PadDef {
   id: string
@@ -63,7 +64,7 @@ export interface MapContent {
   id: string
   name: string
   /** Visual setting for the scene. */
-  theme: 'desert' | 'city'
+  theme: 'desert' | 'city' | 'snow'
   bounds: { minX: number; maxX: number; minZ: number; maxZ: number }
   day: {
     lengthSeconds: number
@@ -108,6 +109,10 @@ export interface MapContent {
     firstCarDelaySeconds: number
   }
   dust: { perSecond: number; maxOutputLoss: number }
+  /** Wind for turbines (0..1): a steady base, slow gusts, and more after dark. */
+  wind?: { base: number; gust: number; nightBoost: number; periodSeconds: [number, number] }
+  /** Cold nights: batteries lose this fraction of their charge per second after dark. */
+  cold?: { nightLossPerSecond: number }
   spending: {
     minDwellSeconds: number
     cafePerMinute: number
@@ -164,6 +169,7 @@ export interface EquipmentContent {
   charger: { tiers: TierDef[] }
   panelRow: { tiers: TierDef[] }
   battery: { tiers: TierDef[] }
+  windTurbine: { tiers: TierDef[] }
   staff: Record<StaffKind, StaffDef>
 }
 
@@ -268,6 +274,12 @@ export interface Battery {
   upgradingUntil: number
 }
 
+export interface WindTurbine {
+  id: string
+  tier: number
+  upgradingUntil: number
+}
+
 export interface Staff {
   id: string
   kind: StaffKind
@@ -364,6 +376,7 @@ export interface GameState {
   chargers: Charger[]
   panels: PanelRow[]
   batteries: Battery[]
+  turbines: WindTurbine[]
   facilities: { cafe: boolean; carWash: boolean }
   staff: Staff[]
   cars: Car[]

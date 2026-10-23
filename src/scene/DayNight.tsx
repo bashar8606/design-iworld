@@ -84,6 +84,9 @@ const KEYS: {
 const tmpA = new THREE.Color()
 const tmpB = new THREE.Color()
 const SAND_HAZE = new THREE.Color('#D9B98A')
+/** A blizzard (the sandstorm event on the snowy map) whites everything out instead. */
+const SNOW_HAZE = new THREE.Color('#E6EEF5')
+const GROUND_BOUNCE = { desert: '#D9C08E', city: '#9DA2A9', snow: '#E4ECF3' } as const
 
 function sample(t: number, key: 'top' | 'horizon' | 'light' | 'ambient', out: THREE.Color) {
   const i = Math.max(0, KEYS.findIndex((k) => k.t > t) - 1)
@@ -158,7 +161,9 @@ export function DayNight({ shadows = true }: { shadows?: boolean }) {
       sample(t, 'light', sun.current.color)
       sun.current.intensity = sampleIntensity(t)
     }
+    const theme = getContent(state.mapId).map.theme
     if (hemi.current) {
+      hemi.current.groundColor.set(GROUND_BOUNCE[theme])
       sample(t, 'ambient', hemi.current.color)
       hemi.current.intensity = 0.35 + 0.35 * Math.min(1, state.sun * 1.5)
     }
@@ -167,7 +172,9 @@ export function DayNight({ shadows = true }: { shadows?: boolean }) {
     // Sandstorms bring a sandy haze and a dimmer sun.
     const storm = activeEvent(state)?.kind === 'sandstorm' ? 1 : 0
     haze.current += (storm - haze.current) * 0.02
-    fogColor.copy(uniforms.horizon.value).lerp(SAND_HAZE, haze.current)
+    fogColor
+      .copy(uniforms.horizon.value)
+      .lerp(theme === 'snow' ? SNOW_HAZE : SAND_HAZE, haze.current)
     if (scene.fog instanceof THREE.Fog) {
       scene.fog.color.copy(fogColor)
       scene.fog.near = 60 - 40 * haze.current

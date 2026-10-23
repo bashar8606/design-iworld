@@ -15,6 +15,12 @@
         "mapCompleteDays": [6, 8]
       },
       "startIncomeLevel": 3
+    },
+    "map3": {
+      "targets": {
+        "mapCompleteDays": [7, 10]
+      },
+      "startIncomeLevel": 6
     }
   },
   "tolerance": 0.25,

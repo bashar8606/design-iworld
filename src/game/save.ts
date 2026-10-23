@@ -58,6 +58,7 @@ export function deserializeSave(json: string | null): SaveFile | null {
     if (!('missions' in state)) state.missions = initialMissions(state as unknown as GameState)
     // Saves from before the car album, and cars on the road from before golden cars.
     if (!('collection' in state)) state.collection = emptyCollection()
+    if (!('turbines' in state)) state.turbines = []
     for (const car of (state.cars as { golden?: boolean }[] | undefined) ?? []) car.golden ??= false
     grantBuiltZones(state as unknown as GameState)
     return { version: SAVE_VERSION, savedAt: raw.savedAt, state: state as unknown as GameState }

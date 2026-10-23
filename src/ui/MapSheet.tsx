@@ -3,7 +3,7 @@ import { useGame } from '../store/gameStore.ts'
 import { useUi } from '../store/uiStore.ts'
 import { Sheet } from './Sheet.tsx'
 
-const THEME_ICONS = { desert: '🏜️', city: '🏙️' } as const
+const THEME_ICONS = { desert: '🏜️', city: '🏙️', snow: '🏔️' } as const
 
 /** Every station: where the player is, which maps are sold, and the Green Credits they earned. */
 export function MapSheet() {

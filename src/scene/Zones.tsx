@@ -60,13 +60,20 @@ export function Zones() {
   )
 }
 
-function stripeTexture(city: boolean): THREE.CanvasTexture {
+const STRIPES = {
+  desert: ['#A88A5C', '#B99B6B'],
+  city: ['#2E3138', '#3A3E46'],
+  snow: ['#9FB1C2', '#B4C4D3'],
+} as const
+
+function stripeTexture(theme: MapContent['theme']): THREE.CanvasTexture {
+  const [base, stripe] = STRIPES[theme]
   const canvas = document.createElement('canvas')
   canvas.width = canvas.height = 64
   const ctx = canvas.getContext('2d')!
-  ctx.fillStyle = city ? '#2E3138' : '#A88A5C'
+  ctx.fillStyle = base
   ctx.fillRect(0, 0, 64, 64)
-  ctx.strokeStyle = city ? '#3A3E46' : '#B99B6B'
+  ctx.strokeStyle = stripe
   ctx.lineWidth = 14
   for (let i = -64; i < 128; i += 32) {
     ctx.beginPath()
@@ -112,7 +119,7 @@ function LockedZone({ zone, map }: { zone: ZoneDef; map: MapContent }) {
   const land = map.pads.find((p) => p.opensZone === zone.id)
   const forSale = useGame((s) => !!land && isPadUnlocked(s.state, land, map))
   const stripes = useMemo(() => {
-    const t = stripeTexture(map.theme === 'city')
+    const t = stripeTexture(map.theme)
     t.repeat.set(w / 2, d / 2)
     return t
   }, [map.theme, w, d])

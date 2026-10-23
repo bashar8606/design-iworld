@@ -4,6 +4,7 @@ import equipmentJson from '../content/equipment.json'
 import eventsJson from '../content/events.json'
 import map1Json from '../content/map1.json'
 import map2Json from '../content/map2.json'
+import map3Json from '../content/map3.json'
 import type {
   CarTypeDef,
   Content,
@@ -16,6 +17,7 @@ import type {
 const maps: Record<string, MapContent> = {
   map1: map1Json as unknown as MapContent,
   map2: map2Json as unknown as MapContent,
+  map3: map3Json as unknown as MapContent,
 }
 
 const base = {
@@ -35,7 +37,7 @@ export function mapIds(): string[] {
 }
 
 /** Maps in play order; selling a completed map moves on to the next one. */
-export const MAP_ORDER = ['map1', 'map2']
+export const MAP_ORDER = ['map1', 'map2', 'map3']
 
 export function nextMapId(mapId: string): string {
   const i = MAP_ORDER.indexOf(mapId)

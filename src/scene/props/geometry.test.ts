@@ -9,8 +9,13 @@ import {
   duneGeometry,
   panelFrameGeometry,
   panelModuleGeometry,
+  chaletGeometry,
+  mountainGeometry,
+  pineGeometry,
   robotGeometry,
   triangleCount,
+  turbineRotorGeometry,
+  turbineTowerGeometry,
 } from './geometry.ts'
 import { cableGeometry } from './cableGeometry.ts'
 
@@ -30,6 +35,11 @@ describe('code-built props stay inside their triangle limits', () => {
     ['carWash', triangleCount(carWashGeometry())],
     ['dune', triangleCount(duneGeometry())],
     ['robot', triangleCount(robotGeometry())],
+    ['turbineTower', triangleCount(turbineTowerGeometry())],
+    ['turbineRotor', triangleCount(turbineRotorGeometry())],
+    ['pine', triangleCount(pineGeometry())],
+    ['mountain', triangleCount(mountainGeometry())],
+    ['chalet', triangleCount(chaletGeometry())],
     ['cable', triangleCount(cableGeometry({ x: 0, y: 1, z: 0 }, { x: 2, y: 0.8, z: 0 }))],
   ]
   it.each(cases)('%s (%i triangles)', (name, tris) => {

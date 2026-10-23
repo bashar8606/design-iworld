@@ -67,11 +67,14 @@ export function EventBanner() {
       return { kind: null, phase: null, seconds: 0 }
     }),
   )
+  const snowy = useGame((s) => getContent(s.state.mapId).map.theme === 'snow')
   if (!info.kind) return null
   const soon = info.phase === 'soon'
-  const look = EVENT_LOOKS[info.kind]
+  const snowLook = snowy ? SNOW_LOOKS[info.kind] : undefined
+  const look = snowLook ?? EVENT_LOOKS[info.kind]
+  const tone = snowLook ? snowLook.tone : info.kind
   return (
-    <div className={`event-banner event-${info.kind}${soon ? ' is-soon' : ''}`} role="status">
+    <div className={`event-banner event-${tone}${soon ? ' is-soon' : ''}`} role="status">
       <span className="event-icon" aria-hidden>
         {look.icon}
       </span>
@@ -102,6 +105,29 @@ const EVENT_LOOKS = {
     effect: 'Extra cars late',
   },
 } as const
+
+/** The same events on the ski lodge map: a blizzard buries the panels, a ski rush fills the lot. */
+const SNOW_LOOKS: Partial<
+  Record<
+    keyof typeof EVENT_LOOKS,
+    { icon: string; title: string; soon: string; effect: string; tone: string }
+  >
+> = {
+  sandstorm: {
+    icon: '❄️',
+    title: 'BLIZZARD!',
+    soon: 'Blizzard coming',
+    effect: 'Panels snowed under',
+    tone: 'blizzard',
+  },
+  heatwave: {
+    icon: '⛷️',
+    title: 'SKI RUSH!',
+    soon: 'Ski rush coming',
+    effect: 'Double the cars!',
+    tone: 'skiRush',
+  },
+}
 
 /** One-line tutorial hint at the top of the screen. */
 export function TutorialHint() {
@@ -177,7 +203,13 @@ export function StormOverlay() {
     const e = s.state.event
     return !!e && e.kind === 'sandstorm' && s.state.time >= e.startsAt && s.state.time < e.endsAt
   })
-  return <div className={`storm-overlay${storm ? ' storm-on' : ''}`} aria-hidden />
+  const snowy = useGame((s) => getContent(s.state.mapId).map.theme === 'snow')
+  return (
+    <div
+      className={`storm-overlay${snowy ? ' storm-snow' : ''}${storm ? ' storm-on' : ''}`}
+      aria-hidden
+    />
+  )
 }
 
 /** Taxi fleet contracts (map 2): serve N taxis before the deadline for a bonus. */

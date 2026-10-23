@@ -1,0 +1,551 @@
+{
+  "id": "map3",
+  "name": "Alpine Ski Lodge",
+  "theme": "snow",
+  "bounds": {
+    "minX": -7.6,
+    "maxX": 14,
+    "minZ": -14,
+    "maxZ": 19
+  },
+  "day": {
+    "lengthSeconds": 360,
+    "sunrise": 0.27,
+    "sunset": 0.75,
+    "dawnLength": 0.06,
+    "startTime": 0.3
+  },
+  "energy": {
+    "kwhPerKwSecond": 0.1
+  },
+  "player": {
+    "start": {
+      "x": 0,
+      "z": 1
+    },
+    "speed": 5,
+    "plugSeconds": 0.5,
+    "plugRadius": 1.9,
+    "pickupRadius": 1.3,
+    "padRadius": 1.0,
+    "cleanRadius": 1.6,
+    "cleanPerSecond": 0.5,
+    "buildSeconds": 1.2,
+    "minDrainPerSecond": 400
+  },
+  "road": {
+    "laneX": -8.9,
+    "spawnZ": -24,
+    "despawnZ": 34,
+    "entranceZ": -15,
+    "exitZ": 21.5,
+    "carSpeed": 7
+  },
+  "lane": {
+    "x": -6.6,
+    "entryZ": -14,
+    "exitZ": 19
+  },
+  "queueSlots": [
+    {
+      "x": -6.6,
+      "z": -2.5
+    },
+    {
+      "x": -6.6,
+      "z": -5.5
+    },
+    {
+      "x": -6.6,
+      "z": -8.5
+    },
+    {
+      "x": -6.6,
+      "z": -11.5
+    }
+  ],
+  "bays": [
+    {
+      "id": "bay1",
+      "car": {
+        "x": -3.6,
+        "z": -0.5
+      },
+      "post": {
+        "x": -1.5,
+        "z": -0.5
+      }
+    },
+    {
+      "id": "bay2",
+      "car": {
+        "x": -3.6,
+        "z": 2.5
+      },
+      "post": {
+        "x": -1.5,
+        "z": 2.5
+      }
+    },
+    {
+      "id": "bay3",
+      "car": {
+        "x": -3.6,
+        "z": 5.5
+      },
+      "post": {
+        "x": -1.5,
+        "z": 5.5
+      }
+    },
+    {
+      "id": "bay4",
+      "car": {
+        "x": -3.6,
+        "z": 8.5
+      },
+      "post": {
+        "x": -1.5,
+        "z": 8.5
+      }
+    },
+    {
+      "id": "bay5",
+      "car": {
+        "x": -3.6,
+        "z": 11.5
+      },
+      "post": {
+        "x": -1.5,
+        "z": 11.5
+      }
+    },
+    {
+      "id": "bay6",
+      "car": {
+        "x": -3.6,
+        "z": 14.5
+      },
+      "post": {
+        "x": -1.5,
+        "z": 14.5
+      }
+    }
+  ],
+  "arrivals": {
+    "baseCarsPerMinute": 3.0,
+    "perChargerCarsPerMinute": 1.1,
+    "nightMultiplier": 0.5,
+    "rushTime": 0.36,
+    "rushWidth": 0.06,
+    "rushMultiplier": 2.4,
+    "firstCarDelaySeconds": 1
+  },
+  "dust": {
+    "perSecond": 0.003,
+    "maxOutputLoss": 0.6
+  },
+  "wind": {
+    "base": 0.45,
+    "gust": 0.3,
+    "nightBoost": 0.2,
+    "periodSeconds": [83, 29]
+  },
+  "cold": {
+    "nightLossPerSecond": 0.0015
+  },
+  "spending": {
+    "minDwellSeconds": 20,
+    "cafePerMinute": 60,
+    "carWashPerMinute": 100,
+    "maxDwellBonusSeconds": 60
+  },
+  "carTypes": {
+    "sedan": {
+      "weight": 0.5
+    },
+    "hatchback": {
+      "weight": 0.35
+    },
+    "taxi": {
+      "weight": 0.15
+    }
+  },
+  "vip": {
+    "everySeconds": [150, 300],
+    "offerSeconds": 30,
+    "payMultiplier": 5,
+    "type": "sedan"
+  },
+  "panelRow": {
+    "halfLength": 4
+  },
+  "cashStackOffset": 1.8,
+  "zones": [
+    {
+      "id": "lodge",
+      "name": "Lodge lot",
+      "bounds": {
+        "minX": -5.2,
+        "maxX": 14.0,
+        "minZ": -4,
+        "maxZ": 7
+      }
+    },
+    {
+      "id": "slope",
+      "name": "Sunny slope",
+      "bounds": {
+        "minX": -5.2,
+        "maxX": 14.0,
+        "minZ": -14,
+        "maxZ": -4
+      }
+    },
+    {
+      "id": "ridge",
+      "name": "Wind ridge",
+      "bounds": {
+        "minX": -5.2,
+        "maxX": 14.0,
+        "minZ": 7,
+        "maxZ": 13
+      }
+    },
+    {
+      "id": "apres",
+      "name": "Après-ski",
+      "bounds": {
+        "minX": -5.2,
+        "maxX": 14.0,
+        "minZ": 13,
+        "maxZ": 19
+      }
+    }
+  ],
+  "pads": [
+    {
+      "id": "charger1",
+      "kind": "charger",
+      "label": "Fast charger",
+      "price": 0,
+      "pos": {
+        "x": -1.5,
+        "z": -0.5
+      },
+      "bay": "bay1"
+    },
+    {
+      "id": "panel1",
+      "kind": "panelRow",
+      "label": "Solar row",
+      "price": 0,
+      "pos": {
+        "x": 6.5,
+        "z": -2.4
+      }
+    },
+    {
+      "id": "charger2",
+      "kind": "charger",
+      "label": "Fast charger",
+      "price": 2500,
+      "pos": {
+        "x": -1.5,
+        "z": 2.5
+      },
+      "bay": "bay2"
+    },
+    {
+      "id": "turbine1",
+      "kind": "windTurbine",
+      "label": "Wind turbine",
+      "price": 0,
+      "pos": {
+        "x": 11.5,
+        "z": 1.5
+      }
+    },
+    {
+      "id": "battery1",
+      "kind": "battery",
+      "label": "Battery",
+      "price": 2000,
+      "pos": {
+        "x": 1.8,
+        "z": 3.6
+      },
+      "unlockAfter": ["charger2"]
+    },
+    {
+      "id": "technician1",
+      "kind": "technician",
+      "label": "Hire technician",
+      "price": 3000,
+      "pos": {
+        "x": 4.4,
+        "z": 0.9
+      },
+      "unlockAfter": ["battery1"]
+    },
+    {
+      "id": "charger3",
+      "kind": "charger",
+      "label": "Fast charger",
+      "price": 5000,
+      "pos": {
+        "x": -1.5,
+        "z": 5.5
+      },
+      "unlockAfter": ["technician1"],
+      "bay": "bay3"
+    },
+    {
+      "id": "landSlope",
+      "kind": "land",
+      "label": "Buy land: Sunny slope",
+      "price": 6000,
+      "pos": {
+        "x": 0.5,
+        "z": -2.6
+      },
+      "unlockAfter": ["charger3"],
+      "opensZone": "slope"
+    },
+    {
+      "id": "panel2",
+      "kind": "panelRow",
+      "label": "Solar row",
+      "price": 7000,
+      "pos": {
+        "x": 6.5,
+        "z": -5.4
+      },
+      "unlockAfter": ["charger3"],
+      "zone": "slope"
+    },
+    {
+      "id": "cashier1",
+      "kind": "cashier",
+      "label": "Hire cashier",
+      "price": 10000,
+      "pos": {
+        "x": 6.8,
+        "z": 0.9
+      },
+      "unlockAfter": ["panel2"]
+    },
+    {
+      "id": "landRidge",
+      "kind": "land",
+      "label": "Buy land: Wind ridge",
+      "price": 14000,
+      "pos": {
+        "x": 5.2,
+        "z": 5.6
+      },
+      "unlockAfter": ["cashier1"],
+      "opensZone": "ridge"
+    },
+    {
+      "id": "charger4",
+      "kind": "charger",
+      "label": "Fast charger",
+      "price": 20000,
+      "pos": {
+        "x": -1.5,
+        "z": 8.5
+      },
+      "unlockAfter": ["cashier1"],
+      "bay": "bay4",
+      "zone": "ridge"
+    },
+    {
+      "id": "battery2",
+      "kind": "battery",
+      "label": "Battery",
+      "price": 26000,
+      "pos": {
+        "x": 1.8,
+        "z": 9.0
+      },
+      "unlockAfter": ["charger4"],
+      "zone": "ridge"
+    },
+    {
+      "id": "panel3",
+      "kind": "panelRow",
+      "label": "Solar row",
+      "price": 32000,
+      "pos": {
+        "x": 6.5,
+        "z": -7.6
+      },
+      "unlockAfter": ["battery2"],
+      "zone": "slope"
+    },
+    {
+      "id": "turbine2",
+      "kind": "windTurbine",
+      "label": "Wind turbine",
+      "price": 34000,
+      "pos": {
+        "x": 11.5,
+        "z": 9.5
+      },
+      "unlockAfter": ["panel3"],
+      "zone": "ridge"
+    },
+    {
+      "id": "robot1",
+      "kind": "robot",
+      "label": "Snow-clearing robot",
+      "price": 38000,
+      "pos": {
+        "x": 1.8,
+        "z": -6.5
+      },
+      "unlockAfter": ["panel3"],
+      "zone": "slope"
+    },
+    {
+      "id": "technician2",
+      "kind": "technician",
+      "label": "Hire technician",
+      "price": 51000,
+      "pos": {
+        "x": 4.0,
+        "z": 11.8
+      },
+      "unlockAfter": ["charger4"],
+      "zone": "ridge"
+    },
+    {
+      "id": "landApres",
+      "kind": "land",
+      "label": "Buy land: Après-ski",
+      "price": 60000,
+      "pos": {
+        "x": 7.6,
+        "z": 11.6
+      },
+      "unlockAfter": ["turbine2"],
+      "zone": "ridge",
+      "opensZone": "apres"
+    },
+    {
+      "id": "cafe",
+      "kind": "cafe",
+      "label": "Hot chocolate hut",
+      "price": 68000,
+      "pos": {
+        "x": 3.0,
+        "z": 16.4
+      },
+      "unlockAfter": ["landApres"],
+      "zone": "apres"
+    },
+    {
+      "id": "charger5",
+      "kind": "charger",
+      "label": "Fast charger",
+      "price": 81000,
+      "pos": {
+        "x": -1.5,
+        "z": 11.5
+      },
+      "unlockAfter": ["turbine2"],
+      "bay": "bay5",
+      "zone": "ridge"
+    },
+    {
+      "id": "carWash",
+      "kind": "carWash",
+      "label": "Salt wash",
+      "price": 102000,
+      "pos": {
+        "x": 7.6,
+        "z": 16.0
+      },
+      "unlockAfter": ["cafe"],
+      "zone": "apres"
+    },
+    {
+      "id": "panel4",
+      "kind": "panelRow",
+      "label": "Solar row",
+      "price": 119000,
+      "pos": {
+        "x": 6.5,
+        "z": -9.8
+      },
+      "unlockAfter": ["charger5"],
+      "zone": "slope"
+    },
+    {
+      "id": "battery3",
+      "kind": "battery",
+      "label": "Battery",
+      "price": 144000,
+      "pos": {
+        "x": 4.8,
+        "z": 9.0
+      },
+      "unlockAfter": ["charger5"],
+      "zone": "ridge"
+    },
+    {
+      "id": "charger6",
+      "kind": "charger",
+      "label": "Fast charger",
+      "price": 178000,
+      "pos": {
+        "x": -1.5,
+        "z": 14.5
+      },
+      "unlockAfter": ["battery3", "landApres"],
+      "bay": "bay6",
+      "zone": "apres"
+    },
+    {
+      "id": "turbine3",
+      "kind": "windTurbine",
+      "label": "Wind turbine",
+      "price": 212000,
+      "pos": {
+        "x": 12.0,
+        "z": 16.0
+      },
+      "unlockAfter": ["charger6"],
+      "zone": "apres"
+    },
+    {
+      "id": "panel5",
+      "kind": "panelRow",
+      "label": "Solar row",
+      "price": 246000,
+      "pos": {
+        "x": 6.5,
+        "z": -12.0
+      },
+      "unlockAfter": ["charger6"],
+      "zone": "slope"
+    },
+    {
+      "id": "turbine4",
+      "kind": "windTurbine",
+      "label": "Wind turbine",
+      "price": 280000,
+      "pos": {
+        "x": 11.5,
+        "z": -8.7
+      },
+      "unlockAfter": ["turbine3"],
+      "zone": "slope"
+    }
+  ],
+  "initial": {
+    "cash": 3000,
+    "chargerTier": 2
+  }
+}

@@ -31,6 +31,8 @@ import {
   panelRatingKw,
   staffSpeedMultiplier,
   sunIntensity,
+  turbineRatingKw,
+  windStrength,
 } from './world.ts'
 
 export const NO_INPUT: TickInput = { move: { x: 0, z: 0 } }
@@ -44,6 +46,7 @@ export function cloneState(s: GameState): GameState {
     chargers: s.chargers.map((c) => ({ ...c })),
     panels: s.panels.map((p) => ({ ...p })),
     batteries: s.batteries.map((b) => ({ ...b })),
+    turbines: s.turbines.map((t) => ({ ...t })),
     facilities: { ...s.facilities },
     staff: s.staff.map((m) => ({ ...m })),
     cars: s.cars.map((c) => ({ ...c })),
@@ -165,7 +168,7 @@ function updateWorldEvents(
 }
 
 function finishUpgrades(s: GameState, events: GameEvent[]) {
-  for (const item of [...s.chargers, ...s.panels, ...s.batteries]) {
+  for (const item of [...s.chargers, ...s.panels, ...s.batteries, ...s.turbines]) {
     if (item.upgradingUntil > 0 && s.time >= item.upgradingUntil) {
       item.tier += 1
       item.upgradingUntil = 0
@@ -588,6 +591,11 @@ function updateEnergy(s: GameState, dt: number, content: Content): Map<number, n
     const loss = panel.dust * content.map.dust.maxOutputLoss
     producedKw += panelRatingKw(panel, content) * s.sun * (1 - loss) * eventOutput
   }
+  // Turbines turn day and night, with the wind.
+  if (s.turbines.length > 0) {
+    const wind = windStrength(s.time, s.dayTime, content.map)
+    for (const turbine of s.turbines) producedKw += turbineRatingKw(turbine, content) * wind
+  }
 
   // What each charging car wants this tick.
   const wants = new Map<number, number>()
@@ -614,6 +622,9 @@ function updateEnergy(s: GameState, dt: number, content: Content): Map<number, n
     availableKw += discharge
   }
   s.energy.stored = Math.min(s.energy.capacity, Math.max(0, s.energy.stored + batteryFlow * kwh))
+  // Cold nights sap the batteries.
+  const cold = content.map.cold
+  if (cold && isNight(s.dayTime, content.map)) s.energy.stored *= 1 - cold.nightLossPerSecond * dt
 
   const ratio = demandKw > 0 ? Math.min(1, availableKw / demandKw) : 1
   const delivered = new Map<number, number>()

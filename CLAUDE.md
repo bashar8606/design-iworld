@@ -22,7 +22,7 @@ Run `npm run lint`, `npx tsc -b` and `npm test` before every commit.
 - `src/platform/` — ads, purchases, storage, haptics, analytics (+ web stubs)
 - `src/store/` — zustand store, the fixed-step game loop and the game-event bus
 - `src/gallery/` — the /gallery asset viewer
-- `src/content/` — JSON config: map1/map2, cars, equipment, events, economy, pacing, ads, shop
+- `src/content/` — JSON config: map1/map2/map3, cars, equipment, events, economy, pacing, ads, shop
 - `src/audio/` — howler.js sound and haptic feedback
 - `src/ui/` — HUD, sheets (upgrades, shop, settings, debug), cards, banners
 - `assets-src/` — .blend files, Blender scripts, raw exports, Poly Haven originals
@@ -45,7 +45,7 @@ measurement and TestFlight, store listing, live ops).
 - Performance budget on an iPhone 3-4 years old: 60 fps, under 100 draw calls, under 150k
   triangles, textures at most 1024 px. Repeated objects use instancing.
 - Save after every purchase and when the app goes to the background.
-- After changing any price or rate, run `npm run sim -- --tune` (and `--map map2`) and keep the
+- After changing any price or rate, run `npm run sim -- --tune` (and `--map map2`, `--map map3`) and keep the
   smart and idle bots within 25% of `src/content/pacing.json`.
 - zustand selectors must return primitives or stable references; wrap selectors that build
   objects or arrays in `useShallow`, or they re-render forever.

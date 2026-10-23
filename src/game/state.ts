@@ -39,6 +39,7 @@ export function createInitialState(mapId = 'map1', options: NewGameOptions = {})
     chargers: [],
     panels: [],
     batteries: [],
+    turbines: [],
     facilities: { cafe: false, carWash: false },
     staff: [],
     cars: [],
@@ -114,6 +115,9 @@ export function buildPadItem(state: GameState, pad: PadDef, content: Content): v
       break
     case 'carWash':
       state.facilities.carWash = true
+      break
+    case 'windTurbine':
+      state.turbines.push({ id: pad.id, tier: 0, upgradingUntil: 0 })
       break
     case 'land':
       // Owning the zone is read from the pad itself (see zoneOwned).

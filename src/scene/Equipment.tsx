@@ -4,7 +4,7 @@ import * as THREE from 'three'
 import { useShallow } from 'zustand/react/shallow'
 import { getContent } from '../game/content.ts'
 import type { Charger } from '../game/types.ts'
-import { bayDef, itemPos } from '../game/world.ts'
+import { bayDef, itemPos, windStrength } from '../game/world.ts'
 import { useGame } from '../store/gameStore.ts'
 import { cableMaterial, glowLime, glowTeal, propMaterial } from './materials.ts'
 import { popScale } from './buildPop.ts'
@@ -22,6 +22,9 @@ import {
   panelModuleGeometry,
   panelRowMatrices,
   panelFrameMatrices,
+  TURBINE_HUB,
+  turbineRotorGeometry,
+  turbineTowerGeometry,
 } from './props/geometry.ts'
 
 const useMap = () => getContent(useGame((s) => s.state.mapId)).map
@@ -39,6 +42,7 @@ function applyPop(group: THREE.Group | null, id: string) {
 
 const TIER_TINT = ['#FFFFFF', '#8E9BB5', '#C9F0FF']
 const DUST = new THREE.Color('#D9C08E')
+const SNOW = new THREE.Color('#F7FAFD')
 const MAX_PANEL_MODULES = 600
 
 export function SolarPanels() {
@@ -110,11 +114,14 @@ export function SolarPanels() {
     if (last.current < 0.2) return
     last.current = 0
     const { state } = useGame.getState()
+    const snowy = getContent(state.mapId).map.theme === 'snow'
     let i = 0
     const mesh = modules.current!
     for (const row of rows) {
       const panel = state.panels.find((p) => p.id === row.id)
-      color.set(TIER_TINT[row.tier] ?? '#FFFFFF').lerp(DUST, (panel?.dust ?? 0) * 0.7)
+      color
+        .set(TIER_TINT[row.tier] ?? '#FFFFFF')
+        .lerp(snowy ? SNOW : DUST, (panel?.dust ?? 0) * (snowy ? 0.9 : 0.7))
       const tracking = row.tier >= 2
       const tilt = tracking ? 0.15 + 0.5 * (1 - state.sun) : undefined
       const mats = tracking ? panelRowMatrices(row.x, row.z, row.y, tilt) : null
@@ -380,5 +387,80 @@ function CafeModel({ x, z }: { x: number; z: number }) {
       castShadow
       receiveShadow
     />
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Wind turbines (map 3): towers in one instanced mesh, rotors in another, spinning with the wind.
+
+const MAX_TURBINES = 8
+const TURBINE_SCALE = [1, 1.2, 1.4]
+/** Rotors face the camera's side of the lot. */
+const TURBINE_YAW = Math.PI / 4
+
+export function WindTurbines() {
+  const map = useMap()
+  const towerGeometry = useMemo(() => turbineTowerGeometry(), [])
+  const rotorGeometry = useMemo(() => turbineRotorGeometry(), [])
+  const towers = useRef<THREE.InstancedMesh>(null)
+  const rotors = useRef<THREE.InstancedMesh>(null)
+  const angle = useRef(0)
+  const tmp = useMemo(
+    () => ({
+      m: new THREE.Matrix4(),
+      q: new THREE.Quaternion(),
+      spin: new THREE.Quaternion(),
+      yaw: new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), TURBINE_YAW),
+      p: new THREE.Vector3(),
+      s: new THREE.Vector3(),
+      hub: new THREE.Vector3(),
+      z: new THREE.Vector3(0, 0, 1),
+    }),
+    [],
+  )
+  useFrame((_, dt) => {
+    const { state } = useGame.getState()
+    const t = towers.current
+    const r = rotors.current
+    if (!t || !r) return
+    const wind = windStrength(state.time, state.dayTime, map)
+    angle.current -= dt * (0.5 + 3.5 * wind)
+    tmp.spin.setFromAxisAngle(tmp.z, angle.current)
+    state.turbines.forEach((turbine, i) => {
+      if (i >= MAX_TURBINES) return
+      const pad = padPos(map, turbine.id)
+      const base = itemPos(pad)
+      const k = (TURBINE_SCALE[turbine.tier] ?? 1) * popScale(turbine.id)
+      tmp.p.set(base.x, pad.buildY ?? 0, base.z)
+      tmp.s.set(k, k, k)
+      t.setMatrixAt(i, tmp.m.compose(tmp.p, tmp.yaw, tmp.s))
+      tmp.hub
+        .set(0, TURBINE_HUB.y, TURBINE_HUB.z)
+        .multiplyScalar(k)
+        .applyQuaternion(tmp.yaw)
+        .add(tmp.p)
+      tmp.q.copy(tmp.yaw).multiply(tmp.spin)
+      r.setMatrixAt(i, tmp.m.compose(tmp.hub, tmp.q, tmp.s))
+    })
+    t.count = r.count = Math.min(MAX_TURBINES, state.turbines.length)
+    t.instanceMatrix.needsUpdate = true
+    r.instanceMatrix.needsUpdate = true
+  })
+  return (
+    <>
+      <instancedMesh
+        ref={towers}
+        args={[towerGeometry, propMaterial, MAX_TURBINES]}
+        castShadow
+        receiveShadow
+        frustumCulled={false}
+      />
+      <instancedMesh
+        ref={rotors}
+        args={[rotorGeometry, propMaterial, MAX_TURBINES]}
+        castShadow
+        frustumCulled={false}
+      />
+    </>
   )
 }

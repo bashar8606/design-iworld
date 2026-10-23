@@ -16,7 +16,8 @@ describe('map 2 and the prestige reset', () => {
     expect(next.mapId).toBe('map2')
     expect(next.prestige.greenCredits).toBe(credits)
     expect(next.prestige.mapsCompleted).toEqual(['map1'])
-    expect(nextMapId('map2')).toBe('map2')
+    expect(nextMapId('map2')).toBe('map3')
+    expect(nextMapId('map3')).toBe('map3')
   })
 
   it('cannot sell a map that is not complete', () => {

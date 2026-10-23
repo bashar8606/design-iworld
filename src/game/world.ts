@@ -7,8 +7,10 @@ import type {
   MapContent,
   PadDef,
   PanelRow,
+  EquipmentKind,
   StaffKind,
   Vec2,
+  WindTurbine,
   ZoneDef,
 } from './types.ts'
 import { dist } from './vec.ts'
@@ -81,6 +83,21 @@ export function dayClock(time: number, map: MapContent): { day: number; dayTime:
 
 export function chargerPowerKw(charger: Charger, content: Content): number {
   return content.equipment.charger.tiers[charger.tier]?.powerKw ?? 0
+}
+
+export function turbineRatingKw(turbine: WindTurbine, content: Content): number {
+  return content.equipment.windTurbine.tiers[turbine.tier]?.ratingKw ?? 0
+}
+
+/** How hard the wind blows, 0..1: a pure function of the clock so ticks stay deterministic. */
+export function windStrength(time: number, dayTime: number, map: MapContent): number {
+  const w = map.wind
+  if (!w) return 0
+  const [a, b] = w.periodSeconds
+  const gust =
+    0.6 * Math.sin((2 * Math.PI * time) / a) + 0.4 * Math.sin((2 * Math.PI * time) / b + 1.3)
+  const night = isNight(dayTime, map) ? w.nightBoost : 0
+  return Math.min(1, Math.max(0.05, w.base + w.gust * gust + night))
 }
 
 export function panelRatingKw(panel: PanelRow, content: Content): number {
@@ -174,12 +191,8 @@ export function clampToOwned(pos: Vec2, state: GameState, map: MapContent): Vec2
   return best
 }
 
-/** Price of the next tier for a charger, panel row or battery, or null at max tier. */
-export function nextTierPrice(
-  kind: 'charger' | 'panelRow' | 'battery',
-  tier: number,
-  content: Content,
-): number | null {
+/** Price of the next tier for a charger, panel row, battery or turbine, or null at max tier. */
+export function nextTierPrice(kind: EquipmentKind, tier: number, content: Content): number | null {
   const next = content.equipment[kind].tiers[tier + 1]
   return next ? next.upgradePrice : null
 }

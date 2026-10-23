@@ -296,3 +296,80 @@ export function robotGeometry(): THREE.BufferGeometry {
     cylAt(0.15, 0.08, [0.38, 0.15, -0.2], PALETTE.dark, 8, [0, 0, Math.PI / 2]),
   ])
 }
+
+// ---------------------------------------------------------------------------
+// Map 3, the ski lodge: wind turbines, pines, mountains and the lodge.
+
+/** Height of a turbine's hub above the ground (before its tier scale). */
+export const TURBINE_HUB = { y: 7.1, z: 0.85 }
+
+/** Turbine tower, nacelle and base; the rotor is separate so it can spin. Faces +z. */
+export function turbineTowerGeometry(): THREE.BufferGeometry {
+  const tower = new THREE.CylinderGeometry(0.17, 0.3, 7, 10).translate(0, 3.5, 0)
+  return merge([
+    cylAt(0.6, 0.25, [0, 0.12, 0], PALETTE.concrete, 10),
+    paint(tower, PALETTE.white),
+    boxAt([0.55, 0.55, 1.4], [0, TURBINE_HUB.y, 0.1], PALETTE.white),
+    boxAt([0.56, 0.08, 1.2], [0, TURBINE_HUB.y - 0.12, 0.1], PALETTE.teal),
+  ])
+}
+
+/** Hub and three blades around the origin, in the xy plane, so a z rotation spins it. */
+export function turbineRotorGeometry(): THREE.BufferGeometry {
+  const parts = [cylAt(0.22, 0.45, [0, 0, 0], PALETTE.white, 10, [Math.PI / 2, 0, 0])]
+  for (let i = 0; i < 3; i++) {
+    const blade = new THREE.BoxGeometry(0.26, 2.7, 0.05).translate(0, 1.5, 0)
+    blade.rotateZ((i * 2 * Math.PI) / 3)
+    parts.push(paint(blade, PALETTE.white))
+    const tip = new THREE.BoxGeometry(0.2, 0.45, 0.06).translate(0, 2.65, 0)
+    tip.rotateZ((i * 2 * Math.PI) / 3)
+    parts.push(paint(tip, PALETTE.orange))
+  }
+  return merge(parts)
+}
+
+/** A snowy pine: trunk, three tiers of needles, each with a dusting of snow. */
+export function pineGeometry(): THREE.BufferGeometry {
+  const parts = [
+    paint(new THREE.CylinderGeometry(0.12, 0.18, 0.9, 6).translate(0, 0.45, 0), '#6B4B33'),
+  ]
+  const tiers = [
+    [1.15, 1.3, 1.0],
+    [0.9, 1.15, 1.75],
+    [0.62, 1.0, 2.45],
+  ] as const
+  for (const [r, h, y] of tiers) {
+    parts.push(paint(new THREE.ConeGeometry(r, h, 7).translate(0, y, 0), '#2F6B4F'))
+    parts.push(
+      paint(new THREE.ConeGeometry(r * 0.55, h * 0.45, 7).translate(0, y + h * 0.3, 0), '#F4F8FB'),
+    )
+  }
+  return merge(parts)
+}
+
+/** A distant peak: grey rock with a snow cap. */
+export function mountainGeometry(): THREE.BufferGeometry {
+  return merge([
+    paint(new THREE.ConeGeometry(1, 1, 7).translate(0, 0.5, 0), '#8796A8'),
+    paint(new THREE.ConeGeometry(0.45, 0.45, 7).translate(0, 0.78, 0), '#F4F8FB'),
+  ])
+}
+
+/** The ski lodge: timber walls, a snowy gable roof, a chimney and lit windows. */
+export function chaletGeometry(): THREE.BufferGeometry {
+  // A triangular prism along x with its ridge on top.
+  const roof = new THREE.CylinderGeometry(4.6, 4.6, 9, 3, 1)
+    .rotateZ(Math.PI / 2)
+    .rotateX(-Math.PI / 2)
+  roof.scale(1, 0.55, 1)
+  roof.translate(0, 4.6, 0)
+  return merge([
+    boxAt([8, 3.6, 6.4], [0, 1.8, 0], '#8A5A3B'),
+    boxAt([8.2, 0.3, 6.6], [0, 0.15, 0], '#5E3E2A'),
+    paint(roof, '#F4F8FB'),
+    boxAt([0.7, 1.8, 0.7], [2.2, 6, -0.8], '#6E6A66'),
+    boxAt([1.2, 0.9, 0.1], [-2.2, 2.1, 3.22], PALETTE.yellow),
+    boxAt([1.2, 0.9, 0.1], [2.2, 2.1, 3.22], PALETTE.yellow),
+    boxAt([1.3, 2.2, 0.1], [0, 1.1, 3.22], '#5E3E2A'),
+  ])
+}

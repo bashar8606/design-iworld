@@ -88,6 +88,31 @@
       "route": "code",
       "source": "src/scene/props/geometry.ts",
       "triangleLimit": 300
+    },
+    "turbineTower": {
+      "route": "code",
+      "source": "src/scene/props/geometry.ts",
+      "triangleLimit": 300
+    },
+    "turbineRotor": {
+      "route": "code",
+      "source": "src/scene/props/geometry.ts",
+      "triangleLimit": 200
+    },
+    "pine": {
+      "route": "code",
+      "source": "src/scene/props/geometry.ts",
+      "triangleLimit": 300
+    },
+    "mountain": {
+      "route": "code",
+      "source": "src/scene/props/geometry.ts",
+      "triangleLimit": 60
+    },
+    "chalet": {
+      "route": "code",
+      "source": "src/scene/props/geometry.ts",
+      "triangleLimit": 300
     }
   }
 }

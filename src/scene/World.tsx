@@ -6,7 +6,7 @@ import { Cars } from './Cars.tsx'
 import { DayNight } from './DayNight.tsx'
 import { Drivers } from './Drivers.tsx'
 import { Effects } from './Effects.tsx'
-import { Batteries, Chargers, Facilities, SolarPanels } from './Equipment.tsx'
+import { Batteries, Chargers, Facilities, SolarPanels, WindTurbines } from './Equipment.tsx'
 import { Ground } from './Ground.tsx'
 import { Lighting } from './Lighting.tsx'
 import { Pads } from './Pads.tsx'
@@ -52,6 +52,7 @@ export function World({
         <Ground />
         <SolarPanels />
         <Batteries />
+        <WindTurbines />
         <Chargers />
         <Facilities />
         <Zones />

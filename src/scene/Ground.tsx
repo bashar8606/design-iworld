@@ -4,6 +4,7 @@ import * as THREE from 'three'
 import textures from '../content/textures.json'
 import { getContent } from '../game/content.ts'
 import { useGame } from '../store/gameStore.ts'
+import { AlpineScenery } from './Alpine.tsx'
 import { CityScenery } from './City.tsx'
 import { propMaterial } from './materials.ts'
 import { PALETTE, duneGeometry, skylineGeometry } from './props/geometry.ts'
@@ -87,21 +88,26 @@ export function Ground() {
   const mapId = useGame((s) => s.state.mapId)
   const map = getContent(mapId).map
   const city = map.theme === 'city'
+  const snow = map.theme === 'snow'
   const skyline = useMemo(() => skylineGeometry(), [])
   const sand = useMemo(
     () =>
       city
         ? noiseTexture('#666B74', '#585C64', 900, 18)
-        : noiseTexture('#E9D8B4', '#CDB688', 1400, 18),
-    [city],
+        : snow
+          ? noiseTexture('#F4F8FB', '#D6E2EC', 1200, 18)
+          : noiseTexture('#E9D8B4', '#CDB688', 1400, 18),
+    [city, snow],
   )
   const asphalt = useMemo(() => noiseTexture('#50545D', '#3E4149', 900, 10), [])
   const concrete = useMemo(
     () =>
       city
         ? noiseTexture('#AEB3BA', '#9DA2A9', 500, 6)
-        : noiseTexture('#D9D5C8', '#BDB8A9', 500, 6),
-    [city],
+        : snow
+          ? noiseTexture('#C7D0D8', '#E8EEF3', 700, 6)
+          : noiseTexture('#D9D5C8', '#BDB8A9', 500, 6),
+    [city, snow],
   )
   const b = map.bounds
   const roadX = map.road.laneX - 1.25
@@ -117,7 +123,7 @@ export function Ground() {
     <group>
       <mesh rotation-x={-Math.PI / 2} position={[0, -0.01, 0]} receiveShadow>
         <planeGeometry args={[160, 160]} />
-        {city ? (
+        {city || snow ? (
           <meshStandardMaterial color="#FFFFFF" map={sand} roughness={0.95} />
         ) : (
           <SurfaceMaterial slot="sand" color="#FFFFFF" fallback={sand} />
@@ -150,7 +156,11 @@ export function Ground() {
         receiveShadow
       >
         <planeGeometry args={[b.maxX - b.minX + 1.6, b.maxZ - b.minZ + 1.4]} />
-        <SurfaceMaterial slot="concrete" color="#FFFFFF" fallback={concrete} />
+        {snow ? (
+          <meshStandardMaterial color="#FFFFFF" map={concrete} roughness={0.9} />
+        ) : (
+          <SurfaceMaterial slot="concrete" color="#FFFFFF" fallback={concrete} />
+        )}
       </mesh>
       {/* Access lanes from the highway into the lot and back out. */}
       {[map.lane.entryZ, map.lane.exitZ].map((z) => (
@@ -165,8 +175,8 @@ export function Ground() {
         </mesh>
       ))}
       <BayLines />
-      {city ? <CityScenery map={map} /> : <Dunes />}
-      {!city && (
+      {city ? <CityScenery map={map} /> : snow ? <AlpineScenery map={map} /> : <Dunes />}
+      {!city && !snow && (
         <mesh
           geometry={skyline}
           material={propMaterial}

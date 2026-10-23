@@ -97,6 +97,8 @@ export function findEquipment(state: GameState, id: string) {
   if (panel) return { kind: 'panelRow' as EquipmentKind, item: panel }
   const battery = state.batteries.find((b) => b.id === id)
   if (battery) return { kind: 'battery' as EquipmentKind, item: battery }
+  const turbine = state.turbines.find((t) => t.id === id)
+  if (turbine) return { kind: 'windTurbine' as EquipmentKind, item: turbine }
   return null
 }
 
@@ -130,7 +132,7 @@ export function upgradeStaff(state: GameState, id: string, content: Content): Ga
 /** Seconds left on the longest running upgrade, for the instant-build offer. */
 export function longestUpgrade(state: GameState): { id: string; seconds: number } | null {
   let best: { id: string; seconds: number } | null = null
-  for (const item of [...state.chargers, ...state.panels, ...state.batteries]) {
+  for (const item of [...state.chargers, ...state.panels, ...state.batteries, ...state.turbines]) {
     if (item.upgradingUntil <= 0) continue
     const seconds = item.upgradingUntil - state.time
     if (!best || seconds > best.seconds) best = { id: item.id, seconds }

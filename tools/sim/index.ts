@@ -2,6 +2,7 @@
 //   npm run sim                 7 days, all bots, CSV + HTML report in tools/sim/out
 //   npm run sim -- --days 3 --bots smart,idle --tune
 //   npm run sim -- --map map2       map 2 (10 days, starting with map 1's prestige income levels)
+//   npm run sim -- --map map3       map 3, the ski lodge (12 days)
 import { join, resolve } from 'node:path'
 import { getContent } from '../../src/game/content.ts'
 import { checkMilestones, writeCsv, writeReport } from './report.ts'
@@ -13,7 +14,7 @@ const arg = (name: string) => {
   const i = args.indexOf(`--${name}`)
   return i >= 0 ? args[i + 1] : undefined
 }
-const days = Number(arg('days') ?? (arg('map') === 'map2' ? 10 : 7))
+const days = Number(arg('days') ?? { map2: 10, map3: 12 }[arg('map') ?? ''] ?? 7)
 const mapId = arg('map') ?? 'map1'
 const wanted = (arg('bots') ?? 'greedy,smart,idle').split(',')
 const outDir = resolve(arg('out') ?? join(import.meta.dirname, 'out', arg('map') ?? 'map1'))

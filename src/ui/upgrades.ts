@@ -1,6 +1,6 @@
 // What can be upgraded, for the upgrade sheet and the nearby-upgrade card.
 import type { GameAction } from '../game/actions.ts'
-import type { Content, GameState, PadKind, TierDef, Vec2 } from '../game/types.ts'
+import type { Content, EquipmentKind, GameState, PadKind, TierDef, Vec2 } from '../game/types.ts'
 import {
   bayDef,
   itemPos,
@@ -37,9 +37,10 @@ const DESCRIPTIONS: Partial<Record<PadKind, string>> = {
   charger: 'Charge cars faster and serve more of them',
   panelRow: 'Make more power from the same sunshine',
   battery: 'Store more energy for the night',
+  windTurbine: 'Power from the wind, day and night',
   technician: 'Plugs in waiting cars faster',
   cashier: 'Collects cash stacks faster',
-  robot: 'Keeps the panels free of dust',
+  robot: 'Keeps the panels clean (dust or snow)',
 }
 
 /** "+50% Capacity" from one tier value to the next. */
@@ -48,14 +49,11 @@ function gain(from: number | undefined, to: number | undefined, label: string): 
   return [`+${Math.round((to / from - 1) * 100)}% ${label}`]
 }
 
-function tierStats(
-  kind: 'charger' | 'panelRow' | 'battery',
-  from: TierDef,
-  to: TierDef | undefined,
-): string[] {
+function tierStats(kind: EquipmentKind, from: TierDef, to: TierDef | undefined): string[] {
   if (!to) return []
   if (kind === 'charger') return gain(from.powerKw, to.powerKw, 'Charge speed')
-  if (kind === 'panelRow') return gain(from.ratingKw, to.ratingKw, 'Power')
+  if (kind === 'panelRow' || kind === 'windTurbine')
+    return gain(from.ratingKw, to.ratingKw, 'Power')
   return [
     ...gain(from.capacityKwh, to.capacityKwh, 'Capacity'),
     ...gain(from.powerKw, to.powerKw, 'Output'),
@@ -121,6 +119,24 @@ export function upgradeOptions(state: GameState, content: Content): UpgradeOptio
       upgradingUntil: b.upgradingUntil,
       pos: posOf(b.id),
       action: { type: 'upgrade', id: b.id },
+    })
+  }
+  for (const t of state.turbines) {
+    const tiers = equipment.windTurbine.tiers
+    out.push({
+      id: t.id,
+      kind: 'windTurbine',
+      title: 'Wind turbine',
+      level: t.tier + 1,
+      description: DESCRIPTIONS.windTurbine!,
+      stats: tierStats('windTurbine', tiers[t.tier]!, tiers[t.tier + 1]),
+      from: tiers[t.tier]!.label,
+      to: tiers[t.tier + 1]?.label ?? null,
+      price: nextTierPrice('windTurbine', t.tier, content),
+      buildSeconds: tiers[t.tier + 1]?.buildSeconds ?? 0,
+      upgradingUntil: t.upgradingUntil,
+      pos: posOf(t.id),
+      action: { type: 'upgrade', id: t.id },
     })
   }
   for (const m of state.staff) {

@@ -3,7 +3,7 @@
 import { type GameAction, applyAction } from './actions.ts'
 import { buildPadItem } from './state.ts'
 import { NO_INPUT, cloneState, tick } from './tick.ts'
-import type { Content, GameState, TickInput, Vec2 } from './types.ts'
+import type { Content, EquipmentKind, GameState, TickInput, Vec2 } from './types.ts'
 import { dist } from './vec.ts'
 import { bayDef, nextStaffLevelPrice, nextTierPrice, openPads } from './world.ts'
 
@@ -25,7 +25,7 @@ export function purchaseOptions(state: GameState, content: Content): Purchase[] 
     price: p.price - (state.pads[p.id]?.paid ?? 0),
     pos: p.pos,
   }))
-  const equipment: [string, 'charger' | 'panelRow' | 'battery', number, number][] = [
+  const equipment: [string, EquipmentKind, number, number][] = [
     ...state.chargers.map(
       (c) => [c.id, 'charger', c.tier, c.upgradingUntil] as [string, 'charger', number, number],
     ),
@@ -34,6 +34,10 @@ export function purchaseOptions(state: GameState, content: Content): Purchase[] 
     ),
     ...state.batteries.map(
       (b) => [b.id, 'battery', b.tier, b.upgradingUntil] as [string, 'battery', number, number],
+    ),
+    ...state.turbines.map(
+      (t) =>
+        [t.id, 'windTurbine', t.tier, t.upgradingUntil] as [string, 'windTurbine', number, number],
     ),
   ]
   for (const [id, kind, tier, upgrading] of equipment) {
@@ -71,6 +75,7 @@ function applyPurchase(state: GameState, p: Purchase, content: Content): GameSta
     chargers: done(next.chargers),
     panels: done(next.panels),
     batteries: done(next.batteries),
+    turbines: done(next.turbines),
   }
 }
 

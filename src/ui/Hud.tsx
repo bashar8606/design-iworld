@@ -174,10 +174,15 @@ function Toasts() {
           'bad',
         )
       } else if (e.type === 'nightStarted') {
+        const { map } = getContent(state.mapId)
         push(
-          state.energy.capacity > 0
-            ? 'Night falls: running on batteries'
-            : 'Night falls: the panels stop',
+          map.cold && state.energy.capacity > 0
+            ? 'A cold night: the batteries drain faster'
+            : state.energy.capacity > 0
+              ? 'Night falls: running on batteries'
+              : state.turbines.length > 0
+                ? 'Night falls: only the wind is working'
+                : 'Night falls: the panels stop',
           'info',
         )
       } else if (e.type === 'dayStarted' && e.survived) {

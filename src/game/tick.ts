@@ -20,6 +20,7 @@ import {
   batteryCapacity,
   batteryPowerKw,
   bayDef,
+  bayStop,
   chargerPowerKw,
   clampToOwned,
   dayClock,
@@ -573,7 +574,7 @@ function assignChargers(s: GameState, content: Content) {
     car.path = [
       { x: map.lane.x, z: Math.max(car.pos.z, map.lane.entryZ) },
       { x: map.lane.x, z: bay.car.z },
-      bay.car,
+      bayStop(bay, (content.cars[car.type] ?? content.cars.hatchback!).length),
     ]
   }
 }

@@ -3,7 +3,15 @@ import { useMemo } from 'react'
 import * as THREE from 'three'
 
 export type ModelName =
-  'hatchback' | 'sedan' | 'taxi' | 'scooter' | 'cafe' | 'fast_charger' | 'worker'
+  | 'hatchback'
+  | 'sedan'
+  | 'taxi'
+  | 'scooter'
+  | 'truck'
+  | 'ski_bus'
+  | 'cafe'
+  | 'fast_charger'
+  | 'worker'
 
 export const modelUrl = (name: ModelName) => `${import.meta.env.BASE_URL}models/${name}.glb`
 
@@ -58,6 +66,8 @@ for (const name of [
   'sedan',
   'taxi',
   'scooter',
+  'truck',
+  'ski_bus',
   'cafe',
   'fast_charger',
   'worker',

@@ -1,5 +1,6 @@
 // Read-only helpers shared by tick, actions, bots and the UI.
 import type {
+  BayDef,
   Battery,
   Charger,
   Content,
@@ -48,6 +49,17 @@ export function openPads(state: GameState, content: Content): PadDef[] {
   return content.map.pads.filter(
     (p) => !state.pads[p.id]?.built && isPadUnlocked(state, p, content.map),
   )
+}
+
+/** Bays are laid out for a sedan; longer vehicles stop further back so their nose stays at the post. */
+const BAY_LENGTH = 4.6
+
+export function bayStop(bay: BayDef, length: number): Vec2 {
+  const back = Math.max(0, length - BAY_LENGTH) / 2
+  const dx = bay.post.x - bay.car.x
+  const dz = bay.post.z - bay.car.z
+  const d = Math.hypot(dx, dz) || 1
+  return { x: bay.car.x - (dx / d) * back, z: bay.car.z - (dz / d) * back }
 }
 
 export function bayDef(map: MapContent, bayId: string) {

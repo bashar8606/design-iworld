@@ -6,6 +6,8 @@ export const CAR_ICONS: Record<string, string> = {
   hatchback: '🚗',
   sedan: '🚙',
   taxi: '🚕',
+  truck: '🚚',
+  skiBus: '🚌',
   vip: '🚘',
 }
 

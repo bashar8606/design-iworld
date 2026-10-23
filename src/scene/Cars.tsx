@@ -12,7 +12,9 @@ import { lerp, lerpAngle } from './interp.ts'
 import { type ModelName, useModelGeometry } from './models/useModelGeometry.ts'
 
 const MAX_PER_MODEL = 40
-const CAR_MODELS: ModelName[] = ['hatchback', 'sedan', 'taxi', 'scooter']
+/** Bubbles sit higher over the truck and the ski bus. */
+const TALL_MODELS = new Set<string>(['truck', 'ski_bus'])
+const CAR_MODELS: ModelName[] = ['hatchback', 'sedan', 'taxi', 'scooter', 'truck', 'ski_bus']
 const VIP_TINT = new THREE.Color('#FFE08A')
 const GOLDEN_TINT = new THREE.Color('#FFB300')
 const WHITE = new THREE.Color('#FFFFFF')
@@ -139,6 +141,11 @@ function CarBubble({ id }: { id: number }) {
   const group = useRef<THREE.Group>(null)
   const bubble = useGame(useShallow((s) => carBubble(s.state, id)))
   const golden = useGame((s) => !!s.state.cars.find((c) => c.id === id)?.golden)
+  const model = useGame(
+    (s) =>
+      getContent(s.state.mapId).cars[s.state.cars.find((c) => c.id === id)?.type ?? '']?.model ??
+      '',
+  )
   useFrame(() => {
     const { state, prev } = useGame.getState()
     const car = state.cars.find((c) => c.id === id)
@@ -148,7 +155,7 @@ function CarBubble({ id }: { id: number }) {
       prev.cars.find((c) => c.id === id),
       tickAlpha(),
     )
-    group.current.position.set(p.x, 2.3, p.z)
+    group.current.position.set(p.x, TALL_MODELS.has(model) ? 3.3 : 2.3, p.z)
   })
   if (bubble.kind === 'none') return null
   return (

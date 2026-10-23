@@ -18,8 +18,34 @@
       "stars": [1, 25, 100],
       "gems": [2, 4, 8]
     },
-    { "id": "sedan", "car": "sedan", "name": "Sedan", "stars": [1, 25, 100], "gems": [2, 4, 8] },
-    { "id": "taxi", "car": "taxi", "name": "Taxi", "stars": [1, 25, 100], "gems": [2, 4, 8] },
+    {
+      "id": "sedan",
+      "car": "sedan",
+      "name": "Sedan",
+      "stars": [1, 25, 100],
+      "gems": [2, 4, 8]
+    },
+    {
+      "id": "taxi",
+      "car": "taxi",
+      "name": "Taxi",
+      "stars": [1, 25, 100],
+      "gems": [2, 4, 8]
+    },
+    {
+      "id": "truck",
+      "car": "truck",
+      "name": "Box truck",
+      "stars": [1, 10, 40],
+      "gems": [3, 6, 12]
+    },
+    {
+      "id": "skiBus",
+      "car": "skiBus",
+      "name": "Ski bus",
+      "stars": [1, 10, 40],
+      "gems": [3, 6, 12]
+    },
     {
       "id": "vip",
       "car": "sedan",
@@ -57,6 +83,22 @@
       "car": "taxi",
       "golden": true,
       "name": "Golden taxi",
+      "stars": [1, 3, 10],
+      "gems": [5, 8, 15]
+    },
+    {
+      "id": "truck:gold",
+      "car": "truck",
+      "golden": true,
+      "name": "Golden truck",
+      "stars": [1, 3, 10],
+      "gems": [5, 8, 15]
+    },
+    {
+      "id": "skiBus:gold",
+      "car": "skiBus",
+      "golden": true,
+      "name": "Golden ski bus",
       "stars": [1, 3, 10],
       "gems": [5, 8, 15]
     }

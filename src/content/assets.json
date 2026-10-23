@@ -24,6 +24,18 @@
       "triangleLimit": 1500,
       "drawCallLimit": 1
     },
+    "truck": {
+      "route": "blender",
+      "source": "assets-src/blender/scripts/truck.py",
+      "triangleLimit": 3000,
+      "drawCallLimit": 1
+    },
+    "ski_bus": {
+      "route": "blender",
+      "source": "assets-src/blender/scripts/ski_bus.py",
+      "triangleLimit": 3000,
+      "drawCallLimit": 1
+    },
     "cafe": {
       "route": "blender",
       "source": "assets-src/blender/scripts/cafe.py",

@@ -3,7 +3,7 @@
   "name": "Alpine Ski Lodge",
   "theme": "snow",
   "bounds": {
-    "minX": -7.6,
+    "minX": -8.0,
     "maxX": 14,
     "minZ": -14,
     "maxZ": 19
@@ -34,7 +34,7 @@
     "minDrainPerSecond": 400
   },
   "road": {
-    "laneX": -8.9,
+    "laneX": -9.4,
     "spawnZ": -24,
     "despawnZ": 34,
     "entranceZ": -15,
@@ -42,26 +42,26 @@
     "carSpeed": 7
   },
   "lane": {
-    "x": -6.6,
+    "x": -7.0,
     "entryZ": -14,
     "exitZ": 19
   },
   "queueSlots": [
     {
-      "x": -6.6,
+      "x": -7.0,
       "z": -2.5
     },
     {
-      "x": -6.6,
-      "z": -5.5
+      "x": -7.0,
+      "z": -6.1
     },
     {
-      "x": -6.6,
-      "z": -8.5
+      "x": -7.0,
+      "z": -9.7
     },
     {
-      "x": -6.6,
-      "z": -11.5
+      "x": -7.0,
+      "z": -13.3
     }
   ],
   "bays": [
@@ -162,13 +162,21 @@
   },
   "carTypes": {
     "sedan": {
-      "weight": 0.5
+      "weight": 0.4
     },
     "hatchback": {
-      "weight": 0.35
+      "weight": 0.25
     },
     "taxi": {
-      "weight": 0.15
+      "weight": 0.1
+    },
+    "skiBus": {
+      "weight": 0.15,
+      "unlockAfter": "charger3"
+    },
+    "truck": {
+      "weight": 0.1,
+      "unlockAfter": "charger4"
     }
   },
   "vip": {
@@ -376,7 +384,7 @@
       "id": "panel3",
       "kind": "panelRow",
       "label": "Solar row",
-      "price": 32000,
+      "price": 40000,
       "pos": {
         "x": 6.5,
         "z": -7.6
@@ -388,7 +396,7 @@
       "id": "turbine2",
       "kind": "windTurbine",
       "label": "Wind turbine",
-      "price": 34000,
+      "price": 42000,
       "pos": {
         "x": 11.5,
         "z": 9.5
@@ -400,7 +408,7 @@
       "id": "robot1",
       "kind": "robot",
       "label": "Snow-clearing robot",
-      "price": 38000,
+      "price": 48000,
       "pos": {
         "x": 1.8,
         "z": -6.5
@@ -412,7 +420,7 @@
       "id": "technician2",
       "kind": "technician",
       "label": "Hire technician",
-      "price": 51000,
+      "price": 64000,
       "pos": {
         "x": 4.0,
         "z": 11.8
@@ -424,7 +432,7 @@
       "id": "landApres",
       "kind": "land",
       "label": "Buy land: Après-ski",
-      "price": 60000,
+      "price": 75000,
       "pos": {
         "x": 7.6,
         "z": 11.6
@@ -437,7 +445,7 @@
       "id": "cafe",
       "kind": "cafe",
       "label": "Hot chocolate hut",
-      "price": 68000,
+      "price": 85000,
       "pos": {
         "x": 3.0,
         "z": 16.4
@@ -449,7 +457,7 @@
       "id": "charger5",
       "kind": "charger",
       "label": "Fast charger",
-      "price": 81000,
+      "price": 101000,
       "pos": {
         "x": -1.5,
         "z": 11.5
@@ -462,7 +470,7 @@
       "id": "carWash",
       "kind": "carWash",
       "label": "Salt wash",
-      "price": 102000,
+      "price": 128000,
       "pos": {
         "x": 7.6,
         "z": 16.0
@@ -474,7 +482,7 @@
       "id": "panel4",
       "kind": "panelRow",
       "label": "Solar row",
-      "price": 119000,
+      "price": 149000,
       "pos": {
         "x": 6.5,
         "z": -9.8
@@ -486,7 +494,7 @@
       "id": "battery3",
       "kind": "battery",
       "label": "Battery",
-      "price": 144000,
+      "price": 180000,
       "pos": {
         "x": 4.8,
         "z": 9.0
@@ -498,7 +506,7 @@
       "id": "charger6",
       "kind": "charger",
       "label": "Fast charger",
-      "price": 178000,
+      "price": 222000,
       "pos": {
         "x": -1.5,
         "z": 14.5
@@ -511,7 +519,7 @@
       "id": "turbine3",
       "kind": "windTurbine",
       "label": "Wind turbine",
-      "price": 212000,
+      "price": 265000,
       "pos": {
         "x": 12.0,
         "z": 16.0
@@ -523,7 +531,7 @@
       "id": "panel5",
       "kind": "panelRow",
       "label": "Solar row",
-      "price": 246000,
+      "price": 308000,
       "pos": {
         "x": 6.5,
         "z": -12.0
@@ -535,7 +543,7 @@
       "id": "turbine4",
       "kind": "windTurbine",
       "label": "Wind turbine",
-      "price": 280000,
+      "price": 350000,
       "pos": {
         "x": 11.5,
         "z": -8.7

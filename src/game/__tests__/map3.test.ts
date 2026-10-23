@@ -3,7 +3,7 @@ import { getContent } from '../content.ts'
 import { buildPadItem, createInitialState } from '../state.ts'
 import { tick } from '../tick.ts'
 import type { GameState } from '../types.ts'
-import { isNight, openPads, windStrength } from '../world.ts'
+import { bayStop, isNight, openPads, windStrength } from '../world.ts'
 
 const content = getContent('map3')
 const { map } = content
@@ -61,5 +61,35 @@ describe('map 3, the ski lodge', () => {
     const before = s.energy.stored
     for (let i = 0; i < 100; i++) s = tick(s, 0.1)
     expect(s.energy.stored).toBeLessThan(before * 0.99)
+  })
+
+  it('brings ski buses and trucks once the lot is big enough', () => {
+    let s = build(createInitialState('map3', { seed: 5 }), 'charger2')
+    const typesBefore = new Set<string>()
+    for (let i = 0; i < 3000; i++) {
+      s = tick(s, 0.1)
+      for (const c of s.cars) typesBefore.add(c.type)
+    }
+    expect(typesBefore.has('truck')).toBe(false)
+    expect(typesBefore.has('skiBus')).toBe(false)
+    s = build(s, 'battery1', 'technician1', 'charger3', 'landSlope', 'panel2', 'cashier1')
+    s = build(s, 'landRidge', 'charger4')
+    const types = new Set<string>()
+    for (let i = 0; i < 6000; i++) {
+      s = tick(s, 0.1)
+      for (const c of s.cars) types.add(c.type)
+    }
+    expect(types.has('truck')).toBe(true)
+    expect(types.has('skiBus')).toBe(true)
+  })
+
+  it('parks long vehicles further back so their nose stays at the charger', () => {
+    const bay = map.bays[0]!
+    const truck = content.cars.truck!.length
+    const stop = bayStop(bay, truck)
+    const front = stop.x + truck / 2
+    const sedanFront = bay.car.x + content.cars.sedan!.length / 2
+    expect(front).toBeCloseTo(sedanFront, 5)
+    expect(bayStop(bay, content.cars.hatchback!.length)).toEqual(bay.car)
   })
 })

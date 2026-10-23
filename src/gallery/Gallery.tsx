@@ -103,6 +103,8 @@ const ITEMS: Item[] = [
   modelItem('sedan', 'Sedan', 5.5),
   modelItem('taxi', 'Taxi', 5.5),
   modelItem('scooter', 'Scooter', 3),
+  modelItem('truck', 'Box truck', 7),
+  modelItem('ski_bus', 'Ski bus', 7),
   modelItem('cafe', 'Café kiosk', 9.5),
   modelItem('fast_charger', 'Fast charger', 3.5),
   modelItem('worker', 'Worker', 2.6),

@@ -11,7 +11,7 @@ import sys
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 SCRIPTS = os.path.join(ROOT, "assets-src", "blender", "scripts")
-ASSETS = ["hatchback", "sedan", "taxi", "scooter", "cafe", "fast_charger", "worker"]
+ASSETS = ["hatchback", "sedan", "taxi", "scooter", "truck", "ski_bus", "cafe", "fast_charger", "worker"]
 
 
 def main():

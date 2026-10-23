@@ -30,5 +30,21 @@
     "patienceSeconds": 30,
     "speed": 7.5,
     "length": 4.4
+  },
+  "truck": {
+    "model": "truck",
+    "energyKwh": [26, 38],
+    "pricePerKwh": 2.0,
+    "patienceSeconds": 60,
+    "speed": 6,
+    "length": 5.4
+  },
+  "skiBus": {
+    "model": "ski_bus",
+    "energyKwh": [20, 30],
+    "pricePerKwh": 2.4,
+    "patienceSeconds": 40,
+    "speed": 6.5,
+    "length": 5.6
   }
 }

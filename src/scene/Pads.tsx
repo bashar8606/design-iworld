@@ -36,7 +36,7 @@ function drawPad(ctx: CanvasRenderingContext2D, pad: PadDef, paid: number) {
   ctx.fill()
   ctx.setLineDash([18, 12])
   ctx.lineWidth = 8
-  ctx.strokeStyle = '#19B5A5'
+  ctx.strokeStyle = pad.kind === 'land' ? '#F29E4C' : '#19B5A5'
   roundRect(ctx, 10, 10, SIZE - 20, SIZE - 20, 34)
   ctx.stroke()
   ctx.setLineDash([])
@@ -95,7 +95,7 @@ function Pad({ pad }: { pad: PadDef }) {
       rotation={PAD_ROTATION}
       renderOrder={2}
     >
-      <planeGeometry args={[2.1, 2.1]} />
+      <planeGeometry args={pad.kind === 'land' ? [2.4, 2.4] : [2.1, 2.1]} />
       <meshBasicMaterial map={texture} transparent depthWrite={false} toneMapped={false} />
     </mesh>
   )

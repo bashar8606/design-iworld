@@ -16,6 +16,7 @@ import { Player, Staff } from './People.tsx'
 import { BakedContactShadow, BlobShadows } from './Shadows.tsx'
 import { TutorialArrow } from './TutorialArrow.tsx'
 import { UpgradeArrows } from './UpgradeArrows.tsx'
+import { Zones } from './Zones.tsx'
 import { Weather } from './Weather.tsx'
 import { quality } from './quality.ts'
 
@@ -53,6 +54,7 @@ export function World({
         <Batteries />
         <Chargers />
         <Facilities />
+        <Zones />
         <Pads />
         <Pickups />
         <Cars />

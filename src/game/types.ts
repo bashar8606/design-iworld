@@ -6,7 +6,15 @@ export interface Vec2 {
 }
 
 export type PadKind =
-  'charger' | 'panelRow' | 'battery' | 'cafe' | 'carWash' | 'technician' | 'cashier' | 'robot'
+  | 'charger'
+  | 'panelRow'
+  | 'battery'
+  | 'cafe'
+  | 'carWash'
+  | 'technician'
+  | 'cashier'
+  | 'robot'
+  | 'land'
 
 export type StaffKind = 'technician' | 'cashier' | 'robot'
 export type EquipmentKind = 'charger' | 'panelRow' | 'battery'
@@ -27,6 +35,17 @@ export interface PadDef {
   buildPos?: Vec2
   /** Height the item is built at (carports and roof decks build upward). */
   buildY?: number
+  /** The zone the pad stands in; it opens only once that zone is owned. */
+  zone?: string
+  /** Land pads: the zone this pad buys. */
+  opensZone?: string
+}
+
+/** A piece of the lot the player buys with a land pad (the first zone is owned from the start). */
+export interface ZoneDef {
+  id: string
+  name: string
+  bounds: { minX: number; maxX: number; minZ: number; maxZ: number }
 }
 
 export interface BayDef {
@@ -108,6 +127,8 @@ export interface MapContent {
     bonusPerTaxi: number
   }
   pads: PadDef[]
+  /** The lot in pieces; maps without zones are all open from the start. */
+  zones?: ZoneDef[]
   initial: { cash: number; firstCarType?: string; chargerTier?: number }
 }
 

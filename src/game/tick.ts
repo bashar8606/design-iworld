@@ -20,7 +20,7 @@ import {
   batteryPowerKw,
   bayDef,
   chargerPowerKw,
-  clampToBounds,
+  clampToOwned,
   dayClock,
   distToPanelRow,
   incomeMultiplier,
@@ -187,8 +187,9 @@ function updatePlayer(
   const mz = input.move.z * k
   p.moving = len > 0.05
   if (p.moving) {
-    p.pos = clampToBounds(
+    p.pos = clampToOwned(
       { x: p.pos.x + mx * map.player.speed * dt, z: p.pos.z + mz * map.player.speed * dt },
+      s,
       map,
     )
     p.heading = Math.atan2(mx, mz)
@@ -199,7 +200,7 @@ function updatePlayer(
   let best = map.player.padRadius
   for (const pad of map.pads) {
     const pState = s.pads[pad.id]
-    if (!pState || pState.built || !isPadUnlocked(s, pad)) continue
+    if (!pState || pState.built || !isPadUnlocked(s, pad, map)) continue
     const d = dist(p.pos, pad.pos)
     if (d <= best) {
       best = d

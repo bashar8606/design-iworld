@@ -9,6 +9,7 @@ import type {
   PanelRow,
   StaffKind,
   Vec2,
+  ZoneDef,
 } from './types.ts'
 import { dist } from './vec.ts'
 
@@ -23,13 +24,28 @@ export function itemPos(pad: PadDef): Vec2 {
   return pad.buildPos ?? pad.pos
 }
 
-export function isPadUnlocked(state: GameState, pad: PadDef): boolean {
-  return (pad.unlockAfter ?? []).every((id) => state.pads[id]?.built)
+/** The first zone is owned from the start; each other zone once its land pad is built. */
+export function zoneOwned(state: GameState, map: MapContent, zoneId: string): boolean {
+  const land = map.pads.find((p) => p.opensZone === zoneId)
+  return !land || !!state.pads[land.id]?.built
+}
+
+export function ownedZones(state: GameState, map: MapContent): ZoneDef[] {
+  return (map.zones ?? []).filter((z) => zoneOwned(state, map, z.id))
+}
+
+export function isPadUnlocked(state: GameState, pad: PadDef, map: MapContent): boolean {
+  return (
+    (pad.unlockAfter ?? []).every((id) => state.pads[id]?.built) &&
+    (!pad.zone || zoneOwned(state, map, pad.zone))
+  )
 }
 
 /** Pads the player can pay into right now. */
 export function openPads(state: GameState, content: Content): PadDef[] {
-  return content.map.pads.filter((p) => !state.pads[p.id]?.built && isPadUnlocked(state, p))
+  return content.map.pads.filter(
+    (p) => !state.pads[p.id]?.built && isPadUnlocked(state, p, content.map),
+  )
 }
 
 export function bayDef(map: MapContent, bayId: string) {
@@ -130,11 +146,32 @@ export function distToPanelRow(point: Vec2, center: Vec2, halfLength: number): n
 }
 
 export function clampToBounds(pos: Vec2, map: MapContent): Vec2 {
-  const b = map.bounds
+  return clampToRect(pos, map.bounds)
+}
+
+function clampToRect(pos: Vec2, b: ZoneDef['bounds']): Vec2 {
   return {
     x: Math.max(b.minX, Math.min(b.maxX, pos.x)),
     z: Math.max(b.minZ, Math.min(b.maxZ, pos.z)),
   }
+}
+
+/** Keeps the player on land they own: inside any owned zone, or pushed to the nearest one. */
+export function clampToOwned(pos: Vec2, state: GameState, map: MapContent): Vec2 {
+  const zones = ownedZones(state, map)
+  if (zones.length === 0) return clampToBounds(pos, map)
+  let best = pos
+  let bestD = Infinity
+  for (const z of zones) {
+    const c = clampToRect(pos, z.bounds)
+    const d = dist(c, pos)
+    if (d === 0) return pos
+    if (d < bestD) {
+      bestD = d
+      best = c
+    }
+  }
+  return best
 }
 
 /** Price of the next tier for a charger, panel row or battery, or null at max tier. */

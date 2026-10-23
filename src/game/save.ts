@@ -1,3 +1,4 @@
+import { getContent } from './content.ts'
 import { initialMissions } from './missions.ts'
 import { SAVE_VERSION } from './state.ts'
 import type { GameState } from './types.ts'
@@ -54,8 +55,22 @@ export function deserializeSave(json: string | null): SaveFile | null {
     if (!('ledger' in state)) state.ledger = null
     // Saves from before missions existed get a fresh set.
     if (!('missions' in state)) state.missions = initialMissions(state as unknown as GameState)
+    grantBuiltZones(state as unknown as GameState)
     return { version: SAVE_VERSION, savedAt: raw.savedAt, state: state as unknown as GameState }
   } catch {
     return null
+  }
+}
+
+/**
+ * Saves from before a map was split into zones may already have built things in a zone they
+ * never bought; they get that land for free so nothing they own is fenced off.
+ */
+function grantBuiltZones(state: GameState) {
+  const { map } = getContent(state.mapId)
+  for (const land of map.pads.filter((p) => p.opensZone)) {
+    const built = map.pads.some((p) => p.zone === land.opensZone && state.pads[p.id]?.built)
+    if (built) state.pads[land.id] = { paid: land.price, built: true, builtAt: 0 }
+    else state.pads[land.id] ??= { paid: 0, built: false, builtAt: null }
   }
 }

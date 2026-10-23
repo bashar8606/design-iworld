@@ -9,4 +9,5 @@ export const PAD_ICONS: Record<PadKind, string> = {
   technician: '🔧',
   cashier: '💵',
   robot: '🤖',
+  land: '🚧',
 }

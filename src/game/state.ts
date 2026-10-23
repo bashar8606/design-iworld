@@ -113,6 +113,9 @@ export function buildPadItem(state: GameState, pad: PadDef, content: Content): v
     case 'carWash':
       state.facilities.carWash = true
       break
+    case 'land':
+      // Owning the zone is read from the pad itself (see zoneOwned).
+      break
     case 'technician':
     case 'cashier':
     case 'robot':

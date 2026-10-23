@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { getContent } from '../game/content.ts'
-import { isNight } from '../game/world.ts'
+import { isNight, isPadUnlocked } from '../game/world.ts'
 import { onGameEvent } from '../store/events.ts'
 import { useGame } from '../store/gameStore.ts'
 import { useUi } from '../store/uiStore.ts'
@@ -181,6 +181,17 @@ function Toasts() {
         )
       } else if (e.type === 'dayStarted' && e.survived) {
         push('You made it through the night', 'good')
+      } else if (e.type === 'padBuilt') {
+        const { map } = getContent(state.mapId)
+        const zoneName = (id?: string) => map.zones?.find((z) => z.id === id)?.name
+        if (e.kind === 'land') {
+          const name = zoneName(map.pads.find((p) => p.id === e.padId)?.opensZone)
+          if (name) push(`${name} is yours!`, 'good')
+        }
+        // Land that just went on sale.
+        for (const land of map.pads.filter((p) => p.opensZone && p.unlockAfter?.includes(e.padId)))
+          if (isPadUnlocked(state, land, map))
+            push(`New land for sale: ${zoneName(land.opensZone)}`, 'info')
       } else if (e.type === 'mapComplete') {
         push('Map complete!', 'good')
       } else if (e.type === 'contractDone') {

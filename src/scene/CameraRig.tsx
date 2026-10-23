@@ -1,8 +1,10 @@
 import { OrthographicCamera } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import * as THREE from 'three'
 import { getContent } from '../game/content.ts'
+import { ownedZones } from '../game/world.ts'
+import { onGameEvent } from '../store/events.ts'
 import { tickAlpha, useGame } from '../store/gameStore.ts'
 import {
   CAMERA_AZIMUTH_DEG,
@@ -32,6 +34,21 @@ function overviewCenter(state: ReturnType<typeof useGame.getState>['state']) {
   )
 }
 
+const REVEAL_SECONDS = 3
+/** How far the camera pulls back at the height of a land reveal. */
+const REVEAL_ZOOM_OUT = 0.68
+/** The view widens a little with every zone the player owns. */
+const ZOOM_PER_ZONE = 0.05
+
+/** 0 → 1 → 0 over the reveal, easing in and out. */
+function revealCurve(t: number): number {
+  const x = Math.min(1, Math.max(0, t / REVEAL_SECONDS))
+  const rise = Math.min(1, x / 0.3)
+  const fall = Math.min(1, (1 - x) / 0.3)
+  const k = Math.min(rise, fall)
+  return k * k * (3 - 2 * k)
+}
+
 /** Orthographic camera that follows the player smoothly and stays over the map. */
 export function CameraRig({
   follow = true,
@@ -45,11 +62,40 @@ export function CameraRig({
   const target = useRef(new THREE.Vector3())
   const first = useRef(true)
   const zoom = Math.min(size.width, size.height) / viewSize
+  // Buying land swings the camera over the new zone and pulls back to show it.
+  const reveal = useRef<{ center: THREE.Vector3; start: number } | null>(null)
+  useEffect(
+    () =>
+      onGameEvent((e) => {
+        if (e.type !== 'padBuilt' || e.kind !== 'land') return
+        const map = getContent(useGame.getState().state.mapId).map
+        const zoneId = map.pads.find((p) => p.id === e.padId)?.opensZone
+        const b = map.zones?.find((z) => z.id === zoneId)?.bounds
+        if (!b) return
+        reveal.current = {
+          center: new THREE.Vector3((b.minX + b.maxX) / 2, 0, (b.minZ + b.maxZ) / 2),
+          start: performance.now(),
+        }
+      }),
+    [],
+  )
 
   useFrame((_, dt) => {
     const cam = camera.current
     if (!cam) return
     const { state, prev } = useGame.getState()
+    const map = getContent(state.mapId).map
+    const zones = map.zones ? ownedZones(state, map).length : 1
+    const r = reveal.current
+    const rt = r ? (performance.now() - r.start) / 1000 : Infinity
+    if (r && rt > REVEAL_SECONDS) reveal.current = null
+    const k = r ? revealCurve(rt) : 0
+    const goalZoom =
+      zoom * (1 - ZOOM_PER_ZONE * Math.max(0, zones - 1)) * (1 - (1 - REVEAL_ZOOM_OUT) * k)
+    if (Math.abs(cam.zoom - goalZoom) > 1e-3) {
+      cam.zoom = first.current ? goalZoom : damp(cam.zoom, goalZoom, 4, dt)
+      cam.updateProjectionMatrix()
+    }
     const b = getContent(state.mapId).map.bounds
     const t = tickAlpha()
     const goal = follow
@@ -65,6 +111,7 @@ export function CameraRig({
           ),
         )
       : overviewCenter(state)
+    if (r) goal.lerp(r.center, k)
     if (first.current) {
       target.current.copy(goal)
       first.current = false

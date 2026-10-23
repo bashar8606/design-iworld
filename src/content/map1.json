@@ -173,6 +173,48 @@
     "payMultiplier": 5,
     "type": "sedan"
   },
+  "zones": [
+    {
+      "id": "roadside",
+      "name": "Roadside plot",
+      "bounds": {
+        "minX": -5.2,
+        "maxX": 11.6,
+        "minZ": -6.8,
+        "maxZ": 4.0
+      }
+    },
+    {
+      "id": "restStop",
+      "name": "Rest stop",
+      "bounds": {
+        "minX": -5.2,
+        "maxX": 11.6,
+        "minZ": 4.0,
+        "maxZ": 10.2
+      }
+    },
+    {
+      "id": "solarField",
+      "name": "Solar field",
+      "bounds": {
+        "minX": -5.2,
+        "maxX": 11.6,
+        "minZ": -16.5,
+        "maxZ": -6.8
+      }
+    },
+    {
+      "id": "washBay",
+      "name": "Wash bay",
+      "bounds": {
+        "minX": -5.2,
+        "maxX": 11.6,
+        "minZ": 10.2,
+        "maxZ": 18
+      }
+    }
+  ],
   "pads": [
     {
       "id": "charger1",
@@ -240,15 +282,28 @@
       "unlockAfter": ["battery1"]
     },
     {
+      "id": "landRestStop",
+      "kind": "land",
+      "label": "Buy land: Rest stop",
+      "price": 200,
+      "pos": {
+        "x": 5.8,
+        "z": 2.6
+      },
+      "unlockAfter": ["technician1"],
+      "opensZone": "restStop"
+    },
+    {
       "id": "cafe",
       "kind": "cafe",
-      "label": "Caf\u00e9",
+      "label": "Café",
       "price": 400,
       "pos": {
         "x": 5.6,
         "z": 5.4
       },
-      "unlockAfter": ["technician1"]
+      "unlockAfter": ["technician1"],
+      "zone": "restStop"
     },
     {
       "id": "charger3",
@@ -260,7 +315,20 @@
         "z": 5.4
       },
       "unlockAfter": ["technician1"],
-      "bay": "bay3"
+      "bay": "bay3",
+      "zone": "restStop"
+    },
+    {
+      "id": "landSolarField",
+      "kind": "land",
+      "label": "Buy land: Solar field",
+      "price": 350,
+      "pos": {
+        "x": 0.0,
+        "z": -5.2
+      },
+      "unlockAfter": ["charger3"],
+      "opensZone": "solarField"
     },
     {
       "id": "panel3",
@@ -271,7 +339,8 @@
         "x": 6.5,
         "z": -7.9
       },
-      "unlockAfter": ["charger3"]
+      "unlockAfter": ["charger3"],
+      "zone": "solarField"
     },
     {
       "id": "cashier1",
@@ -293,7 +362,8 @@
         "x": 1.8,
         "z": 7.5
       },
-      "unlockAfter": ["panel3"]
+      "unlockAfter": ["panel3"],
+      "zone": "restStop"
     },
     {
       "id": "charger4",
@@ -305,7 +375,8 @@
         "z": 8.6
       },
       "unlockAfter": ["battery2"],
-      "bay": "bay4"
+      "bay": "bay4",
+      "zone": "restStop"
     },
     {
       "id": "panel4",
@@ -316,7 +387,8 @@
         "x": 6.5,
         "z": -10.1
       },
-      "unlockAfter": ["charger4"]
+      "unlockAfter": ["charger4"],
+      "zone": "solarField"
     },
     {
       "id": "robot1",
@@ -330,6 +402,19 @@
       "unlockAfter": ["panel4"]
     },
     {
+      "id": "landWashBay",
+      "kind": "land",
+      "label": "Buy land: Wash bay",
+      "price": 3000,
+      "pos": {
+        "x": 5.0,
+        "z": 8.8
+      },
+      "unlockAfter": ["robot1"],
+      "opensZone": "washBay",
+      "zone": "restStop"
+    },
+    {
       "id": "carWash",
       "kind": "carWash",
       "label": "Car wash",
@@ -338,7 +423,8 @@
         "x": 8.2,
         "z": 12.5
       },
-      "unlockAfter": ["robot1"]
+      "unlockAfter": ["robot1"],
+      "zone": "washBay"
     },
     {
       "id": "technician2",
@@ -361,7 +447,8 @@
         "z": 11.8
       },
       "unlockAfter": ["carWash"],
-      "bay": "bay5"
+      "bay": "bay5",
+      "zone": "washBay"
     },
     {
       "id": "panel5",
@@ -372,7 +459,8 @@
         "x": 6.5,
         "z": -12.3
       },
-      "unlockAfter": ["charger5"]
+      "unlockAfter": ["charger5"],
+      "zone": "solarField"
     },
     {
       "id": "battery3",
@@ -383,7 +471,8 @@
         "x": 1.8,
         "z": 11.5
       },
-      "unlockAfter": ["panel5"]
+      "unlockAfter": ["panel5"],
+      "zone": "washBay"
     },
     {
       "id": "charger6",
@@ -395,7 +484,8 @@
         "z": 15
       },
       "unlockAfter": ["battery3"],
-      "bay": "bay6"
+      "bay": "bay6",
+      "zone": "washBay"
     },
     {
       "id": "panel6",
@@ -406,7 +496,8 @@
         "x": 6.5,
         "z": -14.5
       },
-      "unlockAfter": ["charger6"]
+      "unlockAfter": ["charger6"],
+      "zone": "solarField"
     }
   ],
   "initial": {

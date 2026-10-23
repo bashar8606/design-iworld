@@ -81,5 +81,17 @@
 			<string>cstr6suwn9.skadnetwork</string>
 		</dict>
 	</array>
+	<!-- Deep links: solaroasis://store/<save> loads an App Store capture save (store builds). -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.yourname.solaroasis</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>solaroasis</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

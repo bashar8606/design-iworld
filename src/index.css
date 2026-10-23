@@ -720,3 +720,16 @@ body {
   font-size: 22px;
   font-weight: 700;
 }
+
+.storm-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 30% 40%, rgb(233 207 160 / 0.15), rgb(205 168 110 / 0.45));
+  opacity: 0;
+  transition: opacity 2s;
+}
+
+.storm-on {
+  opacity: 1;
+}

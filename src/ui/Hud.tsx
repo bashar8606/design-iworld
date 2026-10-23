@@ -174,9 +174,15 @@ function useFiveTaps(onFive: () => void) {
   }
 }
 
-export function Hud({ children }: { children?: React.ReactNode }) {
+export function Hud({
+  children,
+  allowDebug = true,
+}: {
+  children?: React.ReactNode
+  allowDebug?: boolean
+}) {
   const open = useUi((s) => s.open)
-  const onClockTap = useFiveTaps(() => open('debug'))
+  const onClockTap = useFiveTaps(() => allowDebug && open('debug'))
   return (
     <div className="hud">
       <div className="hud-bar">

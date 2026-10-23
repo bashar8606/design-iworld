@@ -6,7 +6,7 @@ import { NO_INPUT, tick } from '../../src/game/tick.ts'
 import type { Content, GameState } from '../../src/game/types.ts'
 import { isNight } from '../../src/game/world.ts'
 import pacing from '../../src/content/pacing.json'
-import { Bot, type Strategy } from './bots.ts'
+import { Bot, type Strategy } from '../../src/game/autopilot.ts'
 
 export interface BotConfig {
   name: string

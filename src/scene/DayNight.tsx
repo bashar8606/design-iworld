@@ -2,6 +2,7 @@ import { useFrame, useThree } from '@react-three/fiber'
 import { useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import { getContent } from '../game/content.ts'
+import { activeEvent } from '../game/world.ts'
 import { useGame } from '../store/gameStore.ts'
 import { glowLime, glowTeal } from './materials.ts'
 
@@ -82,6 +83,7 @@ const KEYS: {
 
 const tmpA = new THREE.Color()
 const tmpB = new THREE.Color()
+const SAND_HAZE = new THREE.Color('#D9B98A')
 
 function sample(t: number, key: 'top' | 'horizon' | 'light' | 'ambient', out: THREE.Color) {
   const i = Math.max(0, KEYS.findIndex((k) => k.t > t) - 1)
@@ -124,6 +126,7 @@ export function DayNight({ shadows = true }: { shadows?: boolean }) {
   const sun = useRef<THREE.DirectionalLight>(null)
   const hemi = useRef<THREE.HemisphereLight>(null)
   const sky = useRef<THREE.Mesh>(null)
+  const haze = useRef(0)
   const scene = useThree((s) => s.scene)
   const map = getContent(useGame.getState().state.mapId).map
   const uniforms = useMemo(
@@ -161,8 +164,16 @@ export function DayNight({ shadows = true }: { shadows?: boolean }) {
     }
     if (sky.current) sky.current.position.set(target.x, 0, target.z)
     uniforms.center.value.set(target.x, 0, target.z)
-    fogColor.copy(uniforms.horizon.value)
-    if (scene.fog) scene.fog.color.copy(fogColor)
+    // Sandstorms bring a sandy haze and a dimmer sun.
+    const storm = activeEvent(state)?.kind === 'sandstorm' ? 1 : 0
+    haze.current += (storm - haze.current) * 0.02
+    fogColor.copy(uniforms.horizon.value).lerp(SAND_HAZE, haze.current)
+    if (scene.fog instanceof THREE.Fog) {
+      scene.fog.color.copy(fogColor)
+      scene.fog.near = 60 - 40 * haze.current
+      scene.fog.far = 140 - 70 * haze.current
+    }
+    if (sun.current) sun.current.intensity *= 1 - 0.45 * haze.current
     if (scene.background instanceof THREE.Color) scene.background.copy(fogColor)
 
     // Chargers and battery strips glow brighter at night.

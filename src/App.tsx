@@ -1,20 +1,22 @@
 import { useEffect } from 'react'
 import { startFeedback } from './audio/sound.ts'
-import { startAds, useAds, watchRewarded } from './store/ads.ts'
-import { startShop } from './store/shop.ts'
 import { createStressState } from './game/stress.ts'
 import { World } from './scene/World.tsx'
 import { quality } from './scene/quality.ts'
+import { startAds, useAds, watchRewarded } from './store/ads.ts'
 import { startGameLoop, useGame } from './store/gameStore.ts'
 import { startPersistence } from './store/persistence.ts'
 import { loadRemoteConfig } from './store/remoteConfig.ts'
+import { startShop } from './store/shop.ts'
+import { initialStoreMode, startStoreMode, useStoreMode } from './store/storeMode.ts'
 import { startTracking } from './store/tracking.ts'
-import { startTutorial } from './store/tutorial.ts'
+import { startTutorial, useTutorial } from './store/tutorial.ts'
 import { useUi } from './store/uiStore.ts'
 import { AdOffer, SolarBoostButton } from './ui/AdButtons.tsx'
-import { EventBanner, MapComplete, OfflineCard, TutorialHint } from './ui/Cards.tsx'
+import { EventBanner, MapComplete, OfflineCard, StormOverlay, TutorialHint } from './ui/Cards.tsx'
 import { Joystick } from './ui/Controls.tsx'
 import { DebugMenu } from './ui/DebugMenu.tsx'
+import { ErrorBoundary } from './ui/ErrorBoundary.tsx'
 import { FeedbackSheet } from './ui/FeedbackSheet.tsx'
 import { Hud } from './ui/Hud.tsx'
 import { PerfOverlay } from './ui/PerfOverlay.tsx'
@@ -25,6 +27,8 @@ import { useKeyboardControls } from './ui/useKeyboardControls.ts'
 
 // The device performance test loads the full layout before anything renders.
 if (quality.stress) useGame.getState().replace(createStressState())
+// App Store capture mode never shows the tutorial and never touches the real save.
+if (initialStoreMode()) useTutorial.setState({ active: false })
 
 function Sheets() {
   const sheet = useUi((s) => s.sheet)
@@ -47,65 +51,77 @@ function Sheets() {
 }
 
 export default function App() {
+  const store = useStoreMode((s) => s.active)
   useEffect(() => startGameLoop(), [])
+  useEffect(() => startStoreMode(), [])
   useEffect(() => {
+    if (store) return
     const stop = startTracking()
     void loadRemoteConfig()
     return stop
-  }, [])
-  useEffect(() => startPersistence({ skipLoad: quality.stress }), [])
-  useEffect(() => startTutorial(), [])
+  }, [store])
+  useEffect(() => (store ? undefined : startPersistence({ skipLoad: quality.stress })), [store])
+  useEffect(() => (store ? undefined : startTutorial()), [store])
   useEffect(() => startFeedback(), [])
   // Ads and purchases start once the save has loaded, so grants land on the right state.
   const loaded = useUi((s) => s.loaded)
   useEffect(() => {
-    if (!loaded || quality.stress) return
+    if (!loaded || quality.stress || store) return
     void startShop()
     return startAds()
-  }, [loaded])
+  }, [loaded, store])
   const welcomeBackReady = useAds((s) => s.ready === 'welcome_back')
   useKeyboardControls()
   const open = useUi((s) => s.open)
   return (
     <div className="app">
       <World />
-      <Hud>
-        <EventBanner />
-        <TutorialHint />
-        <div className="hud-bottom">
-          <AdOffer />
-          <NearbyUpgrade />
-          <div className="hud-bottom-buttons">
-            <SolarBoostButton />
-            <button
-              className="hud-fab"
-              data-hud-control
-              onClick={() => open('shop')}
-              aria-label="Shop"
-            >
-              🛒
-            </button>
-            <button
-              className="hud-fab"
-              data-hud-control
-              onClick={() => open('upgrades')}
-              aria-label="Upgrades"
-            >
-              🔧
-            </button>
+      <StormOverlay />
+      <ErrorBoundary name="hud">
+        <Hud allowDebug={!store}>
+          <EventBanner />
+          {!store && <TutorialHint />}
+          <div className="hud-bottom">
+            {!store && <AdOffer />}
+            {!store && <NearbyUpgrade />}
+            <div className="hud-bottom-buttons">
+              {!store && <SolarBoostButton />}
+              <button
+                className="hud-fab"
+                data-hud-control
+                onClick={() => open('shop')}
+                aria-label="Shop"
+              >
+                🛒
+              </button>
+              <button
+                className="hud-fab"
+                data-hud-control
+                onClick={() => open('upgrades')}
+                aria-label="Upgrades"
+              >
+                🔧
+              </button>
+            </div>
           </div>
-        </div>
-      </Hud>
+        </Hud>
+      </ErrorBoundary>
       <Joystick />
-      <Sheets />
-      <OfflineCard
-        onDouble={
-          welcomeBackReady ? (earned) => void watchRewarded('welcome_back', earned) : undefined
-        }
-      />
-      <StarterPackCard />
-      <MapComplete />
-      <PerfOverlay initiallyVisible={quality.stress} />
+      <ErrorBoundary name="sheets">
+        <Sheets />
+      </ErrorBoundary>
+      {!store && (
+        <>
+          <OfflineCard
+            onDouble={
+              welcomeBackReady ? (earned) => void watchRewarded('welcome_back', earned) : undefined
+            }
+          />
+          <StarterPackCard />
+          <MapComplete />
+          <PerfOverlay initiallyVisible={quality.stress} />
+        </>
+      )}
     </div>
   )
 }

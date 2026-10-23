@@ -13,3 +13,10 @@ coverage
 .vscode/*
 !.vscode/extensions.json
 .idea
+
+# Store capture output
+/store/raw
+/store/preview
+/dist-store
+/build
+/store/screenshots

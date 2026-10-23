@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useShallow } from 'zustand/react/shallow'
 import { getContent } from '../game/content.ts'
 import { useGame } from '../store/gameStore.ts'
 import { STEPS, useTutorial } from '../store/tutorial.ts'
@@ -53,17 +54,20 @@ export function OfflineCard({ onDouble }: { onDouble?: (earned: number) => void 
 
 /** Banner 30 s before a sandstorm or heatwave, and while it lasts. */
 export function EventBanner() {
-  const info = useGame((s) => {
-    const e = s.state.event
-    if (!e) return null
-    const t = s.state.time
-    if (t < e.startsAt)
-      return { kind: e.kind, phase: 'soon' as const, seconds: Math.ceil(e.startsAt - t) }
-    if (t < e.endsAt)
-      return { kind: e.kind, phase: 'now' as const, seconds: Math.ceil(e.endsAt - t) }
-    return null
-  })
-  if (!info) return null
+  // useShallow: the selector builds a new object, so compare its fields, not its identity.
+  const info = useGame(
+    useShallow((s) => {
+      const e = s.state.event
+      if (!e) return { kind: null, phase: null, seconds: 0 }
+      const t = s.state.time
+      if (t < e.startsAt)
+        return { kind: e.kind, phase: 'soon' as const, seconds: Math.ceil(e.startsAt - t) }
+      if (t < e.endsAt)
+        return { kind: e.kind, phase: 'now' as const, seconds: Math.ceil(e.endsAt - t) }
+      return { kind: null, phase: null, seconds: 0 }
+    }),
+  )
+  if (!info.kind) return null
   const text =
     info.kind === 'sandstorm'
       ? info.phase === 'soon'
@@ -141,4 +145,13 @@ export function MapComplete({ onSell }: { onSell?: () => void }) {
       </div>
     </div>
   )
+}
+
+/** A sandy tint over the whole screen while a sandstorm blows. */
+export function StormOverlay() {
+  const storm = useGame((s) => {
+    const e = s.state.event
+    return !!e && e.kind === 'sandstorm' && s.state.time >= e.startsAt && s.state.time < e.endsAt
+  })
+  return <div className={`storm-overlay${storm ? ' storm-on' : ''}`} aria-hidden />
 }

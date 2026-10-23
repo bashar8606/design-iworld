@@ -20,6 +20,9 @@ export interface GameStore {
   replace: (state: GameState) => void
   setPaused: (paused: boolean) => void
   setSpeed: (speed: number) => void
+  /** When set, drives the player instead of the joystick (store demo). */
+  autopilot: ((state: GameState) => TickInput) | null
+  setAutopilot: (autopilot: ((state: GameState) => TickInput) | null) => void
 }
 
 type ActionListener = (action: GameAction) => void
@@ -49,6 +52,8 @@ export const useGame = create<GameStore>()((set, get) => ({
   replace: (state) => set({ state, prev: state, tickedAt: performance.now() }),
   setPaused: (paused) => set({ paused }),
   setSpeed: (speed) => set({ speed }),
+  autopilot: null,
+  setAutopilot: (autopilot) => set({ autopilot }),
 }))
 
 export const gameStore = useGame
@@ -86,7 +91,8 @@ export function startGameLoop(): () => void {
         steps < MAX_STEPS_PER_FRAME * Math.max(1, store.speed)
       ) {
         prev = state
-        state = tick(state, TICK_SECONDS, useGame.getState().input)
+        const { autopilot, input } = useGame.getState()
+        state = tick(state, TICK_SECONDS, autopilot ? autopilot(state) : input)
         events.push(...state.events)
         accumulator -= TICK_SECONDS
         steps++

@@ -1,11 +1,11 @@
-// Bot players for the balancing simulation. They drive the real src/game code: movement input
-// for the player and the same actions the UI dispatches.
-import { type GameAction, applyAction } from '../../src/game/actions.ts'
-import { buildPadItem } from '../../src/game/state.ts'
-import { NO_INPUT, cloneState, tick } from '../../src/game/tick.ts'
-import type { Content, GameState, TickInput, Vec2 } from '../../src/game/types.ts'
-import { dist } from '../../src/game/vec.ts'
-import { bayDef, nextStaffLevelPrice, nextTierPrice, openPads } from '../../src/game/world.ts'
+// Bot players: the balancing simulation's greedy, smart and idle strategies, and the store demo's
+// autopilot. They drive the real game code: movement input and the same actions the UI dispatches.
+import { type GameAction, applyAction } from './actions.ts'
+import { buildPadItem } from './state.ts'
+import { NO_INPUT, cloneState, tick } from './tick.ts'
+import type { Content, GameState, TickInput, Vec2 } from './types.ts'
+import { dist } from './vec.ts'
+import { bayDef, nextStaffLevelPrice, nextTierPrice, openPads } from './world.ts'
 
 export type Strategy = 'greedy' | 'smart' | 'idle'
 

@@ -287,7 +287,8 @@ export interface Contract {
 export type GameEvent =
   | { type: 'carArrived'; carId: number }
   | { type: 'carPlugged'; carId: number; by: 'player' | 'staff' }
-  | { type: 'carPaid'; carId: number; amount: number; pos: Vec2 }
+  /** `cafe` and `carWash` are the parts of `amount` the driver spent while waiting. */
+  | { type: 'carPaid'; carId: number; amount: number; pos: Vec2; cafe: number; carWash: number }
   | { type: 'carLost'; carId: number }
   | { type: 'cashCollected'; amount: number; pos: Vec2; by: 'player' | 'staff' }
   | { type: 'padBuilt'; padId: string; kind: PadKind; pos: Vec2 }

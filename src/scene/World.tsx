@@ -4,6 +4,7 @@ import { useGame } from '../store/gameStore.ts'
 import { CameraRig } from './CameraRig.tsx'
 import { Cars } from './Cars.tsx'
 import { DayNight } from './DayNight.tsx'
+import { Drivers } from './Drivers.tsx'
 import { Effects } from './Effects.tsx'
 import { Batteries, Chargers, Facilities, SolarPanels } from './Equipment.tsx'
 import { Ground } from './Ground.tsx'
@@ -56,6 +57,7 @@ export function World({
         <Cars />
         <Player />
         <Staff />
+        <Drivers />
         <Effects />
         <TutorialArrow />
         <Weather />

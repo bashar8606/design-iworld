@@ -61,3 +61,22 @@ describe('cars', () => {
     expect(s.milestones.firstCashAt).not.toBeNull()
   })
 })
+
+describe('café spending', () => {
+  it('shows up in the payment when a driver waited over 20 seconds', async () => {
+    const { withPads } = await import('./helpers.ts')
+    let s = withPads(newGame(), 'cafe')
+    const post = bayDef(content.map, 'bay1').post
+    // Let the first car wait 25 s before plugging it in.
+    s = run(parkPlayer(s), 25)
+    s = at(s, post.x, post.z)
+    let paid: { cafe: number; amount: number } | null = null
+    for (let i = 0; i < 400 && !paid; i++) {
+      s = tick(s, 0.1)
+      for (const e of s.events) if (e.type === 'carPaid') paid = e
+    }
+    expect(paid).not.toBeNull()
+    expect(paid!.cafe).toBeGreaterThan(0)
+    expect(paid!.cafe).toBeLessThan(paid!.amount)
+  })
+})

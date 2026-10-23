@@ -245,8 +245,8 @@
       "label": "Caf\u00e9",
       "price": 400,
       "pos": {
-        "x": 8.2,
-        "z": 6
+        "x": 5.6,
+        "z": 5.4
       },
       "unlockAfter": ["technician1"]
     },

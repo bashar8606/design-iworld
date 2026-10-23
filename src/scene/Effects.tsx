@@ -2,6 +2,7 @@ import { useFrame } from '@react-three/fiber'
 import { useEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import type { Vec2 } from '../game/types.ts'
+import { getContent } from '../game/content.ts'
 import { onGameEvent } from '../store/events.ts'
 import { useGame } from '../store/gameStore.ts'
 import { formatCash } from '../ui/format.ts'
@@ -53,9 +54,9 @@ export function Effects() {
         })
       }
     }
-    const float = (p: Vec2, text: string, color: string) => {
+    const float = (p: Vec2, text: string, color: string, height = 2.2) => {
       const sprite = makeTextSprite(text, color)
-      sprite.position.set(p.x, 2.2, p.z)
+      sprite.position.set(p.x, height, p.z)
       group.current?.add(sprite)
       floaters.current.push({ sprite, life: 1.2 })
     }
@@ -65,6 +66,14 @@ export function Effects() {
         burst(e.pos, 16)
       } else if (e.type === 'upgradeDone') {
         builtAt.set(e.id, performance.now())
+      } else if (e.type === 'carPaid' && (e.cafe > 0 || e.carWash > 0)) {
+        // Show where the money was spent: over the kiosk and the car wash.
+        const pads = getContent(useGame.getState().state.mapId).map.pads
+        const cafe = pads.find((p) => p.kind === 'cafe')
+        const wash = pads.find((p) => p.kind === 'carWash')
+        if (e.cafe > 0 && cafe)
+          float({ x: cafe.pos.x, z: cafe.pos.z + 0.6 }, `☕ +${formatCash(e.cafe)}`, '#7A5230', 3.4)
+        if (e.carWash > 0 && wash) float(wash.pos, `🫧 +${formatCash(e.carWash)}`, '#1E6FA8', 4.4)
       } else if (e.type === 'cashCollected') {
         float(e.pos, `+${formatCash(e.amount)}`, '#2E7D32')
       } else if (e.type === 'carLost') {

@@ -641,11 +641,12 @@ function chargeCars(
       Math.max(0, car.dwell - map.spending.minDwellSeconds),
       map.spending.maxDwellBonusSeconds,
     )
-    if (s.facilities.cafe) amount += (map.spending.cafePerMinute * extra) / 60
-    if (s.facilities.carWash) amount += (map.spending.carWashPerMinute * extra) / 60
-    amount *= incomeMultiplier(s, content)
-    if (options.offline) amount *= economy.offline.efficiency
-    amount = Math.round(amount * 100) / 100
+    let cafe = s.facilities.cafe ? (map.spending.cafePerMinute * extra) / 60 : 0
+    let carWash = s.facilities.carWash ? (map.spending.carWashPerMinute * extra) / 60 : 0
+    const scale = incomeMultiplier(s, content) * (options.offline ? economy.offline.efficiency : 1)
+    cafe = Math.round(cafe * scale * 100) / 100
+    carWash = Math.round(carWash * scale * 100) / 100
+    amount = Math.round(amount * scale * 100) / 100 + cafe + carWash
 
     const bay = bayDef(map, car.bayId!)
     const stack = s.pickups.find((p) => p.bayId === bay.id)
@@ -663,7 +664,7 @@ function chargeCars(
       s.stats.taxisServed += 1
       if (s.contract) s.contract.taxisServed += 1
     }
-    events.push({ type: 'carPaid', carId: car.id, amount, pos: bay.post })
+    events.push({ type: 'carPaid', carId: car.id, amount, pos: bay.post, cafe, carWash })
 
     car.phase = 'leaving'
     car.reversing = true

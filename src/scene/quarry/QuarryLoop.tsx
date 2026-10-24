@@ -4,12 +4,14 @@ import * as THREE from 'three'
 import { useShallow } from 'zustand/react/shallow'
 import { getQuarryContent } from '../../game/quarry/content.ts'
 import { quarryHint } from '../../game/quarry/hint.ts'
+import { upgradeOpen } from '../../game/quarry/state.ts'
 import { faceInReach } from '../../game/quarry/tick.ts'
 import type { QuarryContent, QuarryState, QuarryUpgradeId } from '../../game/quarry/types.ts'
 import { tickAlpha, useGame } from '../../store/gameStore.ts'
 import { lerp, lerpAngle } from '../interp.ts'
 import { glowTeal, propMaterial } from '../materials.ts'
 import { PadMarker } from '../Pads.tsx'
+import { Machines } from './Machines.tsx'
 import { Pickups } from '../Pickups.tsx'
 import {
   boulderGeometry,
@@ -309,7 +311,8 @@ function UpgradePads() {
     useShallow((s) =>
       (Object.keys(quarry.upgrades) as QuarryUpgradeId[]).map((id) => {
         const price = quarry.upgrades[id].prices[s.quarry?.levels[id] ?? 0]
-        return `${id}:${price ?? ''}:${Math.floor(s.quarry?.paid[id] ?? 0)}`
+        const open = s.quarry ? upgradeOpen(s.quarry, quarry, id) : false
+        return `${id}:${open ? (price ?? '') : ''}:${Math.floor(s.quarry?.paid[id] ?? 0)}`
       }),
     ),
   )
@@ -378,6 +381,7 @@ export function QuarryLoop() {
       <UpgradePads />
       <Pickups stacks={quarryStacks} />
       <HintArrow />
+      <Machines />
     </>
   )
 }

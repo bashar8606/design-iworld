@@ -1,7 +1,10 @@
 import type { Vec2 } from '../types.ts'
 import { dist } from '../vec.ts'
-import { backpackCapacity, nextUpgradePrice } from './state.ts'
+import { backpackCapacity, nextUpgradePrice, openQuarryPads, upgradeOpen } from './state.ts'
 import type { QuarryContent, QuarryState, QuarryUpgradeId } from './types.ts'
+
+/** An upgrade is suggested only if it costs at most this share of the next machine. */
+const UPGRADE_SHARE = 0.4
 
 export interface QuarryHint {
   text: string
@@ -14,10 +17,18 @@ export interface QuarryHint {
  * in tests and on screen.
  */
 export function quarryHint(s: QuarryState, quarry: QuarryContent): QuarryHint {
-  // An affordable upgrade comes first, so the arrow never flips between it and the counter.
-  for (const id of ['crusher', 'backpack'] as QuarryUpgradeId[]) {
+  // Something affordable comes first, so the arrow never flips between it and the counter.
+  const pads = openQuarryPads(s, quarry)
+  for (const pad of pads) {
+    if (s.cash + (s.pads[pad.id]?.paid ?? 0) >= pad.price)
+      return { text: `Buy the ${pad.name.toLowerCase()}: stand on the pad`, target: pad.pos }
+  }
+  // Upgrades only when they will not hold up the next machine for long.
+  const saving = Math.min(Infinity, ...pads.map((p) => p.price))
+  for (const id of ['crusher', 'trucks', 'backpack'] as QuarryUpgradeId[]) {
     const price = nextUpgradePrice(s, quarry, id)
-    if (price !== null && s.cash + s.paid[id] >= price) {
+    if (price === null || !upgradeOpen(s, quarry, id) || price > saving * UPGRADE_SHARE) continue
+    if (s.cash + s.paid[id] >= price) {
       const name = quarry.upgrades[id].name.toLowerCase()
       return { text: `Upgrade the ${name}: stand on the pad`, target: quarry.upgrades[id].pad }
     }

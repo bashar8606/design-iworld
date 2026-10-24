@@ -97,7 +97,7 @@
       "x": 2.5,
       "z": -4
     },
-    "hopperTons": 4,
+    "hopperTons": 6,
     "beltSeconds": 3,
     "beltEnd": {
       "x": 5,
@@ -139,13 +139,215 @@
         "x": 8.4,
         "z": -4.4
       },
-      "levels": [0.5, 0.7, 0.95, 1.25, 1.6],
-      "prices": [90, 320, 900, 2400]
+      "levels": [0.5, 0.7, 0.95, 1.25, 1.6, 2.0, 2.5],
+      "prices": [90, 320, 900, 2400, 5000, 9000]
+    },
+    "trucks": {
+      "name": "Truck size",
+      "icon": "🚚",
+      "pad": {
+        "x": 14.8,
+        "z": -9.4
+      },
+      "levels": [6, 9, 12],
+      "prices": [1200, 3000],
+      "requires": ["truck1"]
     }
+  },
+  "bench2": {
+    "pos": {
+      "x": -9.5,
+      "z": -7
+    },
+    "rx": 6.5,
+    "rz": 4.4
+  },
+  "pads": [
+    {
+      "id": "loader",
+      "kind": "loader",
+      "name": "Wheel loader",
+      "icon": "🚜",
+      "pos": {
+        "x": -6.2,
+        "z": 0.2
+      },
+      "price": 150
+    },
+    {
+      "id": "operator",
+      "kind": "operator",
+      "name": "Operator",
+      "icon": "👷",
+      "pos": {
+        "x": 10.8,
+        "z": -1.6
+      },
+      "price": 300,
+      "requires": ["loader"]
+    },
+    {
+      "id": "bench2",
+      "kind": "land",
+      "name": "Bench 2 & ramp",
+      "icon": "🚧",
+      "pos": {
+        "x": -1.4,
+        "z": -11.6
+      },
+      "price": 450,
+      "requires": ["loader"]
+    },
+    {
+      "id": "excavator",
+      "kind": "excavator",
+      "name": "Excavator",
+      "icon": "🦾",
+      "pos": {
+        "x": -15.8,
+        "z": -3.6
+      },
+      "price": 600,
+      "requires": ["bench2"]
+    },
+    {
+      "id": "truck1",
+      "kind": "truck",
+      "name": "Dump truck",
+      "icon": "🚚",
+      "pos": {
+        "x": 4.8,
+        "z": -9.4
+      },
+      "price": 450,
+      "requires": ["excavator"]
+    },
+    {
+      "id": "foreman",
+      "kind": "foreman",
+      "name": "Foreman",
+      "icon": "🧑‍💼",
+      "pos": {
+        "x": 10.4,
+        "z": 4.4
+      },
+      "price": 800,
+      "requires": ["bench2"]
+    },
+    {
+      "id": "truck2",
+      "kind": "truck",
+      "name": "Dump truck",
+      "icon": "🚚",
+      "pos": {
+        "x": 7.4,
+        "z": -9.4
+      },
+      "price": 900,
+      "requires": ["truck1"]
+    },
+    {
+      "id": "drill",
+      "kind": "drill",
+      "name": "Drill rig",
+      "icon": "💥",
+      "pos": {
+        "x": -16.4,
+        "z": -10.6
+      },
+      "price": 1600,
+      "requires": ["excavator"]
+    },
+    {
+      "id": "truck3",
+      "kind": "truck",
+      "name": "Dump truck",
+      "icon": "🚚",
+      "pos": {
+        "x": 10.0,
+        "z": -9.4
+      },
+      "price": 1800,
+      "requires": ["truck2"]
+    },
+    {
+      "id": "mechanic",
+      "kind": "mechanic",
+      "name": "Mechanic",
+      "icon": "🔧",
+      "pos": {
+        "x": 12.4,
+        "z": -9.4
+      },
+      "price": 2500,
+      "requires": ["truck2"]
+    }
+  ],
+  "machines": {
+    "loader": {
+      "speed": 4,
+      "bucketRocks": 3,
+      "scoopSeconds": 1.6,
+      "dumpSeconds": 1.0,
+      "home": {
+        "x": -1.5,
+        "z": -1.2
+      }
+    },
+    "excavator": {
+      "pos": {
+        "x": -12.4,
+        "z": -8.2
+      },
+      "tonsPerSecond": 1.0,
+      "slowFactor": 0.35,
+      "bufferTons": 8,
+      "startBrokenTons": 30,
+      "maxBrokenTons": 60
+    },
+    "drill": {
+      "pos": {
+        "x": -12.8,
+        "z": -10.6
+      },
+      "everySeconds": 60,
+      "blastTons": 25
+    },
+    "trucks": {
+      "speedEmpty": 6,
+      "speedLoaded": 4.5,
+      "loadTonsPerSecond": 2,
+      "tipTonsPerSecond": 2,
+      "gap": 5.5,
+      "laneOffset": 1.0,
+      "route": [
+        {
+          "x": -10,
+          "z": -5.6
+        },
+        {
+          "x": -6,
+          "z": -9.2
+        },
+        {
+          "x": -1.4,
+          "z": -9.4
+        },
+        {
+          "x": 0.9,
+          "z": -7.4
+        },
+        {
+          "x": 0.6,
+          "z": -4.6
+        }
+      ]
+    },
+    "mechanicSpeedBonus": 0.25
   },
   "buyers": {
     "firstDelaySeconds": 10,
-    "everySeconds": [7, 12],
+    "everySeconds": [5, 9],
     "speed": 6,
     "loadTonsPerSecond": 1,
     "types": [
@@ -156,6 +358,15 @@
         "patienceSeconds": 45,
         "weight": 1,
         "color": "#F7F7F2"
+      },
+      {
+        "id": "lorry",
+        "name": "Tipper lorry",
+        "loadTons": 6,
+        "patienceSeconds": 60,
+        "weight": 1,
+        "color": "#E8533A",
+        "requires": ["bench2"]
       }
     ],
     "road": {

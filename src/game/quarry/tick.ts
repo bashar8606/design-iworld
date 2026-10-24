@@ -3,7 +3,22 @@ import type { TickInput, Vec2 } from '../types.ts'
 import { dist, moveToward } from '../vec.ts'
 import { dayClock, sunIntensity } from '../world.ts'
 import { getQuarryContent } from './content.ts'
-import { backpackCapacity, crusherRate } from './state.ts'
+import {
+  buildQuarryPad,
+  machinesRunning,
+  runDrill,
+  runExcavator,
+  runForeman,
+  runLoader,
+  runTrucks,
+} from './machines.ts'
+import {
+  backpackCapacity,
+  crusherRate,
+  openQuarryPads,
+  requirementsMet,
+  upgradeOpen,
+} from './state.ts'
 import type {
   Buyer,
   QuarryAllContent,
@@ -28,6 +43,9 @@ function copy(state: QuarryState): QuarryState {
     piles: { ...state.piles },
     levels: { ...state.levels },
     paid: { ...state.paid },
+    pads: Object.fromEntries(Object.entries(state.pads).map(([k, v]) => [k, { ...v }])),
+    loader: state.loader ? { ...state.loader, pos: { ...state.loader.pos } } : null,
+    trucks: state.trucks.map((t) => ({ ...t })),
     buyers: state.buyers.map((b) => ({ ...b, pos: { ...b.pos } })),
     stacks: state.stacks.map((c) => ({ ...c, pos: { ...c.pos } })),
     stats: { ...state.stats },
@@ -61,6 +79,12 @@ export function tickQuarry(
     dropIntoHopper(s, dt, quarry)
   }
   regrowFaces(s, dt, quarry)
+  if (machinesRunning(s, !!options.offline)) {
+    runDrill(s, quarry)
+    runLoader(s, dt, quarry)
+    runExcavator(s, dt, quarry)
+    runTrucks(s, dt, quarry)
+  }
   crush(s, dt, quarry)
   const rng = new Rng(s.seed)
   spawnBuyers(s, rng, quarry)
@@ -68,7 +92,9 @@ export function tickQuarry(
   serveBuyers(s, dt, quarry)
   if (options.offline) bankStacks(s, content.economy.offline.efficiency)
   else {
+    runForeman(s)
     collectCash(s, quarry)
+    payIntoPads(s, dt, quarry)
     payIntoUpgrades(s, dt, quarry)
   }
   return s
@@ -175,7 +201,8 @@ function spawnBuyers(s: QuarryState, rng: Rng, quarry: QuarryContent) {
     s.nextBuyerAt = s.time + 2
     return
   }
-  const type = rng.pick(buyers.types.map((t) => ({ item: t, weight: t.weight })))!
+  const types = buyers.types.filter((t) => requirementsMet(s, t.requires))
+  const type = rng.pick(types.map((t) => ({ item: t, weight: t.weight })))!
   const id = s.nextBuyerId++
   s.buyers.push({
     id,
@@ -282,7 +309,7 @@ function payIntoUpgrades(s: QuarryState, dt: number, quarry: QuarryContent) {
   for (const id of Object.keys(quarry.upgrades) as QuarryUpgradeId[]) {
     const def = quarry.upgrades[id]
     const price = def.prices[s.levels[id]]
-    if (price === undefined) continue
+    if (price === undefined || !upgradeOpen(s, quarry, id)) continue
     if (dist(s.player.pos, def.pad) > quarry.player.padRadius) continue
     const rate = Math.max(price / quarry.player.buildSeconds, quarry.player.minDrainPerSecond)
     const pay = Math.min(s.cash, price - s.paid[id], rate * dt)
@@ -293,6 +320,23 @@ function payIntoUpgrades(s: QuarryState, dt: number, quarry: QuarryContent) {
       s.paid[id] = 0
       s.events.push({ type: 'upgradeDone', id: `quarry:${id}` })
     }
+  }
+}
+
+/** Pays into the machine, person or land pad the player stands on. */
+function payIntoPads(s: QuarryState, dt: number, quarry: QuarryContent) {
+  for (const pad of openQuarryPads(s, quarry)) {
+    if (dist(s.player.pos, pad.pos) > quarry.player.padRadius) continue
+    const state = s.pads[pad.id] ?? { paid: 0, built: false }
+    const rate = Math.max(pad.price / quarry.player.buildSeconds, quarry.player.minDrainPerSecond)
+    const pay = Math.min(s.cash, pad.price - state.paid, rate * dt)
+    s.pads[pad.id] = { ...state, paid: state.paid + pay }
+    s.cash -= pay
+    if (s.pads[pad.id]!.paid >= pad.price - 1e-6) {
+      buildQuarryPad(s, pad, quarry)
+      s.events.push({ type: 'upgradeDone', id: `quarry:${pad.id}` })
+    }
+    return
   }
 }
 

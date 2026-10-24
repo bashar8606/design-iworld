@@ -365,6 +365,8 @@ export type GameEvent =
   | { type: 'mapComplete' }
   /** The first car of a kind served: a new card in the album. */
   | { type: 'cardFound'; cardId: string }
+  /** The quarry's drill rig set off a blast. */
+  | { type: 'blast'; pos: Vec2 }
 
 export type MissionKind =
   'serveCars' | 'collectCash' | 'buildPads' | 'surviveNight' | 'upgrade' | 'serveTaxis'

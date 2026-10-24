@@ -200,6 +200,36 @@
       "route": "code",
       "source": "src/scene/props/geometry.ts",
       "triangleLimit": 40
+    },
+    "wheelLoader": {
+      "route": "code",
+      "source": "src/scene/props/geometry.ts",
+      "triangleLimit": 500
+    },
+    "excavatorBase": {
+      "route": "code",
+      "source": "src/scene/props/geometry.ts",
+      "triangleLimit": 60
+    },
+    "excavatorUpper": {
+      "route": "code",
+      "source": "src/scene/props/geometry.ts",
+      "triangleLimit": 120
+    },
+    "dumpTruck": {
+      "route": "code",
+      "source": "src/scene/props/geometry.ts",
+      "triangleLimit": 600
+    },
+    "dumpBody": {
+      "route": "code",
+      "source": "src/scene/props/geometry.ts",
+      "triangleLimit": 80
+    },
+    "drillRig": {
+      "route": "code",
+      "source": "src/scene/props/geometry.ts",
+      "triangleLimit": 120
     }
   }
 }

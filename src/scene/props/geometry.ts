@@ -557,3 +557,87 @@ export function conveyorSectionGeometry(): THREE.BufferGeometry {
     boxAt([0.08, 0.16, 1.0], [0.39, 0.05, 0], PALETTE.yellow),
   ])
 }
+
+const MACHINE_YELLOW = '#F2B705'
+
+/** A wheel loader facing +z: big wheels, a cab at the back and a bucket on arms in front. */
+export function wheelLoaderGeometry(): THREE.BufferGeometry {
+  const wheels = [-0.95, 0.95].flatMap((x) =>
+    [-0.9, 0.9].map((z) => cylAt(0.55, 0.45, [x, 0.55, z], PALETTE.dark, 12, [0, 0, Math.PI / 2])),
+  )
+  return merge([
+    ...wheels,
+    boxAt([1.5, 0.7, 2.8], [0, 0.95, -0.1], MACHINE_YELLOW),
+    boxAt([1.3, 1.0, 1.1], [0, 1.75, -0.65], MACHINE_YELLOW),
+    boxAt([1.32, 0.6, 0.9], [0, 1.85, -0.6], '#9DD8F0'),
+    boxAt([1.4, 0.12, 1.2], [0, 2.32, -0.65], PALETTE.dark),
+    boxAt([0.16, 0.16, 1.5], [-0.55, 1.1, 1.5], MACHINE_YELLOW, [-0.35, 0, 0]),
+    boxAt([0.16, 0.16, 1.5], [0.55, 1.1, 1.5], MACHINE_YELLOW, [-0.35, 0, 0]),
+    boxAt([1.9, 0.75, 0.12], [0, 0.6, 2.35], '#6E6A66'),
+    boxAt([1.9, 0.12, 0.6], [0, 0.26, 2.1], '#6E6A66'),
+    boxAt([0.6, 0.5, 0.5], [0, 1.4, -1.45], PALETTE.dark),
+  ])
+}
+
+/** The excavator's tracks, centred on the origin, 3.4 m long along z. */
+export function excavatorBaseGeometry(): THREE.BufferGeometry {
+  return merge([
+    boxAt([0.6, 0.7, 3.4], [-1.0, 0.35, 0], PALETTE.dark),
+    boxAt([0.6, 0.7, 3.4], [1.0, 0.35, 0], PALETTE.dark),
+    boxAt([1.5, 0.35, 1.6], [0, 0.6, 0], '#5A5F66'),
+  ])
+}
+
+/** The excavator's house, boom, stick and bucket, reaching towards +z; it turns on the base. */
+export function excavatorUpperGeometry(): THREE.BufferGeometry {
+  return merge([
+    boxAt([2.2, 0.9, 2.4], [0, 1.25, -0.4], MACHINE_YELLOW),
+    boxAt([0.9, 1.0, 1.0], [-0.55, 2.2, 0.25], MACHINE_YELLOW),
+    boxAt([0.92, 0.6, 0.8], [-0.55, 2.25, 0.3], '#9DD8F0'),
+    boxAt([2.0, 0.5, 0.6], [0, 1.5, -1.6], PALETTE.dark),
+    boxAt([0.35, 0.35, 2.6], [0.4, 2.6, 1.4], MACHINE_YELLOW, [-0.55, 0, 0]),
+    boxAt([0.3, 0.3, 2.0], [0.4, 2.55, 3.15], MACHINE_YELLOW, [0.75, 0, 0]),
+    boxAt([0.8, 0.6, 0.7], [0.4, 1.6, 3.75], '#6E6A66', [0.4, 0, 0]),
+  ])
+}
+
+/** An articulated dump truck's chassis and cab, 6 m long, facing +z (body separate). */
+export function dumpTruckGeometry(): THREE.BufferGeometry {
+  const wheels = [-1.05, 1.05].flatMap((x) =>
+    [2.0, -0.9, -2.2].map((z) =>
+      cylAt(0.6, 0.5, [x, 0.6, z], PALETTE.dark, 12, [0, 0, Math.PI / 2]),
+    ),
+  )
+  return merge([
+    ...wheels,
+    boxAt([1.7, 0.7, 1.8], [0, 1.1, 2.1], MACHINE_YELLOW),
+    boxAt([1.4, 0.9, 1.0], [0, 1.9, 2.3], MACHINE_YELLOW),
+    boxAt([1.42, 0.5, 0.8], [0, 2.0, 2.4], '#9DD8F0'),
+    boxAt([1.9, 0.2, 0.3], [0, 0.8, 3.05], PALETTE.dark),
+    boxAt([1.2, 0.4, 3.6], [0, 0.9, -1.4], '#5A5F66'),
+  ])
+}
+
+/** The dump body, hinged at its back edge (local origin), 3.4 m long towards +z. */
+export function dumpBodyGeometry(): THREE.BufferGeometry {
+  return merge([
+    boxAt([2.1, 0.15, 3.4], [0, 0.08, 1.7], MACHINE_YELLOW),
+    boxAt([0.12, 0.9, 3.4], [-1.0, 0.5, 1.7], MACHINE_YELLOW),
+    boxAt([0.12, 0.9, 3.4], [1.0, 0.5, 1.7], MACHINE_YELLOW),
+    boxAt([2.1, 1.1, 0.14], [0, 0.6, 3.35], MACHINE_YELLOW),
+    boxAt([2.1, 0.3, 0.6], [0, 1.2, 3.55], MACHINE_YELLOW),
+  ])
+}
+
+/** A tracked drill rig with its tall mast. */
+export function drillRigGeometry(): THREE.BufferGeometry {
+  return merge([
+    boxAt([0.5, 0.55, 2.6], [-0.8, 0.28, 0], PALETTE.dark),
+    boxAt([0.5, 0.55, 2.6], [0.8, 0.28, 0], PALETTE.dark),
+    boxAt([1.6, 0.8, 1.8], [0, 0.95, -0.2], MACHINE_YELLOW),
+    boxAt([0.9, 0.8, 0.8], [-0.35, 1.75, -0.6], '#9DD8F0'),
+    boxAt([0.3, 4.2, 0.3], [0.35, 2.6, 0.95], MACHINE_YELLOW),
+    cylAt(0.06, 4.0, [0.35, 2.3, 1.2], PALETTE.metal, 6),
+    boxAt([0.5, 0.25, 0.5], [0.35, 4.6, 1.0], PALETTE.orange),
+  ])
+}

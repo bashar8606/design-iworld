@@ -47,6 +47,10 @@ export function startFeedback(): () => void {
       case 'carArrived':
         play(sfx.carArrive)
         break
+      case 'blast':
+        play(sfx.build)
+        haptic(() => platform.haptics.impact('heavy'))
+        break
       case 'carLost':
         play(sfx.carAngry)
         break

@@ -3,6 +3,7 @@ import { useLayoutEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import { getQuarryContent } from '../../game/quarry/content.ts'
 import type { QuarryContent } from '../../game/quarry/types.ts'
+import type { Vec2 } from '../../game/types.ts'
 import { tickAlpha, useGame } from '../../store/gameStore.ts'
 import { sceneView } from '../../store/view.ts'
 import { Effects } from '../Effects.tsx'
@@ -107,20 +108,30 @@ function stakePlacements(q: QuarryContent): Placement[] {
 function boulderPlacements(q: QuarryContent): Placement[] {
   const rand = seeded(q.forest.seed + 7)
   const { pit } = q.site
+  const b2 = q.bench2
+  const route = q.machines.trucks.route
   const out: Placement[] = []
-  for (let i = 0; i < 26; i++) {
+  for (let i = 0; out.length < 18 && i < 400; i++) {
     const a = rand() * Math.PI * 2
-    const k = Math.sqrt(rand()) * 0.85
+    const k = Math.sqrt(rand()) * 0.9
     const s = 0.6 + rand() * 1.4
-    out.push({
-      x: pit.x + Math.cos(a) * pit.rx * k,
-      z: pit.z + Math.sin(a) * pit.rz * k,
-      s,
-      sy: s * (0.6 + rand() * 0.6),
-      r: rand() * Math.PI * 2,
-    })
+    const x = pit.x + Math.cos(a) * pit.rx * k
+    const z = pit.z + Math.sin(a) * pit.rz * k
+    // Keep bench 2, the haul road and the rock faces clear.
+    const inBench2 = ((x - b2.pos.x) / (b2.rx + 1)) ** 2 + ((z - b2.pos.z) / (b2.rz + 1)) ** 2 < 1
+    const nearRoad = route.some((p, j) => j > 0 && segmentDistance(x, z, route[j - 1]!, p) < 3)
+    const nearFace = q.faces.some((f) => Math.hypot(x - f.pos.x, z - f.pos.z) < 3.2)
+    if (inBench2 || nearRoad || nearFace) continue
+    out.push({ x, z, s, sy: s * (0.6 + rand() * 0.6), r: rand() * Math.PI * 2 })
   }
   return out
+}
+
+function segmentDistance(x: number, z: number, a: Vec2, b: Vec2): number {
+  const dx = b.x - a.x
+  const dz = b.z - a.z
+  const t = Math.max(0, Math.min(1, ((x - a.x) * dx + (z - a.z) * dz) / (dx * dx + dz * dz || 1)))
+  return Math.hypot(x - (a.x + dx * t), z - (a.z + dz * t))
 }
 
 /** A soft dark disc under the player (the device build has no real-time shadows). */

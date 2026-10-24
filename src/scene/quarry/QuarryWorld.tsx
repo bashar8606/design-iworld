@@ -8,7 +8,10 @@ import { tickAlpha, useGame } from '../../store/gameStore.ts'
 import { sceneView } from '../../store/view.ts'
 import { Effects } from '../Effects.tsx'
 import { lerp } from '../interp.ts'
+import { QuarryLayoutOverlay } from './QuarryLayoutOverlay.tsx'
 import { QuarryLoop } from './QuarryLoop.tsx'
+import { QuarryTerrain } from './QuarryTerrain.tsx'
+import { heightAt } from '../../game/quarry/terrain.ts'
 import { propMaterial } from '../materials.ts'
 import {
   boulderGeometry,
@@ -16,7 +19,7 @@ import {
   pineGeometry,
   siteCabinGeometry,
   siteSignGeometry,
-  surveyStakeGeometry,
+  garageGeometry,
 } from '../props/geometry.ts'
 
 function seeded(seed: number) {
@@ -26,6 +29,7 @@ function seeded(seed: number) {
 
 interface Placement {
   x: number
+  y?: number
   z: number
   s: number
   sy?: number
@@ -87,23 +91,6 @@ function forestPlacements(q: QuarryContent): Placement[] {
   return out
 }
 
-/** Stakes with orange flags around the edge of the future pit. */
-function stakePlacements(q: QuarryContent): Placement[] {
-  const { pit } = q.site
-  const out: Placement[] = []
-  const n = 22
-  for (let i = 0; i < n; i++) {
-    const a = (i / n) * Math.PI * 2
-    out.push({
-      x: pit.x + Math.cos(a) * pit.rx,
-      z: pit.z + Math.sin(a) * pit.rz,
-      s: 1,
-      r: -a,
-    })
-  }
-  return out
-}
-
 /** Rock outcrops on the top bench: what the pickaxe will dig first. */
 function boulderPlacements(q: QuarryContent): Placement[] {
   const rand = seeded(q.forest.seed + 7)
@@ -122,7 +109,14 @@ function boulderPlacements(q: QuarryContent): Placement[] {
     const nearRoad = route.some((p, j) => j > 0 && segmentDistance(x, z, route[j - 1]!, p) < 3)
     const nearFace = q.faces.some((f) => Math.hypot(x - f.pos.x, z - f.pos.z) < 3.2)
     if (inBench2 || nearRoad || nearFace) continue
-    out.push({ x, z, s, sy: s * (0.6 + rand() * 0.6), r: rand() * Math.PI * 2 })
+    out.push({
+      x,
+      y: heightAt(q, x, z),
+      z,
+      s,
+      sy: s * (0.6 + rand() * 0.6),
+      r: rand() * Math.PI * 2,
+    })
   }
   return out
 }
@@ -138,13 +132,11 @@ function segmentDistance(x: number, z: number, a: Vec2, b: Vec2): number {
 function PlayerShadow() {
   const ref = useRef<THREE.Mesh>(null)
   useFrame(() => {
-    const { player, prevPlayer } = sceneView()
+    const { player, prevPlayer, ground } = sceneView()
     const t = tickAlpha()
-    ref.current?.position.set(
-      lerp(prevPlayer.pos.x, player.pos.x, t),
-      0.04,
-      lerp(prevPlayer.pos.z, player.pos.z, t),
-    )
+    const x = lerp(prevPlayer.pos.x, player.pos.x, t)
+    const z = lerp(prevPlayer.pos.z, player.pos.z, t)
+    ref.current?.position.set(x, ground(x, z) + 0.04, z)
   })
   return (
     <mesh ref={ref} rotation-x={-Math.PI / 2} renderOrder={1}>
@@ -167,34 +159,39 @@ export function QuarryWorld({ shadows = false }: { shadows?: boolean }) {
       hill: hillGeometry(),
       cabin: siteCabinGeometry(),
       sign: siteSignGeometry(),
-      stake: surveyStakeGeometry(),
       boulder: boulderGeometry(),
+      garage: garageGeometry(),
     }),
     [],
   )
   const pines = useMemo(() => forestPlacements(q), [q])
-  const stakes = useMemo(() => stakePlacements(q), [q])
   const boulders = useMemo(() => boulderPlacements(q), [q])
   const hills = useMemo(() => q.hills.map((h) => ({ x: h.x, z: h.z, s: h.r, sy: h.h, r: 0 })), [q])
   const c = q.site.clearing
-  const { pit, cabin, sign } = q.site
+  const { cabin, sign, garage } = q.site
+  // Grass everywhere around the site, with a hole where the terrain mesh is.
+  const grass = useMemo(() => {
+    const shape = new THREE.Shape()
+    shape.absarc(0, 0, 220, 0, Math.PI * 2, false)
+    const hole = new THREE.Path()
+    // The shape is in the plane's own x/y; rotated flat, its y becomes world -z.
+    hole.moveTo(c.minX, -c.minZ)
+    hole.lineTo(c.minX, -c.maxZ)
+    hole.lineTo(c.maxX, -c.maxZ)
+    hole.lineTo(c.maxX, -c.minZ)
+    hole.lineTo(c.minX, -c.minZ)
+    shape.holes.push(hole)
+    return new THREE.ShapeGeometry(shape, 24)
+  }, [c])
   const { road } = q.buyers
   const exit = road.exit.at(-1)!
   const turn = road.exit[0]!
   return (
     <group>
-      <mesh rotation-x={-Math.PI / 2} position={[0, -0.02, 0]} receiveShadow>
-        <circleGeometry args={[220, 48]} />
+      <mesh geometry={grass} rotation-x={-Math.PI / 2} position={[0, -0.01, 0]} receiveShadow>
         <meshStandardMaterial color="#8DB86B" roughness={1} />
       </mesh>
-      <mesh
-        rotation-x={-Math.PI / 2}
-        position={[(c.minX + c.maxX) / 2, 0, (c.minZ + c.maxZ) / 2]}
-        receiveShadow
-      >
-        <planeGeometry args={[c.maxX - c.minX, c.maxZ - c.minZ]} />
-        <meshStandardMaterial color="#CDB68C" roughness={1} />
-      </mesh>
+      <QuarryTerrain quarry={q} />
       {/* The haul road buyers drive: in from the east, out to the south. */}
       <mesh
         rotation-x={-Math.PI / 2}
@@ -212,25 +209,22 @@ export function QuarryWorld({ shadows = false }: { shadows?: boolean }) {
         <planeGeometry args={[4, exit.z - turn.z + 4]} />
         <meshStandardMaterial color="#9F9479" roughness={1} />
       </mesh>
-      {/* Where the top bench will be cut. */}
-      <mesh
-        rotation-x={-Math.PI / 2}
-        position={[pit.x, 0.01, pit.z]}
-        scale={[pit.rx, pit.rz, 1]}
-        receiveShadow
-      >
-        <circleGeometry args={[1, 40]} />
-        <meshStandardMaterial color="#B49C74" roughness={1} />
-      </mesh>
       <Instances geometry={geo.pine} items={pines} shadows={shadows} />
       <Instances geometry={geo.hill} items={hills} />
-      <Instances geometry={geo.stake} items={stakes} />
       <Instances geometry={geo.boulder} items={boulders} shadows={shadows} />
       <mesh
         geometry={geo.cabin}
         material={propMaterial}
         position={[cabin.x, 0, cabin.z]}
         rotation-y={cabin.rotation}
+        castShadow={shadows}
+        receiveShadow
+      />
+      <mesh
+        geometry={geo.garage}
+        material={propMaterial}
+        position={[garage.x, 0, garage.z]}
+        rotation-y={garage.rotation}
         castShadow={shadows}
         receiveShadow
       />
@@ -244,6 +238,7 @@ export function QuarryWorld({ shadows = false }: { shadows?: boolean }) {
       {!shadows && <PlayerShadow />}
       <QuarryLoop />
       <Effects />
+      <QuarryLayoutOverlay />
     </group>
   )
 }

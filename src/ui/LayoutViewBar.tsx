@@ -1,5 +1,7 @@
 import { getContent } from '../game/content.ts'
 import { layoutProblems } from '../game/layout.ts'
+import { getQuarryContent } from '../game/quarry/content.ts'
+import { quarryLayoutProblems } from '../game/quarry/layout.ts'
 import { useGame } from '../store/gameStore.ts'
 import { useUi } from '../store/uiStore.ts'
 
@@ -17,19 +19,32 @@ const LEGEND = [
   ['#E5484D', 'Problem'],
 ] as const
 
+const QUARRY_LEGEND = [
+  ['#19B5A5', 'Pad'],
+  ['#1E6FD9', 'Building'],
+  ['#8A5CF6', 'Stockpile'],
+  ['#3E9B5F', 'Rock face'],
+  ['#C2410C', 'Haul road, buyers road, conveyor'],
+  ['#F29E4C', 'Where the player walks'],
+  ['#F7C948', 'Pit and bench 2 rims'],
+  ['#E5484D', 'Problem'],
+] as const
+
 /** Shown instead of the HUD in the debug layout view: a legend, the problem count and Exit. */
 export function LayoutViewBar() {
   const mapId = useGame((s) => s.state.mapId)
+  const quarryId = useGame((s) => (s.business === 'quarry' ? s.quarry?.quarryId : undefined))
   const setLayoutView = useUi((s) => s.setLayoutView)
-  const problems = layoutProblems(getContent(mapId))
+  const quarry = quarryId ? getQuarryContent(quarryId).quarry : null
+  const problems = quarry ? quarryLayoutProblems(quarry) : layoutProblems(getContent(mapId))
+  const name = quarry ? quarry.name : getContent(mapId).map.name
   return (
     <div className="layout-bar" data-hud-control>
       <strong>
-        {getContent(mapId).map.name}:{' '}
-        {problems.length === 0 ? 'no layout problems' : `${problems.length} problems`}
+        {name}: {problems.length === 0 ? 'no layout problems' : `${problems.length} problems`}
       </strong>
       <ul>
-        {LEGEND.map(([color, label]) => (
+        {(quarry ? QUARRY_LEGEND : LEGEND).map(([color, label]) => (
           <li key={label}>
             <span style={{ background: color }} aria-hidden />
             {label}

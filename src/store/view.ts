@@ -3,6 +3,7 @@
 import type { BusinessId } from '../game/business.ts'
 import { getContent } from '../game/content.ts'
 import { getQuarryContent } from '../game/quarry/content.ts'
+import { heightAt } from '../game/quarry/terrain.ts'
 import type { QuarryPlayer, Rect } from '../game/quarry/types.ts'
 import type { MapContent } from '../game/types.ts'
 import { activeEvent } from '../game/world.ts'
@@ -21,11 +22,16 @@ export interface SceneView {
   theme: SceneTheme
   /** A sandstorm is blowing (station only). */
   storm: boolean
+  /** Ground height under a point (the quarry has a pit; the stations are flat). */
+  ground: (x: number, z: number) => number
 }
+
+const FLAT = () => 0
 
 export function sceneView(s: GameStore = useGame.getState()): SceneView {
   if (s.business === 'quarry' && s.quarry) {
     const { quarry } = getQuarryContent(s.quarry.quarryId)
+    const dug = s.quarry.pads.bench2?.built ? 1 : 0
     return {
       business: 'quarry',
       player: s.quarry.player,
@@ -36,6 +42,7 @@ export function sceneView(s: GameStore = useGame.getState()): SceneView {
       bounds: quarry.bounds,
       theme: quarry.theme,
       storm: false,
+      ground: (x, z) => heightAt(quarry, x, z, dug),
     }
   }
   const { map } = getContent(s.state.mapId)
@@ -49,6 +56,7 @@ export function sceneView(s: GameStore = useGame.getState()): SceneView {
     bounds: map.bounds,
     theme: map.theme,
     storm: activeEvent(s.state)?.kind === 'sandstorm',
+    ground: FLAT,
   }
 }
 

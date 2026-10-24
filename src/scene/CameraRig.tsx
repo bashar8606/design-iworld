@@ -95,10 +95,10 @@ export function CameraRig({
       first.current = true
     }
     const map = getContent(state.mapId).map
-    if (station && useUi.getState().layoutView) {
+    if (useUi.getState().layoutView) {
       // Straight down over the whole map, north (−z) up.
       // The legend covers the bottom of the screen, so fit the map into the space above it.
-      const b = map.bounds
+      const b = view.bounds
       const w = b.maxX - b.minX + 4
       const d = b.maxZ - b.minZ + 4
       const free = size.height * 0.72
@@ -133,6 +133,7 @@ export function CameraRig({
             Math.max(b.minZ + 2, Math.min(b.maxZ - 2, lerp(prevPlayer.pos.z, player.pos.z, t))),
           )
         : overviewCenter(state)
+    goal.y = station ? 0 : view.ground(goal.x, goal.z) * 0.6
     if (r) goal.lerp(r.center, k)
     if (first.current) {
       target.current.copy(goal)
@@ -140,6 +141,7 @@ export function CameraRig({
     } else {
       // Soft follow: eases in when the player stops.
       target.current.x = damp(target.current.x, goal.x, 5, dt)
+      target.current.y = damp(target.current.y, goal.y, 5, dt)
       target.current.z = damp(target.current.z, goal.z, 5, dt)
     }
     cam.position.copy(target.current).add(offset)

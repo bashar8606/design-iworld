@@ -3,7 +3,9 @@ import { useEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import { useShallow } from 'zustand/react/shallow'
 import { getQuarryContent } from '../../game/quarry/content.ts'
-import { pointAlong, routeLength } from '../../game/quarry/route.ts'
+import { routeLength } from '../../game/quarry/route.ts'
+import { heightAt, routeHeight, routePoint } from '../../game/quarry/terrain.ts'
+import { sceneView } from '../../store/view.ts'
 import { openQuarryPads, truckCapacity } from '../../game/quarry/state.ts'
 import type { QuarryContent, QuarryState, Truck } from '../../game/quarry/types.ts'
 import { onGameEvent } from '../../store/events.ts'
@@ -25,8 +27,6 @@ import {
 const ROCK = '#8E877C'
 /** Machines are drawn a little under life size so they fit the arcade view. */
 const MACHINE_SCALE = 0.72
-const BENCH = '#A48C68'
-const ROAD = '#9A8B70'
 
 function quarryNow(): { q: QuarryState; prev: QuarryState } | null {
   const { quarry, quarryPrev } = useGame.getState()
@@ -40,7 +40,7 @@ function useQuarryContent(): QuarryContent {
 
 const useBuilt = (id: string) => useGame((s) => s.quarry?.pads[id]?.built ?? false)
 
-/** Bench 2: pegged out until it is bought, then a cut floor with the haul road up the ramp. */
+/** Bench 2: pegged out until it is bought; the terrain mesh digs it (and the ramp) out. */
 function Bench2() {
   const quarry = useQuarryContent()
   const open = useBuilt('bench2')
@@ -54,53 +54,16 @@ function Bench2() {
     const m = new THREE.Matrix4()
     for (let i = 0; i < n; i++) {
       const a = (i / n) * Math.PI * 2
-      m.makeRotationY(-a).setPosition(pos.x + Math.cos(a) * rx, 0, pos.z + Math.sin(a) * rz)
+      const x = pos.x + Math.cos(a) * rx
+      const z = pos.z + Math.sin(a) * rz
+      m.makeRotationY(-a).setPosition(x, heightAt(quarry, x, z, 0), z)
       mesh.setMatrixAt(i, m)
     }
     mesh.instanceMatrix.needsUpdate = true
-  }, [open, pos, rx, rz])
-  const route = quarry.machines.trucks.route
-  const segments = useMemo(
-    () =>
-      route.slice(1).map((b, i) => {
-        const a = route[i]!
-        const len = Math.hypot(b.x - a.x, b.z - a.z)
-        return {
-          x: (a.x + b.x) / 2,
-          z: (a.z + b.z) / 2,
-          len: len + 3.2,
-          yaw: Math.atan2(b.x - a.x, b.z - a.z),
-        }
-      }),
-    [route],
-  )
+  }, [open, pos, rx, rz, quarry])
   if (!open) return <instancedMesh ref={stakes} args={[stake, propMaterial, n]} />
   return (
     <>
-      <mesh
-        rotation-x={-Math.PI / 2}
-        position={[pos.x, 0.018, pos.z]}
-        scale={[rx, rz, 1]}
-        receiveShadow
-      >
-        <circleGeometry args={[1, 40]} />
-        <meshStandardMaterial color={BENCH} roughness={1} />
-      </mesh>
-      <mesh rotation-x={-Math.PI / 2} position={[pos.x, 0.02, pos.z]} scale={[rx, rz, 1]}>
-        <ringGeometry args={[0.96, 1, 40]} />
-        <meshStandardMaterial color="#7C6A4E" roughness={1} />
-      </mesh>
-      {segments.map((g, i) => (
-        <mesh
-          key={i}
-          rotation={[-Math.PI / 2, 0, g.yaw]}
-          position={[g.x, 0.024, g.z]}
-          receiveShadow
-        >
-          <planeGeometry args={[3.6, g.len]} />
-          <meshStandardMaterial color={ROAD} roughness={1} />
-        </mesh>
-      ))}
       <RockPiles />
     </>
   )
@@ -112,7 +75,8 @@ function RockPiles() {
   const broken = useRef<THREE.Mesh>(null)
   const buffer = useRef<THREE.Mesh>(null)
   const ex = quarry.machines.excavator
-  const load = quarry.machines.trucks.route[0]!
+  const face = ex.facePile
+  const buf = ex.bufferPile
   useFrame(() => {
     const now = quarryNow()
     if (!now) return
@@ -133,11 +97,21 @@ function RockPiles() {
   })
   return (
     <>
-      <mesh ref={broken} position={[ex.pos.x - 2.6, 0, ex.pos.z - 0.6]} castShadow receiveShadow>
+      <mesh
+        ref={broken}
+        position={[face.x, heightAt(quarry, face.x, face.z), face.z]}
+        castShadow
+        receiveShadow
+      >
         <coneGeometry args={[1, 1, 8]} />
         <meshStandardMaterial color={ROCK} roughness={1} flatShading />
       </mesh>
-      <mesh ref={buffer} position={[load.x - 2.2, 0, load.z + 0.2]} castShadow receiveShadow>
+      <mesh
+        ref={buffer}
+        position={[buf.x, heightAt(quarry, buf.x, buf.z), buf.z]}
+        castShadow
+        receiveShadow
+      >
         <coneGeometry args={[1, 1, 8]} />
         <meshStandardMaterial color={ROCK} roughness={1} flatShading />
       </mesh>
@@ -146,6 +120,7 @@ function RockPiles() {
 }
 
 function Loader() {
+  const quarry = useQuarryContent()
   const built = useBuilt('loader')
   const group = useRef<THREE.Group>(null)
   const bucket = useRef<THREE.Mesh>(null)
@@ -158,7 +133,9 @@ function Loader() {
     if (!now || !g || !l) return
     const p = now.prev.loader ?? l
     const t = tickAlpha()
-    g.position.set(lerp(p.pos.x, l.pos.x, t), 0, lerp(p.pos.z, l.pos.z, t))
+    const x = lerp(p.pos.x, l.pos.x, t)
+    const z = lerp(p.pos.z, l.pos.z, t)
+    g.position.set(x, heightAt(quarry, x, z), z)
     heading.current =
       heading.current === null
         ? l.heading
@@ -188,7 +165,8 @@ function Excavator() {
   const load = quarry.machines.trucks.route[0]!
   // Facing the loading spot; it swings between the rock face and the truck.
   const toTruck = Math.atan2(load.x - pos.x, load.z - pos.z)
-  const toFace = toTruck + Math.PI * 0.85
+  const fp = quarry.machines.excavator.facePile
+  const toFace = Math.atan2(fp.x - pos.x, fp.z - pos.z)
   useFrame(({ clock }) => {
     const now = quarryNow()
     const g = upper.current
@@ -199,7 +177,7 @@ function Excavator() {
   })
   if (!built) return null
   return (
-    <group position={[pos.x, 0, pos.z]} scale={MACHINE_SCALE}>
+    <group position={[pos.x, heightAt(quarry, pos.x, pos.z), pos.z]} scale={MACHINE_SCALE}>
       <mesh geometry={base} material={propMaterial} rotation-y={toTruck} castShadow />
       <group ref={upper}>
         <mesh geometry={top} material={propMaterial} castShadow />
@@ -218,7 +196,7 @@ function DrillRig() {
     <mesh
       geometry={geometry}
       material={propMaterial}
-      position={[pos.x, 0, pos.z]}
+      position={[pos.x, heightAt(quarry, pos.x, pos.z), pos.z]}
       rotation-y={0.6}
       scale={MACHINE_SCALE}
       castShadow
@@ -245,7 +223,8 @@ function BlastDust() {
           })
           const mesh = new THREE.Mesh(geometry, material)
           const a = (i / 14) * Math.PI * 2
-          mesh.position.set(e.pos.x + Math.cos(a) * 0.8, 0.6, e.pos.z + Math.sin(a) * 0.8)
+          const ground = sceneView().ground(e.pos.x, e.pos.z)
+          mesh.position.set(e.pos.x + Math.cos(a) * 0.8, ground + 0.6, e.pos.z + Math.sin(a) * 0.8)
           mesh.scale.setScalar(0.6 + Math.random() * 0.5)
           group.current.add(mesh)
           puffs.current.push({
@@ -286,21 +265,29 @@ function Trucks() {
 }
 
 /** Where a truck is drawn: on its lane of the haul road, or parked beside its pad. */
-function truckPose(t: Truck, quarry: QuarryContent): { x: number; z: number; heading: number } {
+function truckPose(
+  t: Truck,
+  quarry: QuarryContent,
+): { x: number; y: number; z: number; heading: number; pitch: number } {
   const def = quarry.machines.trucks
   if (t.phase === 'parked') {
     const pad = quarry.pads.find((p) => p.id === t.id)!
-    return { x: pad.pos.x, z: pad.pos.z - 2.6, heading: Math.PI / 2 }
+    return { x: pad.pos.x, y: 0, z: pad.pos.z - 2.4, heading: Math.PI / 2, pitch: 0 }
   }
   const toTip = t.phase === 'hauling' || t.phase === 'tipping'
-  const { pos, heading } = pointAlong(def.route, Math.min(t.d, routeLength(def.route)))
+  const d = Math.min(t.d, routeLength(def.route))
+  const { pos, heading, y } = routePoint(quarry, d)
+  const grade = (routeHeight(quarry, d + 0.5) - routeHeight(quarry, d - 0.5)) / 1
   const side = toTip ? 1 : -1
   // Drive on the right: offset to the right of the direction of travel.
   const dir = toTip ? heading : heading + Math.PI
   return {
     x: pos.x + Math.cos(heading) * def.laneOffset * side,
+    y,
     z: pos.z - Math.sin(heading) * def.laneOffset * side,
     heading: dir,
+    // Nose up climbing out, nose down going back down.
+    pitch: Math.atan(grade) * (toTip ? -1 : 1),
   }
 }
 
@@ -322,12 +309,12 @@ function DumpTruck({ id, quarry }: { id: string; quarry: QuarryContent }) {
     const a = truckPose(p, quarry)
     const b = truckPose(t, quarry)
     const k = tickAlpha()
-    g.position.set(lerp(a.x, b.x, k), 0, lerp(a.z, b.z, k))
+    g.position.set(lerp(a.x, b.x, k), lerp(a.y, b.y, k), lerp(a.z, b.z, k))
     heading.current =
       heading.current === null
         ? b.heading
         : lerpAngle(heading.current, b.heading, 1 - Math.exp(-6 * dt))
-    g.rotation.y = heading.current
+    g.rotation.set(lerp(a.pitch, b.pitch, k), heading.current, 0, 'YXZ')
     tilt.current = damp(tilt.current, t.phase === 'tipping' ? 0.75 : 0, 4, dt)
     if (body.current) body.current.rotation.x = -tilt.current
     if (load.current) {
@@ -400,6 +387,7 @@ function MachinePads() {
           <PadMarker
             key={id}
             pos={pad.pos}
+            y={heightAt(quarry, pad.pos.x, pad.pos.z)}
             icon={pad.icon}
             price={pad.price}
             paid={Number(paid)}

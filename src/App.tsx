@@ -103,12 +103,12 @@ export default function App() {
     <div className="app">
       <World />
       {!quarry && <StormOverlay />}
-      {quarry ? (
+      {layoutView ? (
+        <LayoutViewBar />
+      ) : quarry ? (
         <ErrorBoundary name="hud">
           <QuarryHud allowDebug={!store} />
         </ErrorBoundary>
-      ) : layoutView ? (
-        <LayoutViewBar />
       ) : (
         <ErrorBoundary name="hud">
           <Hud allowDebug={!store}>
@@ -128,7 +128,7 @@ export default function App() {
           </Hud>
         </ErrorBoundary>
       )}
-      {(quarry || !layoutView) && <Joystick />}
+      {!layoutView && <Joystick />}
       <ErrorBoundary name="sheets">
         <Sheets />
       </ErrorBoundary>

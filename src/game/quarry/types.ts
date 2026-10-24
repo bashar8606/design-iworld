@@ -71,9 +71,10 @@ export interface QuarryContent {
   site: {
     /** Cleared, levelled ground (everything else is grass and forest). */
     clearing: Rect
-    /** Where the pit will be dug: centre and radii of the top bench. */
-    pit: { x: number; z: number; rx: number; rz: number }
+    /** The old pit: an elliptical hole `depth` deep with sloped walls `wallWidth` wide. */
+    pit: { x: number; z: number; rx: number; rz: number; depth: number; wallWidth: number }
     cabin: { x: number; z: number; rotation: number }
+    garage: { x: number; z: number; rotation: number }
     sign: Vec2
   }
   mining: {
@@ -98,8 +99,8 @@ export interface QuarryContent {
   stockpiles: { id: string; product: string; pos: Vec2; capacityTons: number }[]
   products: Record<string, { name: string; pricePerTon: number }>
   upgrades: Record<QuarryUpgradeId, QuarryUpgradeDef>
-  /** The second bench, cut below the top one (opened by the bench2 land pad). */
-  bench2: { pos: Vec2; rx: number; rz: number }
+  /** The second bench, cut below the pit floor to `depth` (opened by the bench2 land pad). */
+  bench2: { pos: Vec2; rx: number; rz: number; depth: number }
   pads: QuarryPadDef[]
   machines: {
     loader: {
@@ -112,6 +113,9 @@ export interface QuarryContent {
     }
     excavator: {
       pos: Vec2
+      /** Where blasted rock lies, and where dug rock waits for a truck (drawing only). */
+      facePile: Vec2
+      bufferPile: Vec2
       /** Digging blasted rock; unblasted rock goes at slowFactor of this. */
       tonsPerSecond: number
       slowFactor: number
@@ -154,6 +158,19 @@ export interface QuarryContent {
     }
   }
   office: { counter: Vec2 }
+  /** Sizes and clearances for the layout check (src/game/quarry/layout.ts). */
+  layout: {
+    padSize: number
+    haulHalfWidth: number
+    roadHalfWidth: number
+    beltHalfWidth: number
+    /** Pads keep this far beyond the pad radius from the player's walking lines. */
+    walkClearance: number
+    maxGrade: number
+    pileRadius: number
+    faceRadius: number
+    buildings: (Rect & { id: string })[]
+  }
   forest: { count: number; seed: number; margin: number; extent: number }
   /** Grassy hills on the horizon. */
   hills: { x: number; z: number; r: number; h: number }[]

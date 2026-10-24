@@ -230,6 +230,16 @@
       "route": "code",
       "source": "src/scene/props/geometry.ts",
       "triangleLimit": 120
+    },
+    "garage": {
+      "route": "code",
+      "source": "src/scene/props/geometry.ts",
+      "triangleLimit": 120
+    },
+    "quarryTerrain": {
+      "route": "code",
+      "source": "src/scene/quarry/QuarryTerrain.tsx",
+      "triangleLimit": 13000
     }
   }
 }

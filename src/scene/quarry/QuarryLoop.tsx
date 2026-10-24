@@ -7,7 +7,9 @@ import { quarryHint } from '../../game/quarry/hint.ts'
 import { upgradeOpen } from '../../game/quarry/state.ts'
 import { faceInReach } from '../../game/quarry/tick.ts'
 import type { QuarryContent, QuarryState, QuarryUpgradeId } from '../../game/quarry/types.ts'
+import { heightAt } from '../../game/quarry/terrain.ts'
 import { tickAlpha, useGame } from '../../store/gameStore.ts'
+import { sceneView } from '../../store/view.ts'
 import { lerp, lerpAngle } from '../interp.ts'
 import { glowTeal, propMaterial } from '../materials.ts'
 import { PadMarker } from '../Pads.tsx'
@@ -63,7 +65,9 @@ function RockFaces() {
       for (const [dx, dz, sc, yaw] of CLUSTER) {
         q4.setFromAxisAngle(up, yaw)
         s3.set(sc * k * 1.3, sc * k * 1.3, sc * k * 1.3)
-        mesh.setMatrixAt(i++, m4.compose(v3.set(f.pos.x + dx, 0.15, f.pos.z + dz), q4, s3))
+        const x = f.pos.x + dx
+        const z = f.pos.z + dz
+        mesh.setMatrixAt(i++, m4.compose(v3.set(x, heightAt(quarry, x, z) + 0.15, z), q4, s3))
       }
     }
     mesh.instanceMatrix.needsUpdate = true
@@ -73,7 +77,11 @@ function RockFaces() {
     if (ring.current) {
       ring.current.visible = !!def
       if (def) {
-        ring.current.position.set(def.pos.x, 0.04, def.pos.z)
+        ring.current.position.set(
+          def.pos.x,
+          heightAt(quarry, def.pos.x, def.pos.z) + 0.04,
+          def.pos.z,
+        )
         ring.current.scale.setScalar(1 + 0.06 * Math.sin(clock.elapsedTime * 10))
       }
     }
@@ -105,12 +113,13 @@ function CarryStack() {
     const bx = x - Math.sin(heading.current) * 0.42
     const bz = z - Math.cos(heading.current) * 0.42
     const n = Math.min(MAX, now.q.player.carry)
+    const gy = sceneView().ground(x, z)
     for (let i = 0; i < n; i++) {
       q4.setFromAxisAngle(up, i * 1.7)
       const off = ((i % 2) - 0.5) * 0.12
       mesh.setMatrixAt(
         i,
-        m4.compose(v3.set(bx + off, 0.9 + i * 0.16, bz - off), q4, s3.set(1, 1, 1)),
+        m4.compose(v3.set(bx + off, gy + 0.9 + i * 0.16, bz - off), q4, s3.set(1, 1, 1)),
       )
     }
     mesh.count = n
@@ -349,7 +358,8 @@ function HintArrow() {
     const target = now.q.stats.totalEarned < 150 ? quarryHint(now.q, quarry).target : null
     g.visible = !!target
     if (!target) return
-    g.position.set(target.x, 2.8 + 0.35 * Math.sin(clock.elapsedTime * 5), target.z)
+    const y = heightAt(quarry, target.x, target.z) + 2.8
+    g.position.set(target.x, y + 0.35 * Math.sin(clock.elapsedTime * 5), target.z)
     g.rotation.y = clock.elapsedTime * 1.5
   })
   return (

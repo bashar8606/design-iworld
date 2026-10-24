@@ -36,15 +36,13 @@ export function Player() {
   const station = useGame((s) => !selectQuarryOn(s))
   const heading = useRef(0)
   useFrame((_, dt) => {
-    const { player, prevPlayer } = sceneView()
+    const { player, prevPlayer, ground } = sceneView()
     const t = tickAlpha()
     const g = group.current
     if (!g) return
-    g.position.set(
-      lerp(prevPlayer.pos.x, player.pos.x, t),
-      0,
-      lerp(prevPlayer.pos.z, player.pos.z, t),
-    )
+    const x = lerp(prevPlayer.pos.x, player.pos.x, t)
+    const z = lerp(prevPlayer.pos.z, player.pos.z, t)
+    g.position.set(x, ground(x, z), z)
     heading.current = lerpAngle(heading.current, player.heading, 1 - Math.exp(-14 * dt))
     g.rotation.y = heading.current + Math.PI
   })

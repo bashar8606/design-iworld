@@ -641,3 +641,19 @@ export function drillRigGeometry(): THREE.BufferGeometry {
     boxAt([0.5, 0.25, 0.5], [0.35, 4.6, 1.0], PALETTE.orange),
   ])
 }
+
+/** The truck garage: a steel shed with three roll-up doors facing +z. */
+export function garageGeometry(): THREE.BufferGeometry {
+  const roof = new THREE.CylinderGeometry(2.3, 2.3, 9.8, 3, 1)
+    .rotateZ(Math.PI / 2)
+    .rotateX(-Math.PI / 2)
+  roof.scale(1, 0.32, 0.86)
+  roof.translate(0, 3.45, 0)
+  return merge([
+    boxAt([9.8, 0.2, 3.8], [0, 0.1, 0], '#8C8579'),
+    boxAt([9.6, 3.0, 3.6], [0, 1.6, 0], '#C9CED3'),
+    paint(roof, '#7E8790'),
+    ...[-3.1, 0, 3.1].map((x) => boxAt([2.5, 2.4, 0.08], [x, 1.3, 1.82], '#6E7780')),
+    ...[-3.1, 0, 3.1].map((x) => boxAt([2.6, 0.12, 0.1], [x, 2.6, 1.84], MACHINE_YELLOW)),
+  ])
+}

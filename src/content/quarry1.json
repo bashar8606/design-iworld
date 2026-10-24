@@ -37,10 +37,12 @@
       "maxZ": 15
     },
     "pit": {
-      "x": -9,
+      "x": -10,
       "z": -5,
-      "rx": 11,
-      "rz": 8.5
+      "rx": 10,
+      "rz": 8.5,
+      "depth": 1.5,
+      "wallWidth": 1.4
     },
     "cabin": {
       "x": 14.5,
@@ -50,6 +52,11 @@
     "sign": {
       "x": 24,
       "z": 10.8
+    },
+    "garage": {
+      "x": 9.6,
+      "z": -14.4,
+      "rotation": 0
     }
   },
   "mining": {
@@ -64,7 +71,7 @@
       "id": "face1",
       "pos": {
         "x": -3.2,
-        "z": 2.4
+        "z": 2.6
       },
       "rocks": 16,
       "regenSecondsPerRock": 1.2
@@ -73,7 +80,7 @@
       "id": "face2",
       "pos": {
         "x": -8.6,
-        "z": 3.4
+        "z": 4.4
       },
       "rocks": 16,
       "regenSecondsPerRock": 1.2
@@ -82,7 +89,7 @@
       "id": "face3",
       "pos": {
         "x": -14.2,
-        "z": 2.4
+        "z": 3.6
       },
       "rocks": 16,
       "regenSecondsPerRock": 1.2
@@ -101,7 +108,7 @@
     "beltSeconds": 3,
     "beltEnd": {
       "x": 5,
-      "z": 3.2
+      "z": 2.8
     }
   },
   "stockpiles": [
@@ -110,7 +117,7 @@
       "product": "gravel",
       "pos": {
         "x": 5,
-        "z": 4.4
+        "z": 4.0
       },
       "capacityTons": 30
     }
@@ -156,11 +163,12 @@
   },
   "bench2": {
     "pos": {
-      "x": -9.5,
-      "z": -7
+      "x": -10,
+      "z": -6.8
     },
-    "rx": 6.5,
-    "rz": 4.4
+    "rx": 5.2,
+    "rz": 3.6,
+    "depth": 3.0
   },
   "pads": [
     {
@@ -169,8 +177,8 @@
       "name": "Wheel loader",
       "icon": "🚜",
       "pos": {
-        "x": -6.2,
-        "z": 0.2
+        "x": -0.4,
+        "z": 3.6
       },
       "price": 150
     },
@@ -192,8 +200,8 @@
       "name": "Bench 2 & ramp",
       "icon": "🚧",
       "pos": {
-        "x": -1.4,
-        "z": -11.6
+        "x": -11.5,
+        "z": 5.6
       },
       "price": 450,
       "requires": ["loader"]
@@ -204,8 +212,8 @@
       "name": "Excavator",
       "icon": "🦾",
       "pos": {
-        "x": -15.8,
-        "z": -3.6
+        "x": -20.6,
+        "z": -4.0
       },
       "price": 600,
       "requires": ["bench2"]
@@ -252,8 +260,8 @@
       "name": "Drill rig",
       "icon": "💥",
       "pos": {
-        "x": -16.4,
-        "z": -10.6
+        "x": -5.5,
+        "z": -14.2
       },
       "price": 1600,
       "requires": ["excavator"]
@@ -290,25 +298,33 @@
       "scoopSeconds": 1.6,
       "dumpSeconds": 1.0,
       "home": {
-        "x": -1.5,
-        "z": -1.2
+        "x": -1.2,
+        "z": -0.6
       }
     },
     "excavator": {
       "pos": {
-        "x": -12.4,
-        "z": -8.2
+        "x": -13.0,
+        "z": -8.8
       },
       "tonsPerSecond": 1.0,
       "slowFactor": 0.35,
       "bufferTons": 8,
       "startBrokenTons": 30,
-      "maxBrokenTons": 60
+      "maxBrokenTons": 60,
+      "facePile": {
+        "x": -14.6,
+        "z": -6.4
+      },
+      "bufferPile": {
+        "x": -11.0,
+        "z": -4.6
+      }
     },
     "drill": {
       "pos": {
-        "x": -12.8,
-        "z": -10.6
+        "x": -7.5,
+        "z": -5.4
       },
       "everySeconds": 60,
       "blastTons": 25
@@ -322,23 +338,23 @@
       "laneOffset": 1.0,
       "route": [
         {
-          "x": -10,
-          "z": -5.6
+          "x": -12.5,
+          "z": -6.5
         },
         {
-          "x": -6,
-          "z": -9.2
+          "x": -8,
+          "z": -9.6
         },
         {
-          "x": -1.4,
-          "z": -9.4
+          "x": -3.5,
+          "z": -10.4
         },
         {
-          "x": 0.9,
-          "z": -7.4
+          "x": 0.2,
+          "z": -8.4
         },
         {
-          "x": 0.6,
+          "x": 0.8,
           "z": -4.6
         }
       ]
@@ -370,7 +386,7 @@
       }
     ],
     "road": {
-      "z": 8,
+      "z": 8.6,
       "spawnX": 44,
       "bayX": 5,
       "queueSpacing": 5.4,
@@ -378,7 +394,7 @@
       "exit": [
         {
           "x": -2,
-          "z": 8
+          "z": 8.6
         },
         {
           "x": -2,
@@ -392,6 +408,39 @@
       "x": 13.4,
       "z": 4.4
     }
+  },
+  "layout": {
+    "padSize": 2.1,
+    "haulHalfWidth": 2.0,
+    "roadHalfWidth": 2.0,
+    "beltHalfWidth": 0.8,
+    "walkClearance": 0.5,
+    "maxGrade": 0.3,
+    "pileRadius": 2.5,
+    "faceRadius": 1.6,
+    "buildings": [
+      {
+        "id": "crusher",
+        "minX": 1.9,
+        "maxX": 6.9,
+        "minZ": -5.3,
+        "maxZ": -2.7
+      },
+      {
+        "id": "office",
+        "minX": 11.7,
+        "maxX": 17.3,
+        "minZ": 0.5,
+        "maxZ": 3.1
+      },
+      {
+        "id": "garage",
+        "minX": 4.8,
+        "maxX": 14.4,
+        "minZ": -16.2,
+        "maxZ": -12.6
+      }
+    ]
   },
   "forest": {
     "count": 360,
